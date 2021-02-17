@@ -7,7 +7,7 @@
 (menu-bar-mode -1)
 ; (setq visible-bell t)
 
-(set-face-attribute 'default nil :font "Fira Code" :height 125 :weight 'ultra-light)
+(set-face-attribute 'default nil :font "Fira Code Light" :height 125 :weight 'ultra-light)
 
 ;; (load-theme 'wombat t)
 (use-package kaolin-themes
@@ -26,6 +26,9 @@
 ;;
 ;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
+
+(use-package exec-path-from-shell
+ :init (exec-path-from-shell-initialize))
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -177,7 +180,8 @@
 (use-package general
   :config
   (general-create-definer miika/leader-keys
-    :keymaps '(normal visual emacs)
+    ;; :keymaps '(normal visual emacs)
+    :states '(normal visual emacs)
     :prefix "SPC")
 
   (miika/leader-keys
@@ -205,9 +209,6 @@
 
     ;; Window management
     "w" '(:keymap evil-window-map :package evil)
-    ;; "w"  '(:ignore t :which-key "window")
-    ;; "wv" '(evil-window-vsplit :which-key "split window vertically")
-    ;; "ww" '(evil-window-next :which-key "next window")
 
     ;; Files
     "f" '(:ignore t :which-key "File")
@@ -224,57 +225,57 @@
     "p" '(:keymap projectile-command-map :package projectile)
     ))
 
-;; ;; General coding stuff
-;; (use-package flycheck
-;;   :init (global-flycheck-mode))
-;; (use-package yasnippet)
+;; General coding stuff
+(use-package flycheck
+  :init (global-flycheck-mode))
+(use-package yasnippet)
 
 
-;; ;; LSP
-;; (use-package lsp-mode
-;;   ;; Optional - enable lsp-mode automatically in scala files
-;;   :hook  (scala-mode . lsp)
-;;          (lsp-mode . lsp-lens-mode)
-;;   :config
-;;   ;; Uncomment following section if you would like to tune lsp-mode performance according to
-;;   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-;;   ;;       (setq gc-cons-threshold 100000000) ;; 100mb
-;;   ;;       (setq read-process-output-max (* 1024 1024)) ;; 1mb
-;;   ;;       (setq lsp-idle-delay 0.500)
-;;   ;;       (setq lsp-log-io nil)
-;;   ;;       (setq lsp-completion-provider :capf)
-;;   (setq lsp-prefer-flymake nil))
+;; LSP
+(use-package lsp-mode
+  ;; Optional - enable lsp-mode automatically in scala files
+  :hook  (scala-mode . lsp)
+         (lsp-mode . lsp-lens-mode)
+  :config
+  ;; Uncomment following section if you would like to tune lsp-mode performance according to
+  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+  ;;       (setq gc-cons-threshold 100000000) ;; 100mb
+  ;;       (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  ;;       (setq lsp-idle-delay 0.500)
+  ;;       (setq lsp-log-io nil)
+  ;;       (setq lsp-completion-provider :capf)
+  (setq lsp-prefer-flymake nil))
 
  
 
-;; (use-package lsp-ui)
-;; (use-package company-lsp)
-;; (use-package posframe)
-;; (use-package dap-mode
-;;   :hook
-;;   (lsp-mode . dap-mode)
-;;   (lsp-mode . dap-ui-mode))
+(use-package lsp-ui)
+(use-package company-lsp)
+(use-package posframe)
+(use-package dap-mode
+  :hook
+  (lsp-mode . dap-mode)
+  (lsp-mode . dap-ui-mode))
 
 
-;; ;; Scala
-;; (use-package scala-mode
-;;   :interpreter
-;;   ("scala" . scala-mode))
+;; Scala
+(use-package scala-mode
+  :interpreter
+  ("scala" . scala-mode))
 
-;; (use-package sbt-mode
-;;   :commands sbt-start sbt-command
-;;   :config
-;;   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-;;   ;; allows using SPACE when in the minibuffer
-;;   (substitute-key-definition
-;;    'minibuffer-complete-word
-;;    'self-insert-command
-;;    minibuffer-local-completion-map)
-;;    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
-;;   (setq sbt:program-options '("-Dsbt.supershell=false")))
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+  (setq sbt:program-options '("-Dsbt.supershell=false")))
 
-;; (use-package lsp-metals
-;;   :config (setq lsp-metals-treeview-show-when-views-received t))
+(use-package lsp-metals
+  :config (setq lsp-metals-treeview-show-when-views-received t))
 
 
 
@@ -284,10 +285,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
- ;u; If you edit it by hand, you could mess it up, so be careful.
+ ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
