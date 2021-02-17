@@ -43,7 +43,9 @@
 
 ;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
-   (package-install 'use-package))
+  (package-install 'use-package))
+
+
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -112,42 +114,18 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(use-package god-mode)
+;; Open init.el
+(defun open-user-init-file ()
+  "Edit the `user-init-file', in another window."
+  (interactive)
+  (find-file user-init-file))
 
-(use-package general
-  :config
-  (general-create-definer miika/leader-keys
-    :keymaps '(normal visual emacs)
-    :prefix "SPC")
 
-  (miika/leader-keys
-    "SPC" '(counsel-M-x :which-key "M-x")
-
-    "/" '(swiper :which-key "swiper")
-
-    "e" '(:ignore t :which-key "eval")
-    "ed" '(eval-defun :which-key "eval defun")
-
-    ;; Toggle
-    "t" '(:ignore t :which-key "toggle")
-    "tt" '(counsel-load-theme :which-key "load theme")
-    "ts" '(hydra-text-scale/body :which-key "scale text")
-
-    ;; Window management
-    "w"  '(:ignore t :which-key "window")
-    "wv" '(evil-window-vsplit :which-key "split window vertically")
-    "ww" '(evil-window-next :which-key "next window")
-
-    ;; Files
-    "f" '(:ignore t :which-key "file")
-    "ff" '(find-file :which-key "find file")
-
-    ;; Help
-    "h" '(:ignore t :which-key "help")
-    "hv" '(describe-variable :which-key "describe a variable")
-    "hf" '(describe-function :which-key "describe a function")
-    ))
-
+;; Mac stuff
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none)
 
 (use-package evil
   :init
@@ -159,6 +137,10 @@
   (evil-mode 1)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (define-key evil-normal-state-map (kbd "å" ) 'evil-backward-paragraph)
+  (define-key evil-visual-state-map (kbd "å" ) 'evil-backward-paragraph)
+  (define-key evil-normal-state-map (kbd "ä" ) 'evil-forward-paragraph)
+  (define-key evil-visual-state-map (kbd "ä" ) 'evil-forward-paragraph)
 
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -176,16 +158,136 @@
   :after evil
   :init (evil-commentary-mode))
 
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  ;; :bind-keymap
+  ;; ("SPC p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/dev")
+    (setq projectile-project-search-path '("~/dev")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+
+(use-package general
+  :config
+  (general-create-definer miika/leader-keys
+    :keymaps '(normal visual emacs)
+    :prefix "SPC")
+
+  (miika/leader-keys
+    "." '(find-file :which-key "Find file")
+    ":" '(counsel-M-x :which-key "M-x")
+    "SPC" '(projectile-find-file :which-key "Find file in project")
+
+    "/" '(swiper :which-key "swiper")
+
+    ;; Buffers
+    "b" '(:ignore t :which-key "Buffer")
+    "bb" '(switch-to-buffer :which-key "Switch to buffer")
+    "bd" '(kill-current-buffer :which-key "Kill current buffer")
+
+    ;; Eval
+    "e" '(:ignore t :which-key "Eval")
+    "ed" '(eval-defun :which-key "Eval defun")
+    "er" '(eval-region :which-key "Eval region")
+    "eb" '(eval-region :which-key "Eval buffer")
+
+    ;; Toggle
+    "t" '(:ignore t :which-key "Toggle")
+    "tt" '(counsel-load-theme :which-key "Load theme")
+    "ts" '(hydra-text-scale/body :which-key "Scale text")
+
+    ;; Window management
+    "w" '(:keymap evil-window-map :package evil)
+    ;; "w"  '(:ignore t :which-key "window")
+    ;; "wv" '(evil-window-vsplit :which-key "split window vertically")
+    ;; "ww" '(evil-window-next :which-key "next window")
+
+    ;; Files
+    "f" '(:ignore t :which-key "File")
+    "fi" '(open-user-init-file :which-key "Open init.el")
+    "ff" '(find-file :which-key "Find file")
+
+    ;; Help
+    "h" '(:ignore t :which-key "Help")
+    "hv" '(describe-variable :which-key "Describe a variable")
+    "hf" '(describe-function :which-key "Describe a function")
+    "he" '(view-echo-area-messages :which-key "View echo messages")
+
+    ;; Projects
+    "p" '(:keymap projectile-command-map :package projectile)
+    ))
+
+;; ;; General coding stuff
+;; (use-package flycheck
+;;   :init (global-flycheck-mode))
+;; (use-package yasnippet)
+
+
+;; ;; LSP
+;; (use-package lsp-mode
+;;   ;; Optional - enable lsp-mode automatically in scala files
+;;   :hook  (scala-mode . lsp)
+;;          (lsp-mode . lsp-lens-mode)
+;;   :config
+;;   ;; Uncomment following section if you would like to tune lsp-mode performance according to
+;;   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+;;   ;;       (setq gc-cons-threshold 100000000) ;; 100mb
+;;   ;;       (setq read-process-output-max (* 1024 1024)) ;; 1mb
+;;   ;;       (setq lsp-idle-delay 0.500)
+;;   ;;       (setq lsp-log-io nil)
+;;   ;;       (setq lsp-completion-provider :capf)
+;;   (setq lsp-prefer-flymake nil))
+
+ 
+
+;; (use-package lsp-ui)
+;; (use-package company-lsp)
+;; (use-package posframe)
+;; (use-package dap-mode
+;;   :hook
+;;   (lsp-mode . dap-mode)
+;;   (lsp-mode . dap-ui-mode))
+
+
+;; ;; Scala
+;; (use-package scala-mode
+;;   :interpreter
+;;   ("scala" . scala-mode))
+
+;; (use-package sbt-mode
+;;   :commands sbt-start sbt-command
+;;   :config
+;;   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+;;   ;; allows using SPACE when in the minibuffer
+;;   (substitute-key-definition
+;;    'minibuffer-complete-word
+;;    'self-insert-command
+;;    minibuffer-local-completion-map)
+;;    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+;;   (setq sbt:program-options '("-Dsbt.supershell=false")))
+
+;; (use-package lsp-metals
+;;   :config (setq lsp-metals-treeview-show-when-views-received t))
+
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(god-mode kaolin-themes doom-modeline ivy use-package)))
+ '(package-selected-packages
+   '(sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
+ ;u; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
