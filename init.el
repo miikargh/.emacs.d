@@ -333,7 +333,7 @@
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 (use-package lsp-metals
-  :config (setq lsp-metals-treeview-show-when-views-received t))
+  :config (setq lsp-metals-treeview-show-when-views-received nil))
 
 
 
