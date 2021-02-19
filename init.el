@@ -228,11 +228,14 @@
     :prefix "SPC")
 
   (miika/leader-keys
-    "." '(find-file :which-key "Find file")
     ":" '(counsel-M-x :which-key "M-x")
-    "SPC" '(projectile-find-file :which-key "Find file in project")
+    ";" '(eval-expression :which-key "Eval expression")
+    "." '(projectile-find-file :which-key "Find file in project")
+    "SPC" '(:keymap evilem-map :which-key "Easy motion")
 
     "/" '(swiper :which-key "swiper")
+
+    "x" '(:keymap ctl-x-map :which-key "C-x")
 
     ;; Buffers
     "b" '(:ignore t :which-key "Buffer")
