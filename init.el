@@ -216,6 +216,9 @@
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
+(use-package magit
+  :config
+  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
 (use-package general
   :config
