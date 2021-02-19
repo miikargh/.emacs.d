@@ -207,7 +207,11 @@
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (when (file-directory-p "~/dev")
     (setq projectile-project-search-path '("~/dev")))
-  (setq projectile-switch-project-action #'projectile-dired))
+  (setq projectile-switch-project-action #'projectile-dired)
+  :config
+  (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
+  (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
+  )
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
