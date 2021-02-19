@@ -184,6 +184,19 @@
   :after evil
   :init (evil-commentary-mode))
 
+(use-package evil-snipe
+  :config
+    (evil-snipe-mode +1)
+    (evil-snipe-override-mode +1)
+    (evil-define-key 'visual evil-snipe-local-mode-map "z" 'evil-snipe-s)
+    (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
+
+(use-package evil-multiedit
+  :config (evil-multiedit-default-keybinds))
+
+(use-package evil-easymotion)
+
+
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
