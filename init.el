@@ -1,4 +1,4 @@
-;; Make everything simpler
+; Make everything simpler
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -163,10 +163,10 @@
   (evil-mode 1)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-  (define-key evil-normal-state-map (kbd "å" ) 'evil-backward-paragraph)
-  (define-key evil-visual-state-map (kbd "å" ) 'evil-backward-paragraph)
-  (define-key evil-normal-state-map (kbd "ä" ) 'evil-forward-paragraph)
-  (define-key evil-visual-state-map (kbd "ä" ) 'evil-forward-paragraph)
+  (define-key evil-normal-state-map (kbd "ä" ) 'evil-backward-paragraph)
+  (define-key evil-visual-state-map (kbd "ä" ) 'evil-backward-paragraph)
+  (define-key evil-normal-state-map (kbd "ö" ) 'evil-forward-paragraph)
+  (define-key evil-visual-state-map (kbd "ö" ) 'evil-forward-paragraph)
 
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -220,13 +220,19 @@
   :config
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
+(defun miika/focus-next-window-or-open-new ()
+  "Move focus to the next window or opens a new window if only one is open."
+  (interactive)
+  (when (one-window-p)
+    (evil-window-vsplit))
+  (evil-window-next nil))
+
 (use-package general
   :config
   (general-create-definer miika/leader-keys
     ;; :keymaps '(normal visual emacs)
     :states '(normal visual emacs)
     :prefix "SPC")
-
   (miika/leader-keys
     ":" '(counsel-M-x :which-key "M-x")
     ";" '(eval-expression :which-key "Eval expression")
@@ -240,7 +246,8 @@
     ;; Buffers
     "b" '(:ignore t :which-key "Buffer")
     "bb" '(switch-to-buffer :which-key "Switch to buffer")
-    "bd" '(kill-current-buffer :which-key "Kill current buffer")
+    "bk" '(kill-current-buffer :which-key "Kill current buffer")
+    "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
     ;; Eval
     "e" '(:ignore t :which-key "Eval")
@@ -255,6 +262,9 @@
 
     ;; Window management
     "w" '(:keymap evil-window-map :package evil)
+    "ww" '(miika/focus-next-window-or-open-new
+	   :keymaps 'override
+	   :which-key "Focus on next window or open new")
 
     ;; Files
     "f" '(:ignore t :which-key "File")
@@ -266,6 +276,10 @@
     "hv" '(describe-variable :which-key "Describe a variable")
     "hf" '(describe-function :which-key "Describe a function")
     "he" '(view-echo-area-messages :which-key "View echo messages")
+
+    ;; Magit
+    "g" '(:ignore t :which-key "Magit")
+    "gg" '(magit-status :which-key "Git status")
 
     ;; Projects
     "p" '(:keymap projectile-command-map :package projectile)
@@ -303,7 +317,7 @@
 (use-package lsp-ui
   :config
   (setq lsp-ui-doc-position 'top
-	lsp-ui-doc-delay 0.5
+	lsp-ui-doc-delay 0.2
 	lsp-ui-sideline-show-diagnostics t))
 
 
@@ -343,7 +357,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
