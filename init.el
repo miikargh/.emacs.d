@@ -386,6 +386,10 @@
 (use-package lsp-metals
   :config (setq lsp-metals-treeview-show-when-views-received nil))
 
+;; todo highlighting
+(use-package hl-todo
+  :config (hl-todo-mode))
+
 
 
 (custom-set-variables
@@ -394,7 +398,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
