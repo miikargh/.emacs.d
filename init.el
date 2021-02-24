@@ -153,6 +153,28 @@
       mac-command-modifier 'meta
       mac-option-modifier 'none)
 
+(use-package smartparens
+  :config
+  (smartparens-global-mode t))
+
+(use-package evil-smartparens
+  :init
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
+
+(defun miika/visual-shift-left ()
+  "Make shifting not loose focus"
+  (interactive)
+  (call-interactively 'evil-shift-left)
+  (evil-normal-state)
+  (evil-visual-restore))
+
+(defun miika/visual-shift-right ()
+  "Make shifting not loose focus"
+  (interactive)
+  (call-interactively 'evil-shift-right)
+  (evil-normal-state)
+  (evil-visual-restore))
+
 (use-package evil
   :init
   (setq evil-want-integration t)
@@ -167,6 +189,10 @@
   (define-key evil-visual-state-map (kbd "ä" ) 'evil-backward-paragraph)
   (define-key evil-normal-state-map (kbd "ö" ) 'evil-forward-paragraph)
   (define-key evil-visual-state-map (kbd "ö" ) 'evil-forward-paragraph)
+  (define-key evil-normal-state-map (kbd "å") 'evil-first-non-blank)
+  (define-key evil-visual-state-map (kbd "å") 'evil-first-non-blank)
+  (define-key evil-visual-state-map (kbd ">") 'miika/visual-shift-right)
+  (define-key evil-visual-state-map (kbd "<") 'miika/visual-shift-left)
 
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -238,6 +264,11 @@
     ";" '(eval-expression :which-key "Eval expression")
     "." '(projectile-find-file :which-key "Find file in project")
     "SPC" '(:keymap evilem-map :which-key "Easy motion")
+    "SPC s" '(evil-avy-goto-char
+	      :keymaps: 'override)
+    "SPC S" '(evil-avy-goto-char-2
+	      :keymaps: 'override)
+
 
     "/" '(swiper :which-key "swiper")
 
@@ -270,7 +301,13 @@
     "f" '(:ignore t :which-key "File")
     "fi" '(open-user-init-file :which-key "Open init.el")
     "ff" '(find-file :which-key "Find file")
+    "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
+    ;; Mode stuff
+    "m" '(:ignore t :which-key "Mode")
+    "mf" '(:ignore t :which-key "Format")
+    "mfa" '(lsp-format-buffer :which-key "Format buffer")
+    "mfr" '(lsp-format-region :which-key "Format region")
     ;; Help
     "h" '(:ignore t :which-key "Help")
     "hv" '(describe-variable :which-key "Describe a variable")
@@ -357,7 +394,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
