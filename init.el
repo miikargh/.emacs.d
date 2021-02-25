@@ -90,8 +90,8 @@
          :map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)
          ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
+         ("M-j" . ivy-next-line)
+         ("M-k" . ivy-previous-line)
          :map ivy-switch-buffer-map
          ("C-k" . ivy-previous-line)
          ("C-l" . ivy-done)
@@ -253,8 +253,20 @@
     (evil-window-vsplit))
   (evil-window-next nil))
 
+
 (use-package general
   :config
+
+  (general-define-key
+    :states 'insert
+    :keymaps 'override
+    "M-j" 'company-select-next)
+
+  (general-define-key
+    :states 'insert
+    :keymaps 'override
+    "M-k" 'company-select-previous)
+
   (general-create-definer miika/leader-keys
     ;; :keymaps '(normal visual emacs)
     :states '(normal visual emacs)
@@ -358,7 +370,10 @@
 	lsp-ui-sideline-show-diagnostics t))
 
 
-(use-package company-lsp)
+(use-package company-lsp
+  :config
+  (setq company-lsp-cache-candidates 'auto))
+
 (use-package posframe)
 (use-package dap-mode
   :hook
