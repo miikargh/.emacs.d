@@ -253,6 +253,13 @@
     (evil-window-vsplit))
   (evil-window-next nil))
 
+(defun miika/toggle-lsp-ui-doc ()
+  "Show lsp-ui-doc if if it is hidden and hides if not."
+  (interactive)
+  (if (lsp-ui-doc--visible-p)
+      (lsp-ui-doc-hide)
+    (lsp-ui-doc-show)))
+
 
 (use-package general
   :config
@@ -336,8 +343,7 @@
     ;; UI
     "u" '(:ignore t :which-key "UI")
     "ud" '(:ignore t :which-key "Doc")
-    "uds" '(lsp-ui-doc-show :which-key "Show doc")
-    "udh" '(lsp-ui-doc-hide :which-key "Hide doc")
+    "uds" '(miika/toggle-lsp-ui-doc :which-key "Toggle doc")
     ))
 
 ;; General coding stuff
