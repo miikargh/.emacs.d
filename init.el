@@ -7,7 +7,6 @@
 (menu-bar-mode -1)
 ; (setq visible-bell t)
 
-
 ;; Initialize package sources
 (require 'package)
 
@@ -155,7 +154,8 @@
 
 (use-package smartparens
   :config
-  (smartparens-global-mode t))
+  (smartparens-global-mode t)
+  (sp-pair "'" nil :actions :rem))
 
 (use-package evil-smartparens
   :init
@@ -374,6 +374,10 @@
   :config
   (setq company-lsp-cache-candidates 'auto))
 
+(use-package company
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'company-mode))
+
 (use-package posframe)
 (use-package dap-mode
   :hook
@@ -407,13 +411,14 @@
 
 
 
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
