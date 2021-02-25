@@ -332,6 +332,12 @@
 
     ;; Projects
     "p" '(:keymap projectile-command-map :package projectile)
+
+    ;; UI
+    "u" '(:ignore t :which-key "UI")
+    "ud" '(:ignore t :which-key "Doc")
+    "uds" '(lsp-ui-doc-show :which-key "Show doc")
+    "udh" '(lsp-ui-doc-hide :which-key "Hide doc")
     ))
 
 ;; General coding stuff
@@ -365,8 +371,9 @@
 
 (use-package lsp-ui
   :config
-  (setq lsp-ui-doc-position 'top
-	lsp-ui-doc-delay 0.2
+  (setq lsp-ui-doc-position 'at-point
+	lsp-ui-doc-delay 0.0
+	lsp-ui-doc-show-with-cursor nil
 	lsp-ui-sideline-show-diagnostics t))
 
 
