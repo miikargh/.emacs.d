@@ -342,8 +342,7 @@
 
     ;; UI
     "u" '(:ignore t :which-key "UI")
-    "ud" '(:ignore t :which-key "Doc")
-    "uds" '(miika/toggle-lsp-ui-doc :which-key "Toggle doc")
+    "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
     ))
 
 ;; General coding stuff
