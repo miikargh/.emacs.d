@@ -44,13 +44,13 @@
 
   ;; Enable flashing mode-line on errors
   ;; (doom-themes-visual-bell-config)
-  
+
   ;; Enable custom neotree theme (all-the-icons must be installed!)
   (doom-themes-neotree-config)
   ;; or for treemacs users
   (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
   (doom-themes-treemacs-config)
-  
+
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
@@ -372,7 +372,7 @@
     (setq lsp-log-io nil)
     (setq lsp-prefer-flymake nil))
 
- 
+
 
 (use-package lsp-ui
   :config
@@ -415,12 +415,23 @@
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 (use-package lsp-metals
-  :config (setq lsp-metals-treeview-show-when-views-received nil))
+  :config
+  (setq lsp-metals-treeview-show-when-views-received nil))
 
 ;; todo highlighting
 (use-package hl-todo
   :config (hl-todo-mode))
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(use-package ediff
+  :config
+  (setq ediff-split-window-function 'split-window-horizontally))
+
+(use-package undo-fu
+  :config
+  (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
+  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
 
 
 
@@ -430,7 +441,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(undo-fu evil-escape company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
