@@ -305,7 +305,7 @@
     "er" '(eval-region :which-key "Eval region")
     "eb" '(eval-region :which-key "Eval buffer")
 
-    ;; Toggle
+    ;; Text and themes
     "t" '(:ignore t :which-key "Toggle")
     "tt" '(counsel-load-theme :which-key "Load theme")
     "ts" '(hydra-text-scale/body :which-key "Scale text")
@@ -336,6 +336,8 @@
     ;; Magit
     "g" '(:ignore t :which-key "Magit")
     "gg" '(magit-status :which-key "Git status")
+    "gb" '(magit-branch :which-key "Git branch")
+    "gF" '(magit-fetch :which-key "Git pull")
 
     ;; Projects
     "p" '(:keymap projectile-command-map :package projectile)
@@ -343,6 +345,11 @@
     ;; UI
     "u" '(:ignore t :which-key "UI")
     "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
+
+    ;; Terminal
+    "o" '(:ignore t :which-key "Terminal")
+    "ot" '(multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
+
     ))
 
 ;; General coding stuff
@@ -434,6 +441,15 @@
   (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
 
 
+;; Terminals / Shells
+(use-package vterm
+  :commands vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+  (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+  (setq vterm-max-scrollback 10000))
+
+(use-package multi-vterm)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -441,7 +457,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(undo-fu evil-escape company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(multi-vterm vterm undo-fu evil-escape company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
