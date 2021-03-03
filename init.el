@@ -295,6 +295,7 @@
     "/" '(swiper :which-key "swiper")
 
     "x" '(:keymap ctl-x-map :which-key "C-x")
+    "h" '(:keymap help-map :which-key "Help")
 
     ;; Buffers
     "b" '(:ignore t :which-key "Buffer")
@@ -330,11 +331,6 @@
     "mf" '(:ignore t :which-key "Format")
     "mfa" '(lsp-format-buffer :which-key "Format buffer")
     "mfr" '(lsp-format-region :which-key "Format region")
-    ;; Help
-    "h" '(:ignore t :which-key "Help")
-    "hv" '(describe-variable :which-key "Describe a variable")
-    "hf" '(describe-function :which-key "Describe a function")
-    "he" '(view-echo-area-messages :which-key "View echo messages")
 
     ;; Magit
     "g" '(:ignore t :which-key "Magit")
