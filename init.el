@@ -347,11 +347,12 @@
 
     ;; Terminal
     "o" '(:ignore t :which-key "Terminal")
-    "ot" '(multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
-    "oT" '(multi-vterm :which-key "Open new vterm")
+    "ot" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
+    "oT" '(miika/multi-vterm-project-or-not :which-key "Open new vterm")
     "op" '(multi-vterm-next :whick-key "Next vterm")
     "oi" '(multi-vterm-prev :whick-key "Prev vterm")
     ))
+
 
 ;; General coding stuff
 (use-package flycheck
