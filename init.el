@@ -458,22 +458,148 @@
 
 
 ;; Terminals / Shells
+(defun miika/configure-eshell ()
+  ;; Save command history when commands are entered
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+  ;; Truncate buffer for performance
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+  (setq eshell-history-size         10000
+        eshell-buffer-maximum-lines 10000
+        eshell-hist-ignoredups t
+        eshell-scroll-to-bottom-on-input t))
+
+(use-package eshell-git-prompt)
+
+(use-package eshell
+  :hook (eshell-first-time-mode . efs/configure-eshell)
+  :config
+
+  (with-eval-after-load 'esh-opt
+    (setq eshell-destroy-buffer-when-process-dies t)
+    (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+  ;; (eshell-git-prompt-use-theme 'powerline)
+  )
+
+(use-package conda
+  :config
+    (custom-set-variables
+    '(conda-anaconda-home (expand-file-name "~/miniconda3/")))
+    (setq conda-env-home-directory (expand-file-name "~/miniconda3/"))
+    (conda-env-initialize-interactive-shells)
+    (conda-env-autoactivate-mode t)
+    (add-to-list 'global-mode-string
+		'(conda-env-current-name (" conda:" conda-env-current-name " "))
+		'append)
+    (conda-env-initialize-eshell)
+   :after (eshell))
+
+(defun eshell-exec-in-vterm (&rest args)
+  "https://git.jeremydormitzer.com/jdormit/dotfiles/commit/b7c4e383a2a3d8a0140376e9ebb76a3b7897848a"
+    (let* ((program (car args))
+	    (buf (generate-new-buffer
+		    (concat "*" (file-name-nondirectory program) "*"))))
+	(with-current-buffer buf
+	(vterm-mode)
+	(vterm-send-string (concat (s-join " " args) "\n")))
+	(switch-to-buffer buf)))
+
 (use-package vterm
-  :commands vterm
+  :init
+    (with-eval-after-load 'em-term
+      (defun eshell-exec-visual (&rest args)
+	(apply #'eshell-exec-in-vterm args)))
+  :commands (vterm vterm-other-window vterm-mode)
   :config
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
   (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000))
 
+;; multi-vterm stuff
 (use-package multi-vterm)
+
+(defun miika/multi-vterm-project-or-not ()
+  "Create new vterm in project if project exists, otherwise in the location of the file."
+  (interactive)
+  (if (project-current)
+    (let* ((vterm-buffer (miika/multi-vterm-get-buffer 'project))
+	(multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer))))
+    (set-buffer vterm-buffer)
+    (multi-vterm-internal)
+    (switch-to-buffer vterm-buffer))
+  (let* ((vterm-buffer (miika/multi-vterm-get-buffer)))
+    (setq multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer)))
+    (set-buffer vterm-buffer)
+    (multi-vterm-internal)
+    (switch-to-buffer vterm-buffer))
+  ))
+
+(defun miika/multi-vterm-get-buffer-name ()
+  "Get vterm buffer name.  Increments if default name if name exists."
+  (let ((index 1))
+    (while (buffer-live-p (get-buffer (multi-vterm-format-buffer-index index)))
+    (setq index (1+ index)))
+    (multi-vterm-format-buffer-index index)))
+
+(defun miika/multi-vterm-get-buffer (&optional dedicated-window)
+  "Get vterm buffer based on DEDICATED-WINDOW.
+This will open new terminals also for dedicated and project altering the default behaviour of multi-vterm-get-buffer.
+Optional argument DEDICATED-WINDOW: There are three types of DEDICATED-WINDOW: project, default."
+  (with-temp-buffer
+    (let ((index 1)
+          vterm-name)
+      (cond
+       ((eq dedicated-window 'dedicated) (setq vterm-name (miika/multi-vterm-get-buffer-name)))
+       ((eq dedicated-window 'project) (progn
+                                              (setq vterm-name (miika/multi-vterm-get-buffer-name))
+                                              (setq default-directory
+                                                    (project-root
+                                                     (or (project-current) `(transient . ,default-directory))))))
+            (t (setq vterm-name (miika/multi-vterm-get-buffer-name))))
+      (let ((buffer (get-buffer vterm-name)))
+        (if buffer
+            buffer
+          (let ((buffer (generate-new-buffer vterm-name)))
+            (set-buffer buffer)
+            (vterm-mode)
+            buffer))))))
+
+(defun miika/multi-vterm-dedicated-toggle ()
+  "Toggle dedicated `multi-vterm' window."
+  (interactive)
+  (if (multi-vterm-dedicated-exist-p)
+      (multi-vterm-dedicated-close)
+    (miika/multi-vterm-dedicated-open)))
+
+(defun miika/multi-vterm-dedicated-open ()
+  "Open dedicated `multi-vterm' window."
+  (interactive)
+  (if (not (multi-vterm-dedicated-exist-p))
+      (if (multi-vterm-buffer-exist-p multi-vterm-dedicated-buffer)
+          (unless (multi-vterm-window-exist-p multi-vterm-dedicated-window)
+            (multi-vterm-dedicated-get-window))
+	(setq default-directory
+	    (project-root
+	    (or (project-current) `(transient . ,default-directory))))
+        (setq multi-vterm-dedicated-buffer (multi-vterm-get-buffer 'dedicated))
+        (set-buffer (multi-vterm-dedicated-get-buffer-name))
+        (multi-vterm-dedicated-get-window)
+        (multi-vterm-internal)))
+  (set-window-buffer multi-vterm-dedicated-window (get-buffer (multi-vterm-dedicated-get-buffer-name)))
+  (set-window-dedicated-p multi-vterm-dedicated-window t)
+  (select-window multi-vterm-dedicated-window)
+  (message "`multi-vterm' dedicated window has exist."))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(conda-anaconda-home (expand-file-name "~/miniconda3/"))
  '(package-selected-packages
-   '(multi-vterm vterm undo-fu evil-escape company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(multi-eshell multi-term conda eshell-git-prompt multi-vterm vterm undo-fu evil-escape company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
