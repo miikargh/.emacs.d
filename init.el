@@ -192,6 +192,8 @@
   (define-key evil-visual-state-map (kbd "ö" ) 'evil-forward-paragraph)
   (define-key evil-normal-state-map (kbd "å") 'evil-first-non-blank)
   (define-key evil-visual-state-map (kbd "å") 'evil-first-non-blank)
+  (define-key evil-normal-state-map (kbd "Å") 'evil-last-non-blank)
+  (define-key evil-visual-state-map (kbd "Å") 'evil-last-non-blank)
   (define-key evil-visual-state-map (kbd ">") 'miika/visual-shift-right)
   (define-key evil-visual-state-map (kbd "<") 'miika/visual-shift-left)
 
