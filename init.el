@@ -359,6 +359,20 @@
   :init (global-flycheck-mode))
 (use-package yasnippet)
 
+
+(defun miika/company-complete-selection ()
+  "Insert the selected candidate or the first if none are selected.
+    From: https://www.reddit.com/r/emacs/comments/kmeuft/companymode_not_autocompleting_first_candidate/"
+  (interactive)
+  (if company-selection
+      (company-complete-selection)
+    (company-complete-number 1)))
+
+(use-package company
+  :bind
+  (:map company-active-map
+	("<tab>" . miika/company-complete-selection)))
+
 ;; LSP
 (use-package lsp-mode
   ;; Optional - enable lsp-mode automatically in scala files
