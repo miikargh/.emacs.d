@@ -1,8 +1,6 @@
 #+title: Miika's Emacs configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
-* Miika's Emacs config
-
 This file contains my personal configuration for Emacs. The code blocks here are added to the =init.el= file in this repo so any changes to the configuration should be done here not in =init.el=.
 
 Much of this configuration is copied and some times modified from davivil's excellent [[https://github.com/daviwil/emacs-from-scratch][Emacs from scratch]] repository. You should definitely check his amazing playlist on [[https://www.youtube.com/playlist?list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][youtube]]!
