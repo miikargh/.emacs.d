@@ -1,39 +1,30 @@
-; Make everything simpler
+;; NOTE: init.el is generated from init.org.  Please edit that file
+;;       in Emacs and init.el will be generated automatically!
+
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (tooltip-mode -1)
 (set-fringe-mode 5) ;; Padding on sides
 (menu-bar-mode -1)
-; (setq visible-bell t)
 
-;; Initialize package sources
-(require 'package)
-
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+(show-paren-mode 1)
 
 
 
+(column-number-mode)
+(global-display-line-numbers-mode t)
+(setq display-line-numbers-type 'relative)
 
-(unless package-archive-contents
- (package-refresh-contents))
 
-;; Initialize use-package on non-Linux platforms
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-
-(require 'use-package)
-(setq use-package-always-ensure t)
+;; Disable line numbers from some modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                eshell-mode-hook
+                vterm-mode-hook))
+(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'light)
-
-;; (load-theme 'wombat t)
-;; (use-package kaolin-themes
-;;   :config
-;;   (load-theme 'kaolin-bubblegum t)
-;;   (kaolin-treemacs-theme))
 
 (use-package doom-themes
   :config
@@ -67,22 +58,49 @@
 (use-package all-the-icons)
 
 (use-package exec-path-from-shell
- :init (exec-path-from-shell-initialize))
+:init (exec-path-from-shell-initialize))
+
+(require 'package)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			("org" . "https://orgmode.org/elpa/")
+			("elpa" . "https://elpa.gnu.org/packages/")))
+
+(unless package-archive-contents
+(package-refresh-contents))
+
+;; Initialize use-package on non-Linux platforms
+(unless (package-installed-p 'use-package)
+(package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+;; Mac stuff
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
-(column-number-mode)
-(global-display-line-numbers-mode t)
-(setq display-line-numbers-type 'relative)
+(defun miika/open-user-init-file ()
+  "Edit emacs config, in another window."
+  (interactive)
+  (find-file (expand-file-name "~/.emacs.d/init.org")))
 
-;; Disable line numbers from some modes
-(dolist (mode '(org-mode-hook
-		 term-mode-hook
-		 eshell-mode-hook
-		 vterm-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+;; todo highlighting
+(use-package hl-todo
+:config (hl-todo-mode))
+
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+
+(use-package command-log-mode)
 
 (use-package ivy
   :diminish
@@ -103,7 +121,6 @@
   :init (ivy-mode 1))
 
 
-(show-paren-mode 1)
 
 (use-package which-key
   :init (which-key-mode)
@@ -131,27 +148,6 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
-
-(use-package hydra)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-
-;; Open init.el
-(defun open-user-init-file ()
-  "Edit the `user-init-file', in another window."
-  (interactive)
-  (find-file user-init-file))
-
-
-;; Mac stuff
-(setq mac-option-key-is-meta nil
-      mac-command-key-is-meta t
-      mac-command-modifier 'meta
-      mac-option-modifier 'none)
 
 (use-package smartparens
   :config
@@ -225,45 +221,6 @@
 
 (use-package evil-easymotion)
 
-
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  ;; :bind-keymap
-  ;; ("SPC p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/dev")
-    (setq projectile-project-search-path '("~/dev")))
-  (setq projectile-switch-project-action #'projectile-dired)
-  :config
-  (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
-  (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
-  )
-
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
-
-(use-package magit
-  :config
-  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
-
-(defun miika/focus-next-window-or-open-new ()
-  "Move focus to the next window or opens a new window if only one is open."
-  (interactive)
-  (when (one-window-p)
-    (evil-window-vsplit))
-  (evil-window-next nil))
-
-(defun miika/toggle-lsp-ui-doc ()
-  "Show lsp-ui-doc if if it is hidden and hides if not."
-  (interactive)
-  (if (lsp-ui-doc--visible-p)
-      (lsp-ui-doc-hide)
-    (lsp-ui-doc-show)))
-
-
 (use-package general
   :config
 
@@ -287,9 +244,9 @@
     "." '(projectile-find-file :which-key "Find file in project")
     "SPC" '(:keymap evilem-map :which-key "Easy motion")
     "SPC s" '(evil-avy-goto-char
-	      :keymaps: 'override)
+              :keymaps: 'override)
     "SPC S" '(evil-avy-goto-char-2
-	      :keymaps: 'override)
+              :keymaps: 'override)
 
 
     "/" '(swiper :which-key "swiper")
@@ -318,12 +275,12 @@
     ;; Window management
     "w" '(:keymap evil-window-map :package evil)
     "ww" '(miika/focus-next-window-or-open-new
-	   :keymaps 'override
-	   :which-key "Focus on next window or open new")
+           :keymaps 'override
+           :which-key "Focus on next window or open new")
 
     ;; Files
     "f" '(:ignore t :which-key "File")
-    "fi" '(open-user-init-file :which-key "Open init.el")
+    "fi" '(miika/open-user-init-file :which-key "Open init.el")
     "ff" '(find-file :which-key "Find file")
     "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
@@ -354,12 +311,33 @@
     "oi" '(multi-vterm-prev :whick-key "Prev vterm")
     ))
 
+(use-package undo-fu
+  :config
+  (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
+  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
 
-;; General coding stuff
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  ;; :bind-keymap
+  ;; ("SPC p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/dev")
+    (setq projectile-project-search-path '("~/dev")))
+  (setq projectile-switch-project-action #'projectile-dired)
+  :config
+  (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
+  (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
+  )
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
 (use-package flycheck
   :init (global-flycheck-mode))
 (use-package yasnippet)
-
 
 (defun miika/company-complete-selection ()
   "Insert the selected candidate or the first if none are selected.
@@ -372,9 +350,8 @@
 (use-package company
   :bind
   (:map company-active-map
-	("<tab>" . miika/company-complete-selection)))
+        ("<tab>" . miika/company-complete-selection)))
 
-;; LSP
 (use-package lsp-mode
   ;; Optional - enable lsp-mode automatically in scala files
   :hook
@@ -382,10 +359,10 @@
   (lsp-mode . lsp-lens-mode)
   :init
     (setq lsp-enable-file-watchers nil
-	    lsp-enable-folding nil
-	    lsp-enable-text-document-color nil)
+            lsp-enable-folding nil
+            lsp-enable-text-document-color nil)
     (setq lsp-enable-indentation nil
-	lsp-enable-on-type-formatting nil)
+        lsp-enable-on-type-formatting nil)
 
   :config
   ;; Uncomment following section if you would like to tune lsp-mode performance according to
@@ -401,9 +378,9 @@
 (use-package lsp-ui
   :config
   (setq lsp-ui-doc-position 'at-point
-	lsp-ui-doc-delay 0.0
-	lsp-ui-doc-show-with-cursor nil
-	lsp-ui-sideline-show-diagnostics t))
+        lsp-ui-doc-delay 0.0
+        lsp-ui-doc-show-with-cursor nil
+        lsp-ui-sideline-show-diagnostics t))
 
 
 (use-package company-lsp
@@ -420,8 +397,6 @@
   (lsp-mode . dap-mode)
   (lsp-mode . dap-ui-mode))
 
-
-;; Scala
 (use-package scala-mode
   :interpreter
   ("scala" . scala-mode))
@@ -440,25 +415,45 @@
 
 (use-package lsp-metals
   :config
-  (setq lsp-metals-treeview-show-when-views-received nil))
 
-;; todo highlighting
-(use-package hl-todo
-  :config (hl-todo-mode))
+ (setq lsp-metals-treeview-show-when-views-received nil))
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(use-package conda
+  :config
+    (custom-set-variables
+    '(conda-anaconda-home (expand-file-name "~/miniconda3/")))
+    (setq conda-env-home-directory (expand-file-name "~/miniconda3/"))
+    (conda-env-initialize-interactive-shells)
+    (conda-env-autoactivate-mode t)
+    (add-to-list 'global-mode-string
+                '(conda-env-current-name (" conda:" conda-env-current-name " "))
+                'append)
+    (conda-env-initialize-eshell)
+   :after (eshell))
+
+(use-package magit
+  :config
+  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+
+(defun miika/focus-next-window-or-open-new ()
+  "Move focus to the next window or opens a new window if only one is open."
+  (interactive)
+  (when (one-window-p)
+    (evil-window-vsplit))
+  (evil-window-next nil))
+
+(defun miika/toggle-lsp-ui-doc ()
+  "Show lsp-ui-doc if if it is hidden and hides if not."
+  (interactive)
+  (if (lsp-ui-doc--visible-p)
+      (lsp-ui-doc-hide)
+    (lsp-ui-doc-show)))
+
 
 (use-package ediff
   :config
   (setq ediff-split-window-function 'split-window-horizontally))
 
-(use-package undo-fu
-  :config
-  (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
-  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
-
-
-;; Terminals / Shells
 (defun miika/configure-eshell ()
   ;; Save command history when commands are entered
   (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
@@ -484,34 +479,21 @@
   ;; (eshell-git-prompt-use-theme 'powerline)
   )
 
-(use-package conda
-  :config
-    (custom-set-variables
-    '(conda-anaconda-home (expand-file-name "~/miniconda3/")))
-    (setq conda-env-home-directory (expand-file-name "~/miniconda3/"))
-    (conda-env-initialize-interactive-shells)
-    (conda-env-autoactivate-mode t)
-    (add-to-list 'global-mode-string
-		'(conda-env-current-name (" conda:" conda-env-current-name " "))
-		'append)
-    (conda-env-initialize-eshell)
-   :after (eshell))
-
 (defun eshell-exec-in-vterm (&rest args)
   "https://git.jeremydormitzer.com/jdormit/dotfiles/commit/b7c4e383a2a3d8a0140376e9ebb76a3b7897848a"
     (let* ((program (car args))
-	    (buf (generate-new-buffer
-		    (concat "*" (file-name-nondirectory program) "*"))))
-	(with-current-buffer buf
-	(vterm-mode)
-	(vterm-send-string (concat (s-join " " args) "\n")))
-	(switch-to-buffer buf)))
+            (buf (generate-new-buffer
+                    (concat "*" (file-name-nondirectory program) "*"))))
+        (with-current-buffer buf
+        (vterm-mode)
+        (vterm-send-string (concat (s-join " " args) "\n")))
+        (switch-to-buffer buf)))
 
 (use-package vterm
   :init
     (with-eval-after-load 'em-term
       (defun eshell-exec-visual (&rest args)
-	(apply #'eshell-exec-in-vterm args)))
+        (apply #'eshell-exec-in-vterm args)))
   :commands (vterm vterm-other-window vterm-mode)
   :config
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
@@ -544,7 +526,7 @@ If there is no such buffer, start a new `vterm' with NAME."
   "Create new vterm buffer but open in project root if possible."
   (interactive)
   (let* ((default-directory "/")
-	 (vterm-buffer (multi-vterm-get-buffer)))
+         (vterm-buffer (multi-vterm-get-buffer)))
     (setq multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer)))
     (set-buffer vterm-buffer)
     (multi-vterm-internal)
@@ -569,7 +551,7 @@ If there is no such buffer, start a new `vterm' with NAME."
       (if (multi-vterm-buffer-exist-p multi-vterm-dedicated-buffer)
           (unless (multi-vterm-window-exist-p multi-vterm-dedicated-window)
             (multi-vterm-dedicated-get-window))
-	(let ((default-directory (miika/get-project-root-dir)))
+        (let ((default-directory (miika/get-project-root-dir)))
           (setq multi-vterm-dedicated-buffer (multi-vterm-get-buffer 'dedicated)))
         (set-buffer (multi-vterm-dedicated-get-buffer-name))
         (multi-vterm-dedicated-get-window)
@@ -579,17 +561,100 @@ If there is no such buffer, start a new `vterm' with NAME."
   (select-window multi-vterm-dedicated-window)
   (message "`multi-vterm' dedicated window has exist."))
 
-(use-package command-log-mode)
+(use-package hydra)
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+;; Org-mode
+(defun miika/org-font-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  ;; Set faces for heading levels
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font "Iosevka" :weight 'regular :height (cdr face)))
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+
+(defun miika/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1))
+
+(use-package org
+  :hook (org-mode . miika/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾")
+  (miika/org-font-setup))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  ;; :custom
+  ;; (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
+  )
 
 
+(defun miika/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((emacs-lisp . t)
+    (python . t)))
+
+;; (use-package visual-fill-column
+;;   :hook (org-mode . miika/org-mode-visual-fill))
+
+(org-babel-do-load-languages
+'org-babel-load-languages
+'((emacs-lisp . t)
+    (python . t)))
+
+(setq org-confirm-babel-evaluate nil)
+
+(require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+
+;; Automatically tangle our Emacs.org config file when we save it
+(defun miika/org-babel-tangle-config ()
+  (when (string-equal (buffer-file-name)
+                      (expand-file-name "~/.emacs.d/init.org"))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
+
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'miika/org-babel-tangle-config)))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(conda-anaconda-home (expand-file-name "~/miniconda3/"))
  '(package-selected-packages
-   '(command-log-mode multi-eshell multi-term conda eshell-git-prompt multi-vterm vterm undo-fu evil-escape company-mode hl-todo evil-smartparens smartparens evil-easymotion evil-snipe: evil-multiedit evil-snipe evil-magit magit exec-path-from-shell sbt-mode scala-mode perspective counsel-projectile projectile god-mode kaolin-themes doom-modeline ivy use-package)))
+   '(ediff yasnippet which-key visual-fill-column use-package undo-fu scala-mode sbt-mode org-bullets multi-vterm multi-term magit lsp-ui lsp-metals ivy-rich hl-todo helpful general flycheck exec-path-from-shell evil-snipe evil-smartparens evil-multiedit evil-escape evil-easymotion evil-commentary evil-collection eshell-git-prompt doom-themes doom-modeline counsel-projectile conda company-lsp command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
