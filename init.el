@@ -299,7 +299,8 @@
 
     ;; Buffers
     "b" '(:ignore t :which-key "Buffer")
-    "bb" '(switch-to-buffer :which-key "Switch to buffer")
+    "bb" '(counsel-switch-buffer :which-key "Switch to buffer")
+    "bv" '(miika/switch-to-vterm-buffer :which-key "Switch to vterm buffer")
     "bk" '(kill-current-buffer :which-key "Kill current buffer")
     "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
@@ -519,6 +520,25 @@
 
 ;; multi-vterm stuff
 (use-package multi-vterm)
+
+(defun miika/switch-to-vterm-buffer ()
+  "Switch to a vterm buffer, or create one."
+  (interactive)
+  (ivy-read "Vterm buffer: " (counsel--buffers-with-mode #'vterm-mode)
+            :action #'miika/switch-to-vterm
+            :caller 'miika/switch-to-vterm-buffer))
+
+(defun miika/switch-to-vterm (name)
+  "Display vterm buffer with NAME and select its window.
+Reuse any existing window already displaying the named buffer.
+If there is no such buffer, start a new `vterm' with NAME."
+  (if (get-buffer name)
+      (pop-to-buffer name '((display-buffer-reuse-window
+                             display-buffer-same-window)
+                            (inhibit-same-window . nil)
+                            (reusable-frames . visible)))
+    (let ((default-directory (miika/get-project-root-dir)))
+      (vterm name))))
 
 (defun miika/multi-vterm ()
   "Create new vterm buffer but open in project root if possible."
