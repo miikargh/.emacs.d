@@ -348,7 +348,7 @@
     ;; Terminal
     "o" '(:ignore t :which-key "Terminal")
     "ot" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
-    "oT" '(miika/multi-vterm-project-or-not :which-key "Open new vterm")
+    "oT" '(miika/multi-vterm :which-key "Open new vterm")
     "op" '(multi-vterm-next :whick-key "Next vterm")
     "oi" '(multi-vterm-prev :whick-key "Prev vterm")
     ))
@@ -520,51 +520,20 @@
 ;; multi-vterm stuff
 (use-package multi-vterm)
 
-(defun miika/multi-vterm-project-or-not ()
-  "Create new vterm in project if project exists, otherwise in the location of the file."
+(defun miika/multi-vterm ()
+  "Create new vterm buffer but open in project root if possible."
   (interactive)
-  (if (project-current)
-    (let* ((vterm-buffer (miika/multi-vterm-get-buffer 'project))
-	(multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer))))
-    (set-buffer vterm-buffer)
-    (multi-vterm-internal)
-    (switch-to-buffer vterm-buffer))
-  (let* ((vterm-buffer (miika/multi-vterm-get-buffer)))
+  (setq default-directory (miika/get-project-root-dir))
+  (let* ((vterm-buffer (multi-vterm-get-buffer)))
     (setq multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer)))
     (set-buffer vterm-buffer)
     (multi-vterm-internal)
-    (switch-to-buffer vterm-buffer))
-  ))
+    (switch-to-buffer vterm-buffer)))
 
-(defun miika/multi-vterm-get-buffer-name ()
-  "Get vterm buffer name.  Increments if default name if name exists."
-  (let ((index 1))
-    (while (buffer-live-p (get-buffer (multi-vterm-format-buffer-index index)))
-    (setq index (1+ index)))
-    (multi-vterm-format-buffer-index index)))
-
-(defun miika/multi-vterm-get-buffer (&optional dedicated-window)
-  "Get vterm buffer based on DEDICATED-WINDOW.
-This will open new terminals also for dedicated and project altering the default behaviour of multi-vterm-get-buffer.
-Optional argument DEDICATED-WINDOW: There are three types of DEDICATED-WINDOW: project, default."
-  (with-temp-buffer
-    (let ((index 1)
-          vterm-name)
-      (cond
-       ((eq dedicated-window 'dedicated) (setq vterm-name (miika/multi-vterm-get-buffer-name)))
-       ((eq dedicated-window 'project) (progn
-                                              (setq vterm-name (miika/multi-vterm-get-buffer-name))
-                                              (setq default-directory
-                                                    (project-root
-                                                     (or (project-current) `(transient . ,default-directory))))))
-            (t (setq vterm-name (miika/multi-vterm-get-buffer-name))))
-      (let ((buffer (get-buffer vterm-name)))
-        (if buffer
-            buffer
-          (let ((buffer (generate-new-buffer vterm-name)))
-            (set-buffer buffer)
-            (vterm-mode)
-            buffer))))))
+(defun miika/get-project-root-dir ()
+  "Get the root directory of the current project if available."
+    (project-root
+     (or (project-current) `(transient . ,default-directory))))
 
 (defun miika/multi-vterm-dedicated-toggle ()
   "Toggle dedicated `multi-vterm' window."
@@ -580,9 +549,7 @@ Optional argument DEDICATED-WINDOW: There are three types of DEDICATED-WINDOW: p
       (if (multi-vterm-buffer-exist-p multi-vterm-dedicated-buffer)
           (unless (multi-vterm-window-exist-p multi-vterm-dedicated-window)
             (multi-vterm-dedicated-get-window))
-	(setq default-directory
-	    (project-root
-	    (or (project-current) `(transient . ,default-directory))))
+	(setq default-directory (miika/get-project-root-dir))
         (setq multi-vterm-dedicated-buffer (multi-vterm-get-buffer 'dedicated))
         (set-buffer (multi-vterm-dedicated-get-buffer-name))
         (multi-vterm-dedicated-get-window)
