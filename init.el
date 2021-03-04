@@ -536,14 +536,14 @@
      (or (project-current) `(transient . ,default-directory))))
 
 (defun miika/multi-vterm-dedicated-toggle ()
-  "Toggle dedicated `multi-vterm' window."
+  "Toggle dedicated `multi-vterm' window but in project root."
   (interactive)
   (if (multi-vterm-dedicated-exist-p)
       (multi-vterm-dedicated-close)
     (miika/multi-vterm-dedicated-open)))
 
 (defun miika/multi-vterm-dedicated-open ()
-  "Open dedicated `multi-vterm' window."
+  "Open dedicated `multi-vterm' window but in project root."
   (interactive)
   (if (not (multi-vterm-dedicated-exist-p))
       (if (multi-vterm-buffer-exist-p multi-vterm-dedicated-buffer)
