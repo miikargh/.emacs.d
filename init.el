@@ -663,6 +663,9 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 (setq org-cycle-emulate-tab nil)
 
+(use-package org-make-toc
+  :hook (org-mode . org-make-toc-mode))
+
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun miika/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
