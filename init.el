@@ -238,6 +238,7 @@
     ;; :keymaps '(normal visual emacs)
     :states '(normal visual emacs)
     :prefix "SPC")
+
   (miika/leader-keys
     ":" '(counsel-M-x :which-key "M-x")
     ";" '(eval-expression :which-key "Eval expression")
@@ -261,12 +262,6 @@
     "bk" '(kill-current-buffer :which-key "Kill current buffer")
     "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
-    ;; Eval
-    "e" '(:ignore t :which-key "Eval")
-    "ed" '(eval-defun :which-key "Eval defun")
-    "er" '(eval-region :which-key "Eval region")
-    "eb" '(eval-region :which-key "Eval buffer")
-
     ;; Text and themes
     "t" '(:ignore t :which-key "Toggle")
     "tt" '(counsel-load-theme :which-key "Load theme")
@@ -287,8 +282,6 @@
     ;; Mode stuff
     "m" '(:ignore t :which-key "Mode")
     "mf" '(:ignore t :which-key "Format")
-    "mfa" '(lsp-format-buffer :which-key "Format buffer")
-    "mfr" '(lsp-format-region :which-key "Format region")
 
     ;; Magit
     "g" '(:ignore t :which-key "Magit")
@@ -301,20 +294,25 @@
 
     ;; UI
     "u" '(:ignore t :which-key "UI")
-    "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
 
     ;; Terminal
-    "o" '(:ignore t :which-key "Terminal")
-    "ot" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
-    "oT" '(miika/multi-vterm :which-key "Open new vterm")
-    "op" '(multi-vterm-next :whick-key "Next vterm")
-    "oi" '(multi-vterm-prev :whick-key "Prev vterm")
+    "i" '(:ignore t :which-key "Terminal")
+    "ii" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
+    "it" '(miika/multi-vterm :which-key "Open new vterm")
+    "io" '(multi-vterm-next :whick-key "Next vterm")
+    "iu" '(multi-vterm-prev :whick-key "Prev vterm")
+
     ))
 
 (use-package undo-fu
   :config
   (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
   (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
+
+(setq-default tab-width 2)
+(setq-default evil-shift-width tab-width)
+
+(setq-default indent-tabs-mode nil)
 
 (use-package projectile
   :diminish projectile-mode
@@ -383,6 +381,13 @@
         lsp-ui-sideline-show-diagnostics t))
 
 
+(defun miika/toggle-lsp-ui-doc ()
+  "Show lsp-ui-doc if if it is hidden and hides if not."
+  (interactive)
+  (if (lsp-ui-doc--visible-p)
+      (lsp-ui-doc-hide)
+    (lsp-ui-doc-show)))
+
 (use-package company-lsp
   :config
   (setq company-lsp-cache-candidates 'auto))
@@ -396,6 +401,21 @@
   :hook
   (lsp-mode . dap-mode)
   (lsp-mode . dap-ui-mode))
+
+(miika/leader-keys
+  :keymap lsp-mode-map
+  "mfa" '(lsp-format-buffer :which-key "Format buffer")
+  "mfr" '(lsp-format-region :whick-key "Format region")
+  "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc"))
+
+(miika/leader-keys
+  :keymaps 'emacs-lisp-mode-map
+  :states '(normal visual)
+  ;; Eval
+  "e" '(:ignore t :which-key "Eval")
+  "ed" '(eval-defun :which-key "Eval defun")
+  "er" '(eval-region :which-key "Eval region")
+  "eb" '(eval-region :which-key "Eval buffer"))
 
 (use-package scala-mode
   :interpreter
@@ -441,13 +461,6 @@
   (when (one-window-p)
     (evil-window-vsplit))
   (evil-window-next nil))
-
-(defun miika/toggle-lsp-ui-doc ()
-  "Show lsp-ui-doc if if it is hidden and hides if not."
-  (interactive)
-  (if (lsp-ui-doc--visible-p)
-      (lsp-ui-doc-hide)
-    (lsp-ui-doc-show)))
 
 
 (use-package ediff
@@ -628,16 +641,27 @@ If there is no such buffer, start a new `vterm' with NAME."
 ;; (use-package visual-fill-column
 ;;   :hook (org-mode . miika/org-mode-visual-fill))
 
-(org-babel-do-load-languages
-'org-babel-load-languages
-'((emacs-lisp . t)
-    (python . t)))
+(miika/leader-keys
+  :states '(normal visual)
+  :keymap 'org-mode-map
+  "e" '(:ignore t :which-key "Execute")
+  "ed" '(org-babel-execute-src-block :which-key "Execute code block")
+  "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
+  "me" '(org-edit-special :which-key "Edit Special"))
 
-(setq org-confirm-babel-evaluate nil)
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((emacs-lisp . t)
+(python . t)))
+
+  (setq org-confirm-babel-evaluate nil)
 
 (require 'org-tempo)
+
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+
+(setq org-cycle-emulate-tab nil)
 
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun miika/org-babel-tangle-config ()
@@ -648,16 +672,3 @@ If there is no such buffer, start a new `vterm' with NAME."
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'miika/org-babel-tangle-config)))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(ediff yasnippet which-key visual-fill-column use-package undo-fu scala-mode sbt-mode org-bullets multi-vterm multi-term magit lsp-ui lsp-metals ivy-rich hl-todo helpful general flycheck exec-path-from-shell evil-snipe evil-smartparens evil-multiedit evil-escape evil-easymotion evil-commentary evil-collection eshell-git-prompt doom-themes doom-modeline counsel-projectile conda company-lsp command-log-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
