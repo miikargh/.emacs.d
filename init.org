@@ -601,7 +601,6 @@ This section of the config contains configuration for specific programming langu
 ** Elisp
 
 #+begin_src emacs-lisp
-
   (miika/leader-keys
     :keymaps 'emacs-lisp-mode-map
     :states '(normal visual)
@@ -612,7 +611,6 @@ This section of the config contains configuration for specific programming langu
     "eb" '(eval-region :which-key "Eval buffer"))
 
 #+end_src
-
 
 ** Scala
 
