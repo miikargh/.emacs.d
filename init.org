@@ -404,6 +404,21 @@ TODO: Consider splitting this up and locating relevant keybindings closer to the
 
 #+end_src
 
+* Editing
+** Tab width
+
+Set global tab width to 2 spaces. Change it by language basis if other lengths desired.
+
+#+begin_src emacs-lisp
+  (setq-default tab-width 2)
+  (setq-default evil-shift-width tab-width)
+#+end_src
+
+** Use spaces instead of tabs
+
+#+begin_src emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+end_src
 
 * Project management
 
