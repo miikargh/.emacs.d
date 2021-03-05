@@ -847,10 +847,17 @@ TODO: Better documentation of the huge code block below.
   #+begin_src emacs-lisp
 
     (require 'org-tempo)
+
     (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
     (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 
   #+end_src
+
+** Make TAB cycle anywhere
+
+#+begin_src emacs-lisp
+    (setq org-cycle-emulate-tab nil)
+#+end_src
 
 ** Auto-tangle Configuration Files
 
