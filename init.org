@@ -348,12 +348,6 @@ TODO: Consider splitting this up and locating relevant keybindings closer to the
       "bk" '(kill-current-buffer :which-key "Kill current buffer")
       "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
-      ;; Eval
-      "e" '(:ignore t :which-key "Eval")
-      "ed" '(eval-defun :which-key "Eval defun")
-      "er" '(eval-region :which-key "Eval region")
-      "eb" '(eval-region :which-key "Eval buffer")
-
       ;; Text and themes
       "t" '(:ignore t :which-key "Toggle")
       "tt" '(counsel-load-theme :which-key "Load theme")
@@ -374,8 +368,6 @@ TODO: Consider splitting this up and locating relevant keybindings closer to the
       ;; Mode stuff
       "m" '(:ignore t :which-key "Mode")
       "mf" '(:ignore t :which-key "Format")
-      "mfa" '(lsp-format-buffer :which-key "Format buffer")
-      "mfr" '(lsp-format-region :which-key "Format region")
 
       ;; Magit
       "g" '(:ignore t :which-key "Magit")
@@ -388,14 +380,14 @@ TODO: Consider splitting this up and locating relevant keybindings closer to the
 
       ;; UI
       "u" '(:ignore t :which-key "UI")
-      "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
 
       ;; Terminal
-      "o" '(:ignore t :which-key "Terminal")
-      "ot" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
-      "oT" '(miika/multi-vterm :which-key "Open new vterm")
-      "op" '(multi-vterm-next :whick-key "Next vterm")
-      "oi" '(multi-vterm-prev :whick-key "Prev vterm")
+      "i" '(:ignore t :which-key "Terminal")
+      "ii" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
+      "it" '(miika/multi-vterm :which-key "Open new vterm")
+      "io" '(multi-vterm-next :whick-key "Next vterm")
+      "iu" '(multi-vterm-prev :whick-key "Prev vterm")
+
       ))
 
 
