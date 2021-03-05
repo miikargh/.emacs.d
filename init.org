@@ -221,7 +221,6 @@ Random stuff I can't seem to place anywhere else.
 #+end_src
 
 * Keyboard stuff
-
 ** Evil
 
 Welcome to the dark side ;)
@@ -325,6 +324,7 @@ TODO: Consider splitting this up and locating relevant keybindings closer to the
       ;; :keymaps '(normal visual emacs)
       :states '(normal visual emacs)
       :prefix "SPC")
+
     (miika/leader-keys
       ":" '(counsel-M-x :which-key "M-x")
       ";" '(eval-expression :which-key "Eval expression")
@@ -439,7 +439,6 @@ Setup projectile for powerful project management.
     :config (counsel-projectile-mode))
 
 #+end_src
-
 
 * IDE
 
@@ -759,7 +758,6 @@ TODO: Better documentation of the huge code block below.
     (message "`multi-vterm' dedicated window has exist."))
 
 #+end_src
-
 
 * Hydra
 
