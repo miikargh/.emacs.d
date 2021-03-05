@@ -480,56 +480,86 @@ Autocompletion
 
 #+begin_src emacs-lisp
 
-  (use-package lsp-mode
-    ;; Optional - enable lsp-mode automatically in scala files
-    :hook
-    (scala-mode . lsp)
-    (lsp-mode . lsp-lens-mode)
-    :init
-      (setq lsp-enable-file-watchers nil
-              lsp-enable-folding nil
-              lsp-enable-text-document-color nil)
-      (setq lsp-enable-indentation nil
-          lsp-enable-on-type-formatting nil)
+    (use-package lsp-mode
+      ;; Optional - enable lsp-mode automatically in scala files
+      :hook
+      (scala-mode . lsp)
+      (lsp-mode . lsp-lens-mode)
+      :init
+        (setq lsp-enable-file-watchers nil
+                lsp-enable-folding nil
+                lsp-enable-text-document-color nil)
+        (setq lsp-enable-indentation nil
+            lsp-enable-on-type-formatting nil)
 
-    :config
-    ;; Uncomment following section if you would like to tune lsp-mode performance according to
-    ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-      (setq gc-cons-threshold 100000000) ;; 100mb
-      (setq read-process-output-max (* 1024 1024)) ;; 1mb
-      (setq lsp-idle-delay 0.500)
-      (setq lsp-log-io nil)
-      (setq lsp-prefer-flymake nil))
-
-
-
-  (use-package lsp-ui
-    :config
-    (setq lsp-ui-doc-position 'at-point
-          lsp-ui-doc-delay 0.0
-          lsp-ui-doc-show-with-cursor nil
-          lsp-ui-sideline-show-diagnostics t))
+      :config
+      ;; Uncomment following section if you would like to tune lsp-mode performance according to
+      ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+        (setq gc-cons-threshold 100000000) ;; 100mb
+        (setq read-process-output-max (* 1024 1024)) ;; 1mb
+        (setq lsp-idle-delay 0.500)
+        (setq lsp-log-io nil)
+        (setq lsp-prefer-flymake nil))
 
 
-  (use-package company-lsp
-    :config
-    (setq company-lsp-cache-candidates 'auto))
 
-  (use-package company
-    :config
-    (add-hook 'emacs-lisp-mode-hook 'company-mode))
+    (use-package lsp-ui
+      :config
+      (setq lsp-ui-doc-position 'at-point
+            lsp-ui-doc-delay 0.0
+            lsp-ui-doc-show-with-cursor nil
+            lsp-ui-sideline-show-diagnostics t))
 
-  (use-package posframe)
-  (use-package dap-mode
-    :hook
-    (lsp-mode . dap-mode)
-    (lsp-mode . dap-ui-mode))
+
+    (defun miika/toggle-lsp-ui-doc ()
+      "Show lsp-ui-doc if if it is hidden and hides if not."
+      (interactive)
+      (if (lsp-ui-doc--visible-p)
+          (lsp-ui-doc-hide)
+        (lsp-ui-doc-show)))
+
+    (use-package company-lsp
+      :config
+      (setq company-lsp-cache-candidates 'auto))
+
+    (use-package company
+      :config
+      (add-hook 'emacs-lisp-mode-hook 'company-mode))
+
+    (use-package posframe)
+    (use-package dap-mode
+      :hook
+      (lsp-mode . dap-mode)
+      (lsp-mode . dap-ui-mode))
+
+    (miika/leader-keys
+      :keymap lsp-mode-map
+      "mfa" '(lsp-format-buffer :which-key "Format buffer")
+      "mfr" '(lsp-format-region :whick-key "Format region")
+      "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc"))
+
 
 #+end_src
 
 * Programming languages
 
 This section of the config contains configuration for specific programming languages.
+
+** Elisp
+
+#+begin_src emacs-lisp
+
+  (miika/leader-keys
+    :keymaps 'emacs-lisp-mode-map
+    :states '(normal visual)
+    ;; Eval
+    "e" '(:ignore t :which-key "Eval")
+    "ed" '(eval-defun :which-key "Eval defun")
+    "er" '(eval-region :which-key "Eval region")
+    "eb" '(eval-region :which-key "Eval buffer"))
+
+#+end_src
+
 
 ** Scala
 
@@ -593,13 +623,6 @@ This section of the config contains configuration for specific programming langu
     (when (one-window-p)
       (evil-window-vsplit))
     (evil-window-next nil))
-
-  (defun miika/toggle-lsp-ui-doc ()
-    "Show lsp-ui-doc if if it is hidden and hides if not."
-    (interactive)
-    (if (lsp-ui-doc--visible-p)
-        (lsp-ui-doc-hide)
-      (lsp-ui-doc-show)))
 
 
   (use-package ediff
