@@ -301,9 +301,9 @@ Welcome to the dark side ;)
 
 #+end_src
 
-** Keybindings
+** Global Keybindings
 
-TODO: Consider splitting this up and locating relevant keybindings closer to the packages they are used in.
+Global keybindings live here. You can find mode specific keybindings by the configuration of those modes.
 
 #+begin_src emacs-lisp
 
