@@ -825,6 +825,18 @@ TODO: Better documentation of the huge code block below.
 
 #+end_src
 
+** Keybindings
+
+#+begin_src emacs-lisp
+  (miika/leader-keys
+    :states '(normal visual)
+    :keymap 'org-mode-map
+    "e" '(:ignore t :which-key "Execute")
+    "ed" '(org-babel-execute-src-block :which-key "Execute code block")
+    "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
+    "me" '(org-edit-special :which-key "Edit Special"))
+#+end_src
+
 ** Org babel
 
   To execute or export code in org-mode code blocks, you’ll need to set up org-babel-load-languages for each language you’d like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
