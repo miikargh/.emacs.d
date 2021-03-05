@@ -11,6 +11,53 @@ Much of this configuration is copied and some times modified from davivil's exce
   ;;       in Emacs and init.el will be generated automatically!
 
 #+end_src
+* Table of Contents
+:PROPERTIES:
+:TOC:      :include all :ignore this
+:END:
+:CONTENTS:
+- [[#ui-config][UI Config]]
+  - [[#simplify-ui-and-add-line-numbers][Simplify UI and add line numbers]]
+  - [[#font-setup][Font setup]]
+  - [[#theme-setup][Theme setup]]
+- [[#basic-config][Basic config]]
+  - [[#load-environment][Load environment]]
+  - [[#initialize-package-sources][Initialize package sources]]
+  - [[#mac-stuff][Mac stuff]]
+  - [[#misc][Misc.]]
+- [[#ivy-and-counsel][Ivy and counsel]]
+- [[#keyboard-stuff][Keyboard stuff]]
+  - [[#evil][Evil]]
+  - [[#global-keybindings][Global Keybindings]]
+  - [[#undoredo][Undo/Redo]]
+- [[#editing][Editing]]
+  - [[#tab-width][Tab width]]
+  - [[#use-spaces-instead-of-tabs][Use spaces instead of tabs]]
+- [[#project-management][Project management]]
+- [[#ide][IDE]]
+  - [[#flycheck][Flycheck]]
+  - [[#company][Company]]
+  - [[#lsp][LSP]]
+- [[#programming-languages][Programming languages]]
+  - [[#elisp][Elisp]]
+  - [[#scala][Scala]]
+  - [[#python][Python]]
+    - [[#conda][Conda]]
+- [[#git][Git]]
+- [[#terminals-and-shells][Terminals and shells]]
+  - [[#eshell][Eshell]]
+  - [[#vterm][Vterm]]
+- [[#hydra][Hydra]]
+- [[#org-mode][Org mode]]
+  - [[#org-fonts][Org fonts]]
+  - [[#org][Org]]
+  - [[#keybindings][Keybindings]]
+  - [[#org-babel][Org babel]]
+  - [[#structure-templates][Structure templates]]
+  - [[#make-tab-cycle-anywhere][Make TAB cycle anywhere]]
+  - [[#update-table-of-contents-on-save][Update Table of Contents on Save]]
+  - [[#auto-tangle-configuration-files][Auto-tangle Configuration Files]]
+:END:
 
 * UI Config
 
@@ -897,6 +944,15 @@ TODO: Better documentation of the huge code block below.
 
 #+begin_src emacs-lisp
     (setq org-cycle-emulate-tab nil)
+#+end_src
+
+** Update Table of Contents on Save
+
+#+begin_src emacs-lisp
+
+  (use-package org-make-toc
+    :hook (org-mode . org-make-toc-mode))
+
 #+end_src
 
 ** Auto-tangle Configuration Files
