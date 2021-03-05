@@ -386,6 +386,7 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       "/" '(swiper :which-key "swiper")
 
       "x" '(:keymap ctl-x-map :which-key "C-x")
+      "c" '(:keymap mode-specific-map :which-key "C-c")
       "h" '(:keymap help-map :which-key "Help")
 
       ;; Buffers
