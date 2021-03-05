@@ -538,7 +538,7 @@ If there is no such buffer, start a new `vterm' with NAME."
 (defun miika/multi-vterm ()
   "Create new vterm buffer but open in project root if possible."
   (interactive)
-  (let* ((default-directory "/")
+  (let* ((default-directory (miika/get-project-root-dir))
          (vterm-buffer (multi-vterm-get-buffer)))
     (setq multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer)))
     (set-buffer vterm-buffer)
