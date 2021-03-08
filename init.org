@@ -16,6 +16,8 @@ Much of this configuration is copied and some times modified from davivil's exce
 :TOC:      :include all :ignore this
 :END:
 :CONTENTS:
+- [[#startup-performance][Startup performance]]
+- [[#keep-folders-clean][Keep Folders Clean]]
 - [[#ui-config][UI Config]]
   - [[#simplify-ui-and-add-line-numbers][Simplify UI and add line numbers]]
   - [[#font-setup][Font setup]]
