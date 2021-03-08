@@ -358,16 +358,6 @@ Welcome to the dark side ;)
 
 #+begin_src emacs-lisp
 
-  (use-package smartparens
-    :config
-    (smartparens-global-mode t)
-    (sp-pair "'" nil :actions :rem))
-
-  (use-package evil-smartparens
-    :after (smartparens)
-    :init
-    (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
-
   (defun miika/visual-shift-left ()
     "Make shifting not loose focus"
     (interactive)
