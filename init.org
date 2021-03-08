@@ -468,6 +468,11 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       :states '(normal visual emacs)
       :prefix "SPC")
 
+    (general-define-key
+     :states '(normal visual emacs)
+     :keymaps 'override
+     "/" '(swiper :which-key "swiper"))
+
     (miika/leader-keys
       ":" '(counsel-M-x :which-key "M-x")
       ";" '(eval-expression :which-key "Eval expression")
@@ -478,8 +483,7 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       "SPC S" '(evil-avy-goto-char-2
                 :keymaps: 'override)
 
-
-      "/" '(swiper :which-key "swiper")
+      ;; "/" '(swiper :which-key "swiper")
 
       "x" '(:keymap ctl-x-map :which-key "C-x")
       "c" '(:keymap mode-specific-map :which-key "C-c")
