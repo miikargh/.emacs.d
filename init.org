@@ -624,8 +624,7 @@ Autocompletion
           ("<tab>" . miika/company-complete-selection))
     :custom
     (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0)
-    :config (message "COMPANY LOADED"))
+    (company-idle-delay 0.0))
 
   ;; Nicer UI
   (use-package company-box
