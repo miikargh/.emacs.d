@@ -1,6 +1,29 @@
 ;; NOTE: init.el is generated from init.org.  Please edit that file
 ;;       in Emacs and init.el will be generated automatically!
 
+;; The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
+(defun miika/display-startup-time ()
+  (message "Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                     (time-subtract after-init-time before-init-time)))
+           gcs-done))
+
+(add-hook 'emacs-startup-hook #'miika/display-startup-time)
+
+;; NOTE: If you want to move everything out of the ~/.emacs.d folder
+;; reliably, set `user-emacs-directory` before loading no-littering!
+;(setq user-emacs-directory "~/.cache/emacs")
+
+(use-package no-littering)
+
+;; no-littering doesn't set this by default so we must place
+;; auto save files in the same path as it uses for sessions
+(setq auto-save-file-name-transforms
+      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -83,24 +106,24 @@
       mac-option-modifier 'none)
 
 ;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
-(defun miika/open-user-init-file ()
-  "Edit emacs config, in another window."
-  (interactive)
-  (find-file (expand-file-name "~/.emacs.d/init.org")))
+  (defun miika/open-user-init-file ()
+    "Edit emacs config, in another window."
+    (interactive)
+    (find-file (expand-file-name "~/.emacs.d/init.org")))
 
 
-;; todo highlighting
-(use-package hl-todo
-:config (hl-todo-mode))
+  ;; todo highlighting
+  (use-package hl-todo
+  :config (hl-todo-mode))
 
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-
-(use-package command-log-mode)
+(use-package command-log-mode
+  :command command-log-mode)
 
 (use-package ivy
   :diminish
@@ -253,6 +276,7 @@
     "/" '(swiper :which-key "swiper")
 
     "x" '(:keymap ctl-x-map :which-key "C-x")
+    "c" '(:keymap mode-specific-map :which-key "C-c")
     "h" '(:keymap help-map :which-key "Help")
 
     ;; Buffers
@@ -346,32 +370,42 @@
     (company-complete-number 1)))
 
 (use-package company
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'company-mode)
   :bind
   (:map company-active-map
-        ("<tab>" . miika/company-complete-selection)))
+        ("<tab>" . miika/company-complete-selection))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+;; Nicer UI
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 
 (use-package lsp-mode
   ;; Optional - enable lsp-mode automatically in scala files
+  :commands (lsp lsp-deferred)
   :hook
   (scala-mode . lsp)
   (lsp-mode . lsp-lens-mode)
   :init
-    (setq lsp-enable-file-watchers nil
-            lsp-enable-folding nil
-            lsp-enable-text-document-color nil)
-    (setq lsp-enable-indentation nil
-        lsp-enable-on-type-formatting nil)
+  (setq lsp-enable-file-watchers nil
+        lsp-enable-folding nil
+        lsp-enable-text-document-color nil
+        lsp-enable-indentation nil
+        lsp-enable-on-type-formatting nil
+        lsp-keymap-prefix "C-c l")
 
   :config
   ;; Uncomment following section if you would like to tune lsp-mode performance according to
   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-    (setq gc-cons-threshold 100000000) ;; 100mb
-    (setq read-process-output-max (* 1024 1024)) ;; 1mb
-    (setq lsp-idle-delay 0.500)
-    (setq lsp-log-io nil)
-    (setq lsp-prefer-flymake nil))
-
-
+  (setq gc-cons-threshold 100000000) ;; 100mb
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  (setq lsp-idle-delay 0.500)
+  (setq lsp-log-io nil)
+  (setq lsp-prefer-flymake nil)
+  (setq lsp-headerline-breadcrumb-enable nil))
 
 (use-package lsp-ui
   :config
@@ -389,12 +423,9 @@
     (lsp-ui-doc-show)))
 
 (use-package company-lsp
+  :after comapny-mode
   :config
   (setq company-lsp-cache-candidates 'auto))
-
-(use-package company
-  :config
-  (add-hook 'emacs-lisp-mode-hook 'company-mode))
 
 (use-package posframe)
 (use-package dap-mode
@@ -406,7 +437,9 @@
   :keymap lsp-mode-map
   "mfa" '(lsp-format-buffer :which-key "Format buffer")
   "mfr" '(lsp-format-region :whick-key "Format region")
-  "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc"))
+  "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
+  "r" '(:ignore t :which-key "Refactor")
+  "rr" '(lsp-rename :which-key "Rename symbol"))
 
 (miika/leader-keys
   :keymaps 'emacs-lisp-mode-map
@@ -435,8 +468,7 @@
 
 (use-package lsp-metals
   :config
-
- (setq lsp-metals-treeview-show-when-views-received nil))
+  (setq lsp-metals-treeview-show-when-views-received nil))
 
 (use-package conda
   :config
