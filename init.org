@@ -19,20 +19,22 @@ Much of this configuration is copied and some times modified from davivil's exce
 :CONTENTS:
 - [[#startup-performance][Startup performance]]
 - [[#keep-folders-clean][Keep Folders Clean]]
+- [[#initialize-package-sources][Initialize package sources]]
 - [[#ui-config][UI Config]]
   - [[#simplify-ui-and-add-line-numbers][Simplify UI and add line numbers]]
   - [[#font-setup][Font setup]]
   - [[#theme-setup][Theme setup]]
+  - [[#nyan-mode][Nyan mode!]]
 - [[#basic-config][Basic config]]
   - [[#load-environment][Load environment]]
-  - [[#initialize-package-sources][Initialize package sources]]
   - [[#mac-stuff][Mac stuff]]
   - [[#misc][Misc.]]
 - [[#ivy-and-counsel][Ivy and counsel]]
+- [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
   - [[#evil][Evil]]
-  - [[#global-keybindings][Global Keybindings]]
   - [[#undoredo][Undo/Redo]]
+  - [[#global-keybindings][Global Keybindings]]
 - [[#editing][Editing]]
   - [[#tab-width][Tab width]]
   - [[#use-spaces-instead-of-tabs][Use spaces instead of tabs]]
@@ -103,8 +105,33 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 #+RESULTS:
 | .* | /Users/miikamoilanen/.emacs.d/var/auto-save/ | t |
 
-* UI Config
+* Initialize package sources
 
+   Initialize package sources and use-package.
+
+  #+begin_src emacs-lisp
+
+    (require 'package)
+
+    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+          ("org" . "https://orgmode.org/elpa/")
+          ("elpa" . "https://elpa.gnu.org/packages/")))
+
+    (unless package-archive-contents
+    (package-refresh-contents))
+
+    ;; Initialize use-package on non-Linux platforms
+    (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+
+    (require 'use-package)
+    (setq use-package-always-ensure t)
+    (setq use-package-verbose t)
+
+
+  #+end_src
+
+* UI Config
 ** Simplify UI and add line numbers
 
   #+begin_src emacs-lisp
@@ -198,33 +225,9 @@ I don't use Emacs from command line so it is necessary to load the environment l
 #+begin_src emacs-lisp
 
   (use-package exec-path-from-shell
-  :init (exec-path-from-shell-initialize))
+    :init (exec-path-from-shell-initialize))
 
 #+end_src
-
-** Initialize package sources
-
-   Initialize package sources and use-package.
-
-  #+begin_src emacs-lisp
-
-    (require 'package)
-
-    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			    ("org" . "https://orgmode.org/elpa/")
-			    ("elpa" . "https://elpa.gnu.org/packages/")))
-
-    (unless package-archive-contents
-    (package-refresh-contents))
-
-    ;; Initialize use-package on non-Linux platforms
-    (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
-
-    (require 'use-package)
-    (setq use-package-always-ensure t)
-
-  #+end_src
 
 ** Mac stuff
 
@@ -264,7 +267,7 @@ Random stuff I can't seem to place anywhere else.
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
   (use-package command-log-mode
-    :command command-log-mode)
+    :commands command-log-mode)
 
 #+end_src
 
@@ -293,14 +296,18 @@ Random stuff I can't seem to place anywhere else.
 
 
   (use-package which-key
-    :init (which-key-mode)
+    :defer 0
     :diminish wich-key-mode
-    :config (setq which-key-idle-delay 0.3))
+    :config
+      (setq which-key-idle-delay 0.3)
+      (which-key-mode))
 
   (use-package ivy-rich
-    :init (ivy-rich-mode 1))
+    :after ivy
+    :config (ivy-rich-mode 1))
 
   (use-package counsel
+    :after ivy
     :bind (("M-x" . counsel-M-x)
            ("C-x b" . counsel-ibuffer)
            ("C-x C-f" . counsel-find-file)
@@ -309,7 +316,17 @@ Random stuff I can't seem to place anywhere else.
     :config
     (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"))
 
+  (use-package ivy-prescient
+    :after counsel
+    :custom
+    (ivy-prescient-enable-filtering nil)
+    :config
+    ;; Uncomment the following line to have sorting remembered across sessions!
+    (prescient-persist-mode 1)
+    (ivy-prescient-mode 1))
+
   (use-package helpful
+    :commands (helpful-callable helpful-variable helpful-command helpful-key)
     :custom
     (counsel-describe-function-function #'helpful-callable)
     (counsel-describe-variable-function #'helpful-variable)
@@ -318,6 +335,19 @@ Random stuff I can't seem to place anywhere else.
     ([remap describe-command] . helpful-command)
     ([remap describe-variable] . counsel-describe-variable)
     ([remap describe-key] . helpful-key))
+
+#+end_src
+
+* Window management
+
+#+begin_src emacs-lisp
+
+  (defun miika/focus-next-window-or-open-new ()
+    "Move focus to the next window or opens a new window if only one is open."
+    (interactive)
+    (when (one-window-p)
+      (evil-window-vsplit))
+    (evil-window-next nil))
 
 #+end_src
 
@@ -334,6 +364,7 @@ Welcome to the dark side ;)
     (sp-pair "'" nil :actions :rem))
 
   (use-package evil-smartparens
+    :after (smartparens)
     :init
     (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
@@ -399,6 +430,17 @@ Welcome to the dark side ;)
     :config (evil-multiedit-default-keybinds))
 
   (use-package evil-easymotion)
+
+#+end_src
+
+** Undo/Redo
+
+#+begin_src emacs-lisp
+
+  (use-package undo-fu
+    :config
+    (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
+    (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
 
 #+end_src
 
@@ -487,22 +529,11 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       "i" '(:ignore t :which-key "Terminal")
       "ii" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
       "it" '(miika/multi-vterm :which-key "Open new vterm")
-      "io" '(multi-vterm-next :whick-key "Next vterm")
-      "iu" '(multi-vterm-prev :whick-key "Prev vterm")
+      "io" '(multi-vterm-next :which-key "Next vterm")
+      "iu" '(multi-vterm-prev :which-key "Prev vterm")
 
       ))
 
-
-#+end_src
-
-** Undo/Redo
-
-#+begin_src emacs-lisp
-
-  (use-package undo-fu
-    :config
-    (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
-    (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
 
 #+end_src
 
@@ -558,8 +589,8 @@ Stuff that makes Emacs behave more like an IDE.
 #+begin_src emacs-lisp
 
   (use-package flycheck
-    :init (global-flycheck-mode))
-  (use-package yasnippet)
+    :defer t
+    :config (global-flycheck-mode))
 
 #+end_src
 
@@ -578,14 +609,17 @@ Autocompletion
       (company-complete-number 1)))
 
   (use-package company
-    :init
-    (add-hook 'emacs-lisp-mode-hook 'company-mode)
+    ;; :after (lsp-mode emacs-lisp-mode)
+    :hook (emacs-lisp-mode . company-mode)
+    ;; :init
+    ;; (add-hook 'emacs-lisp-mode-hook 'company-mode)
     :bind
     (:map company-active-map
           ("<tab>" . miika/company-complete-selection))
     :custom
     (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0))
+    (company-idle-delay 0.0)
+    :config (message "COMPANY LOADED"))
 
   ;; Nicer UI
   (use-package company-box
@@ -620,9 +654,17 @@ Autocompletion
     (setq lsp-idle-delay 0.500)
     (setq lsp-log-io nil)
     (setq lsp-prefer-flymake nil)
-    (setq lsp-headerline-breadcrumb-enable nil))
+    (setq lsp-headerline-breadcrumb-enable nil)
+    (miika/leader-keys
+      :keymap lsp-mode-map
+      "mfa" '(lsp-format-buffer :which-key "Format buffer")
+      "mfr" '(lsp-format-region :which-key "Format region")
+      "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
+      "r" '(:ignore t :which-key "Refactor")
+      "rr" '(lsp-rename :which-key "Rename symbol")))
 
   (use-package lsp-ui
+    :after lsp-mode
     :config
     (setq lsp-ui-doc-position 'at-point
           lsp-ui-doc-delay 0.0
@@ -642,19 +684,14 @@ Autocompletion
     :config
     (setq company-lsp-cache-candidates 'auto))
 
-  (use-package posframe)
-  (use-package dap-mode
-    :hook
-    (lsp-mode . dap-mode)
-    (lsp-mode . dap-ui-mode))
+  (use-package posframe
+    :after lsp-ui)
 
-  (miika/leader-keys
-    :keymap lsp-mode-map
-    "mfa" '(lsp-format-buffer :which-key "Format buffer")
-    "mfr" '(lsp-format-region :whick-key "Format region")
-    "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
-    "r" '(:ignore t :which-key "Refactor")
-    "rr" '(lsp-rename :which-key "Rename symbol"))
+  (use-package dap-mode
+      :commands dap-debug
+      :hook
+      (lsp-mode . dap-mode)
+      (lsp-mode . dap-ui-mode))
 
 
 #+end_src
@@ -682,10 +719,12 @@ This section of the config contains configuration for specific programming langu
 #+begin_src emacs-lisp
 
   (use-package scala-mode
+    :mode "\\.scala\\'"
     :interpreter
     ("scala" . scala-mode))
 
   (use-package sbt-mode
+    :after scala-mode
     :commands sbt-start sbt-command
     :config
     ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
@@ -698,6 +737,7 @@ This section of the config contains configuration for specific programming langu
     (setq sbt:program-options '("-Dsbt.supershell=false")))
 
   (use-package lsp-metals
+    :after scala-mode
     :config
     (setq lsp-metals-treeview-show-when-views-received nil))
 
@@ -729,18 +769,12 @@ This section of the config contains configuration for specific programming langu
 #+begin_src emacs-lisp
 
   (use-package magit
+    :command magit-status
     :config
     (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
-  (defun miika/focus-next-window-or-open-new ()
-    "Move focus to the next window or opens a new window if only one is open."
-    (interactive)
-    (when (one-window-p)
-      (evil-window-vsplit))
-    (evil-window-next nil))
-
-
   (use-package ediff
+    :after magit
     :config
     (setq ediff-split-window-function 'split-window-horizontally))
 
@@ -756,29 +790,29 @@ This is a work in progress.
 
 #+begin_src emacs-lisp
 
-  (defun miika/configure-eshell ()
-    ;; Save command history when commands are entered
-    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+    (defun miika/configure-eshell ()
+      ;; Save command history when commands are entered
+      (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
-    ;; Truncate buffer for performance
-    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+      ;; Truncate buffer for performance
+      (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-    (setq eshell-history-size         10000
-          eshell-buffer-maximum-lines 10000
-          eshell-hist-ignoredups t
-          eshell-scroll-to-bottom-on-input t))
+      (setq eshell-history-size         10000
+            eshell-buffer-maximum-lines 10000
+            eshell-hist-ignoredups t
+            eshell-scroll-to-bottom-on-input t))
 
-  (use-package eshell-git-prompt)
+    (use-package eshell-git-prompt
+      :after eshell)
 
-  (use-package eshell
-    :hook (eshell-first-time-mode . efs/configure-eshell)
-    :config
+    (use-package eshell
+      :hook (eshell-first-time-mode . miika/configure-eshell)
+      :config
+      (with-eval-after-load 'esh-opt
+        (setq eshell-destroy-buffer-when-process-dies t)
+        (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
-    (with-eval-after-load 'esh-opt
-      (setq eshell-destroy-buffer-when-process-dies t)
-      (setq eshell-visual-commands '("htop" "zsh" "vim")))
-
-    ;; (eshell-git-prompt-use-theme 'powerline)
+      ;; (eshell-git-prompt-use-theme 'powerline)
     )
 
 #+end_src
@@ -801,19 +835,18 @@ TODO: Better documentation of the huge code block below.
           (vterm-send-string (concat (s-join " " args) "\n")))
           (switch-to-buffer buf)))
 
+  (use-package multi-vterm)
+
   (use-package vterm
-    :init
-      (with-eval-after-load 'em-term
-        (defun eshell-exec-visual (&rest args)
-          (apply #'eshell-exec-in-vterm args)))
+    :after (multi-vterm)
     :commands (vterm vterm-other-window vterm-mode)
     :config
+    (with-eval-after-load 'em-term
+      (defun eshell-exec-visual (&rest args)
+        (apply #'eshell-exec-in-vterm args)))
     (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
     (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
     (setq vterm-max-scrollback 10000))
-
-  ;; multi-vterm stuff
-  (use-package multi-vterm)
 
   (defun miika/switch-to-vterm-buffer ()
     "Switch to a vterm buffer, or create one."
@@ -952,10 +985,11 @@ TODO: Better documentation of the huge code block below.
           visual-fill-column-center-text t)
     (visual-fill-column-mode 1))
 
-  (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t)))
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((emacs-lisp . t)
+        (python . t))))
 
   ;; (use-package visual-fill-column
   ;;   :hook (org-mode . miika/org-mode-visual-fill))
@@ -982,12 +1016,13 @@ TODO: Better documentation of the huge code block below.
 
   #+begin_src emacs-lisp
 
-    (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-	(python . t)))
+    (with-eval-after-load 'org
+      (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((emacs-lisp . t)
+        (python . t)))
 
-    (setq org-confirm-babel-evaluate nil)
+      (setq org-confirm-babel-evaluate nil))
 
   #+end_src
 
@@ -997,10 +1032,11 @@ TODO: Better documentation of the huge code block below.
 
   #+begin_src emacs-lisp
 
-    (require 'org-tempo)
+    (with-eval-after-load 'org
+      (require 'org-tempo)
 
-    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+      (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
 
   #+end_src
 
