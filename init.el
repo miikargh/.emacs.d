@@ -24,6 +24,23 @@
 (setq auto-save-file-name-transforms
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
+(require 'package)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+      ("org" . "https://orgmode.org/elpa/")
+      ("elpa" . "https://elpa.gnu.org/packages/")))
+
+(unless package-archive-contents
+(package-refresh-contents))
+
+;; Initialize use-package on non-Linux platforms
+(unless (package-installed-p 'use-package)
+(package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+(setq use-package-verbose t)
+
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -80,24 +97,14 @@
 ;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
+(use-package nyan-mode
+  :init (nyan-mode t)
+  :config
+  (setq nyan-animate-nyancat t
+        nyan-wavy-trail t))
+
 (use-package exec-path-from-shell
-:init (exec-path-from-shell-initialize))
-
-(require 'package)
-
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			("org" . "https://orgmode.org/elpa/")
-			("elpa" . "https://elpa.gnu.org/packages/")))
-
-(unless package-archive-contents
-(package-refresh-contents))
-
-;; Initialize use-package on non-Linux platforms
-(unless (package-installed-p 'use-package)
-(package-install 'use-package))
-
-(require 'use-package)
-(setq use-package-always-ensure t)
+  :init (exec-path-from-shell-initialize))
 
 ;; Mac stuff
 (setq mac-option-key-is-meta nil
@@ -123,7 +130,7 @@
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (use-package command-log-mode
-  :command command-log-mode)
+  :commands command-log-mode)
 
 (use-package ivy
   :diminish
@@ -146,14 +153,18 @@
 
 
 (use-package which-key
-  :init (which-key-mode)
+  :defer 0
   :diminish wich-key-mode
-  :config (setq which-key-idle-delay 0.3))
+  :config
+    (setq which-key-idle-delay 0.3)
+    (which-key-mode))
 
 (use-package ivy-rich
-  :init (ivy-rich-mode 1))
+  :after ivy
+  :config (ivy-rich-mode 1))
 
 (use-package counsel
+  :after ivy
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
@@ -162,7 +173,17 @@
   :config
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"))
 
+(use-package ivy-prescient
+  :after counsel
+  :custom
+  (ivy-prescient-enable-filtering nil)
+  :config
+  ;; Uncomment the following line to have sorting remembered across sessions!
+  (prescient-persist-mode 1)
+  (ivy-prescient-mode 1))
+
 (use-package helpful
+  :commands (helpful-callable helpful-variable helpful-command helpful-key)
   :custom
   (counsel-describe-function-function #'helpful-callable)
   (counsel-describe-variable-function #'helpful-variable)
@@ -172,12 +193,20 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
+(defun miika/focus-next-window-or-open-new ()
+  "Move focus to the next window or opens a new window if only one is open."
+  (interactive)
+  (when (one-window-p)
+    (evil-window-vsplit))
+  (evil-window-next nil))
+
 (use-package smartparens
   :config
   (smartparens-global-mode t)
   (sp-pair "'" nil :actions :rem))
 
 (use-package evil-smartparens
+  :after (smartparens)
   :init
   (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
@@ -243,6 +272,11 @@
   :config (evil-multiedit-default-keybinds))
 
 (use-package evil-easymotion)
+
+(use-package undo-fu
+  :config
+  (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
+  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
 
 (use-package general
   :config
@@ -323,15 +357,10 @@
     "i" '(:ignore t :which-key "Terminal")
     "ii" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
     "it" '(miika/multi-vterm :which-key "Open new vterm")
-    "io" '(multi-vterm-next :whick-key "Next vterm")
-    "iu" '(multi-vterm-prev :whick-key "Prev vterm")
+    "io" '(multi-vterm-next :which-key "Next vterm")
+    "iu" '(multi-vterm-prev :which-key "Prev vterm")
 
     ))
-
-(use-package undo-fu
-  :config
-  (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
-  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
 
 (setq-default tab-width 2)
 (setq-default evil-shift-width tab-width)
@@ -358,8 +387,8 @@
   :config (counsel-projectile-mode))
 
 (use-package flycheck
-  :init (global-flycheck-mode))
-(use-package yasnippet)
+  :defer t
+  :config (global-flycheck-mode))
 
 (defun miika/company-complete-selection ()
   "Insert the selected candidate or the first if none are selected.
@@ -370,14 +399,17 @@
     (company-complete-number 1)))
 
 (use-package company
-  :init
-  (add-hook 'emacs-lisp-mode-hook 'company-mode)
+  ;; :after (lsp-mode emacs-lisp-mode)
+  :hook (emacs-lisp-mode . company-mode)
+  ;; :init
+  ;; (add-hook 'emacs-lisp-mode-hook 'company-mode)
   :bind
   (:map company-active-map
         ("<tab>" . miika/company-complete-selection))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (company-idle-delay 0.0)
+  :config (message "COMPANY LOADED"))
 
 ;; Nicer UI
 (use-package company-box
@@ -405,9 +437,17 @@
   (setq lsp-idle-delay 0.500)
   (setq lsp-log-io nil)
   (setq lsp-prefer-flymake nil)
-  (setq lsp-headerline-breadcrumb-enable nil))
+  (setq lsp-headerline-breadcrumb-enable nil)
+  (miika/leader-keys
+    :keymap lsp-mode-map
+    "mfa" '(lsp-format-buffer :which-key "Format buffer")
+    "mfr" '(lsp-format-region :which-key "Format region")
+    "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
+    "r" '(:ignore t :which-key "Refactor")
+    "rr" '(lsp-rename :which-key "Rename symbol")))
 
 (use-package lsp-ui
+  :after lsp-mode
   :config
   (setq lsp-ui-doc-position 'at-point
         lsp-ui-doc-delay 0.0
@@ -427,19 +467,14 @@
   :config
   (setq company-lsp-cache-candidates 'auto))
 
-(use-package posframe)
-(use-package dap-mode
-  :hook
-  (lsp-mode . dap-mode)
-  (lsp-mode . dap-ui-mode))
+(use-package posframe
+  :after lsp-ui)
 
-(miika/leader-keys
-  :keymap lsp-mode-map
-  "mfa" '(lsp-format-buffer :which-key "Format buffer")
-  "mfr" '(lsp-format-region :whick-key "Format region")
-  "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
-  "r" '(:ignore t :which-key "Refactor")
-  "rr" '(lsp-rename :which-key "Rename symbol"))
+(use-package dap-mode
+    :commands dap-debug
+    :hook
+    (lsp-mode . dap-mode)
+    (lsp-mode . dap-ui-mode))
 
 (miika/leader-keys
   :keymaps 'emacs-lisp-mode-map
@@ -451,10 +486,12 @@
   "eb" '(eval-region :which-key "Eval buffer"))
 
 (use-package scala-mode
+  :mode "\\.scala\\'"
   :interpreter
   ("scala" . scala-mode))
 
 (use-package sbt-mode
+  :after scala-mode
   :commands sbt-start sbt-command
   :config
   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
@@ -467,6 +504,7 @@
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 (use-package lsp-metals
+  :after scala-mode
   :config
   (setq lsp-metals-treeview-show-when-views-received nil))
 
@@ -484,18 +522,12 @@
    :after (eshell))
 
 (use-package magit
+  :command magit-status
   :config
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
-(defun miika/focus-next-window-or-open-new ()
-  "Move focus to the next window or opens a new window if only one is open."
-  (interactive)
-  (when (one-window-p)
-    (evil-window-vsplit))
-  (evil-window-next nil))
-
-
 (use-package ediff
+  :after magit
   :config
   (setq ediff-split-window-function 'split-window-horizontally))
 
@@ -511,18 +543,18 @@
         eshell-hist-ignoredups t
         eshell-scroll-to-bottom-on-input t))
 
-(use-package eshell-git-prompt)
+(use-package eshell-git-prompt
+  :after eshell)
 
 (use-package eshell
-  :hook (eshell-first-time-mode . efs/configure-eshell)
+  :hook (eshell-first-time-mode . miika/configure-eshell)
   :config
-
   (with-eval-after-load 'esh-opt
     (setq eshell-destroy-buffer-when-process-dies t)
     (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
   ;; (eshell-git-prompt-use-theme 'powerline)
-  )
+)
 
 (defun eshell-exec-in-vterm (&rest args)
   "https://git.jeremydormitzer.com/jdormit/dotfiles/commit/b7c4e383a2a3d8a0140376e9ebb76a3b7897848a"
@@ -534,19 +566,18 @@
         (vterm-send-string (concat (s-join " " args) "\n")))
         (switch-to-buffer buf)))
 
+(use-package multi-vterm)
+
 (use-package vterm
-  :init
-    (with-eval-after-load 'em-term
-      (defun eshell-exec-visual (&rest args)
-        (apply #'eshell-exec-in-vterm args)))
+  :after (multi-vterm)
   :commands (vterm vterm-other-window vterm-mode)
   :config
+  (with-eval-after-load 'em-term
+    (defun eshell-exec-visual (&rest args)
+      (apply #'eshell-exec-in-vterm args)))
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
   (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000))
-
-;; multi-vterm stuff
-(use-package multi-vterm)
 
 (defun miika/switch-to-vterm-buffer ()
   "Switch to a vterm buffer, or create one."
@@ -665,10 +696,11 @@ If there is no such buffer, start a new `vterm' with NAME."
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
-(org-babel-do-load-languages
-  'org-babel-load-languages
-  '((emacs-lisp . t)
-    (python . t)))
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)
+      (python . t))))
 
 ;; (use-package visual-fill-column
 ;;   :hook (org-mode . miika/org-mode-visual-fill))
@@ -681,17 +713,19 @@ If there is no such buffer, start a new `vterm' with NAME."
   "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
   "me" '(org-edit-special :which-key "Edit Special"))
 
-(org-babel-do-load-languages
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
   'org-babel-load-languages
   '((emacs-lisp . t)
-(python . t)))
+    (python . t)))
 
-  (setq org-confirm-babel-evaluate nil)
+  (setq org-confirm-babel-evaluate nil))
 
-(require 'org-tempo)
+(with-eval-after-load 'org
+  (require 'org-tempo)
 
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
 
 (setq org-cycle-emulate-tab nil)
 
