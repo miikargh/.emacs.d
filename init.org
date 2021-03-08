@@ -951,7 +951,9 @@ TODO: Better documentation of the huge code block below.
 ** Make TAB cycle anywhere
 
 #+begin_src emacs-lisp
-    (setq org-cycle-emulate-tab nil)
+
+  (setq org-cycle-emulate-tab nil)
+
 #+end_src
 
 ** Update Table of Contents on Save
