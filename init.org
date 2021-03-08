@@ -785,7 +785,7 @@ This section of the config contains configuration for specific programming langu
 #+begin_src emacs-lisp
 
   (use-package magit
-    :command magit-status
+    :commands magit-status
     :config
     (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
