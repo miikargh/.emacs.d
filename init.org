@@ -955,6 +955,7 @@ TODO: Better documentation of the huge code block below.
 ** Keybindings
 
 #+begin_src emacs-lisp
+
   (miika/leader-keys
     :states '(normal visual)
     :keymap 'org-mode-map
@@ -962,6 +963,7 @@ TODO: Better documentation of the huge code block below.
     "ed" '(org-babel-execute-src-block :which-key "Execute code block")
     "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
     "me" '(org-edit-special :which-key "Edit Special"))
+
 #+end_src
 
 ** Org babel
