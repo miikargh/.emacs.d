@@ -535,7 +535,6 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       "it" '(miika/multi-vterm :which-key "Open new vterm")
       "io" '(multi-vterm-next :which-key "Next vterm")
       "iu" '(multi-vterm-prev :which-key "Prev vterm")
-
       ))
 
 
