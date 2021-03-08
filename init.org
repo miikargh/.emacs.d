@@ -192,25 +192,25 @@ Random stuff I can't seem to place anywhere else.
 
 #+begin_src emacs-lisp
 
-  ;; Make ESC quit prompts
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+    ;; Make ESC quit prompts
+    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
-  (defun miika/open-user-init-file ()
-    "Edit emacs config, in another window."
-    (interactive)
-    (find-file (expand-file-name "~/.emacs.d/init.org")))
+    (defun miika/open-user-init-file ()
+      "Edit emacs config, in another window."
+      (interactive)
+      (find-file (expand-file-name "~/.emacs.d/init.org")))
 
 
-  ;; todo highlighting
-  (use-package hl-todo
-  :config (hl-todo-mode))
+    ;; todo highlighting
+    (use-package hl-todo
+    :config (hl-todo-mode))
 
 
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-
-  (use-package command-log-mode)
+  (use-package command-log-mode
+    :command command-log-mode)
 
 #+end_src
 
