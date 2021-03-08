@@ -39,7 +39,9 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
-(setq use-package-verbose t)
+
+;; Uncomment the following for debugging emacs startup
+;; (setq use-package-verbose t)
 
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
@@ -200,16 +202,6 @@
     (evil-window-vsplit))
   (evil-window-next nil))
 
-(use-package smartparens
-  :config
-  (smartparens-global-mode t)
-  (sp-pair "'" nil :actions :rem))
-
-(use-package evil-smartparens
-  :after (smartparens)
-  :init
-  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
-
 (defun miika/visual-shift-left ()
   "Make shifting not loose focus"
   (interactive)
@@ -223,6 +215,8 @@
   (call-interactively 'evil-shift-right)
   (evil-normal-state)
   (evil-visual-restore))
+
+
 
 (use-package evil
   :init
@@ -256,6 +250,17 @@
   :after evil
   :config
   (evil-collection-init))
+
+(use-package smartparens
+  :after evil
+  :config
+  (smartparens-global-mode t)
+  (sp-pair "'" nil :actions :rem))
+
+(use-package evil-smartparens
+  :after (smartparens)
+  :init
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
 (use-package evil-commentary
   :after evil
@@ -296,6 +301,11 @@
     :states '(normal visual emacs)
     :prefix "SPC")
 
+  (general-define-key
+   :states '(normal visual emacs)
+   :keymaps 'override
+   "/" '(swiper :which-key "swiper"))
+
   (miika/leader-keys
     ":" '(counsel-M-x :which-key "M-x")
     ";" '(eval-expression :which-key "Eval expression")
@@ -306,8 +316,7 @@
     "SPC S" '(evil-avy-goto-char-2
               :keymaps: 'override)
 
-
-    "/" '(swiper :which-key "swiper")
+    ;; "/" '(swiper :which-key "swiper")
 
     "x" '(:keymap ctl-x-map :which-key "C-x")
     "c" '(:keymap mode-specific-map :which-key "C-c")
@@ -359,7 +368,6 @@
     "it" '(miika/multi-vterm :which-key "Open new vterm")
     "io" '(multi-vterm-next :which-key "Next vterm")
     "iu" '(multi-vterm-prev :which-key "Prev vterm")
-
     ))
 
 (setq-default tab-width 2)
@@ -408,8 +416,7 @@
         ("<tab>" . miika/company-complete-selection))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0)
-  :config (message "COMPANY LOADED"))
+  (company-idle-delay 0.0))
 
 ;; Nicer UI
 (use-package company-box
@@ -522,7 +529,7 @@
    :after (eshell))
 
 (use-package magit
-  :command magit-status
+  :commands magit-status
   :config
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
