@@ -63,7 +63,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#update-table-of-contents-on-save][Update Table of Contents on Save]]
   - [[#auto-tangle-configuration-files][Auto-tangle Configuration Files]]
 - [[#misc][Misc.]]
-- [[#xkca][xkca]]
+- [[#xkcd][xkcd]]
 - [[#runtime-performance][Runtime Performance]]
 :END:
 
@@ -1081,7 +1081,7 @@ This snippet adds a hook to =org-mode= buffers so that =miika/org-babel-tangle-c
 #+end_src
 
 * Misc.
-* xkca
+* xkcd
 
 Read xkcd comics in Emacs!
 
