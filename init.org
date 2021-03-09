@@ -221,29 +221,32 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 #+end_src
 
 * Basic config
+** OS specific config
 
-** Load environment
-
-I don't use Emacs from command line so it is necessary to load the environment like this. This is also slowing down the startup time of Emacs quite a bit. One fix would be to load the path once and save to a file like in doom emacs.
+I use Emacs on both MacOS and Linux so here are is a macro copied from [[https://stackoverflow.com/a/26137517][stackoverflow]] to easily do stuff based on your current OS:
 
 #+begin_src emacs-lisp
 
-  (use-package exec-path-from-shell
-    :init (exec-path-from-shell-initialize))
+  (defmacro with-system (type &rest body)
+    "Evaluate BODY if `system-type' equals TYPE."
+    (declare (indent defun))
+    `(when (eq system-type ',type)
+       ,@body))
 
 #+end_src
 
-** Mac stuff
+*** Mac
 
 Stuff that makes Emacs on MacOS usable.
 
 #+begin_src emacs-lisp
 
-  ;; Mac stuff
-  (setq mac-option-key-is-meta nil
-        mac-command-key-is-meta t
-        mac-command-modifier 'meta
-        mac-option-modifier 'none)
+  (with-system darwin ;; Darqwin == MacOS
+    (message "MacOS detected")
+    (setq mac-option-key-is-meta nil
+          mac-command-key-is-meta t
+          mac-command-modifier 'meta
+          mac-option-modifier 'none))
 
 #+end_src
 
