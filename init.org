@@ -35,6 +35,8 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
   - [[#evil][Evil]]
+  - [[#smartparens][Smartparens]]
+  - [[#rainbaw-delimiters][Rainbaw delimiters]]
   - [[#undoredo][Undo/Redo]]
   - [[#global-keybindings][Global Keybindings]]
 - [[#editing][Editing]]
@@ -67,6 +69,7 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#misc][Misc.]]
 - [[#xkcd][xkcd]]
 - [[#runtime-performance][Runtime Performance]]
+  - [[#automatic-garbage-collection][Automatic garbage collection]]
 :END:
 
 * Startup performance
