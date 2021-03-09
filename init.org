@@ -1144,3 +1144,14 @@ Dial the GC threshold back down so that garbage collection happens more frequent
   (setq gc-cons-threshold (* 2 1000 1000))
 
 #+end_src
+
+** Automatic garbage collection
+
+Sneaky garbage collection with [[https://gitlab.com/koral/gcmh][GCMH]]. Should boost performance.
+
+#+begin_src emacs-lisp
+
+  (use-package gcmh
+    :init (gcmh-mode 1))
+
+#+end_src
