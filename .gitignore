@@ -1,2 +1,12 @@
 elpa
 auto-save-list
+.DS_Store
+.dap-breakpoints
+.lsp-session-v1
+eln-cache/
+eshell/
+*~
+projectile-bookmarks.eld
+projects
+transient/
+var/
