@@ -283,19 +283,6 @@
 
 (use-package evil-easymotion)
 
-(use-package smartparens
-  :after evil
-  :hook (emacs-lisp-mode . smartparens-strict-mode)
-  :config
-  (smartparens-global-mode t)
-  (sp-pair "'" nil :actions :rem))
-
-(use-package evil-smartparens
-  :hook (smartparens-enabled . evil-smart-parens-mode))
-
-(use-package rainbow-delimiters
-  :hook emacs-lisp-mode)
-
 (use-package undo-fu
   :config
   (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
@@ -496,6 +483,19 @@
     :hook
     (lsp-mode . dap-mode)
     (lsp-mode . dap-ui-mode))
+
+(use-package smartparens
+  :after evil
+  :hook (emacs-lisp-mode . smartparens-strict-mode)
+  :config
+  (smartparens-global-mode t)
+  (sp-pair "'" nil :actions :rem))
+
+(use-package evil-smartparens
+  :hook (smartparens-enabled . evil-smart-parens-mode))
+
+(use-package rainbow-delimiters
+  :hook emacs-lisp-mode)
 
 (miika/leader-keys
   :keymaps 'emacs-lisp-mode-map

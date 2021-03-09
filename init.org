@@ -36,8 +36,6 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
   - [[#evil][Evil]]
-  - [[#smartparens][Smartparens]]
-  - [[#rainbaw-delimiters][Rainbaw delimiters]]
   - [[#undoredo][Undo/Redo]]
   - [[#global-keybindings][Global Keybindings]]
 - [[#editing][Editing]]
@@ -48,6 +46,8 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#flycheck][Flycheck]]
   - [[#company][Company]]
   - [[#lsp][LSP]]
+  - [[#smartparens][Smartparens]]
+  - [[#rainbaw-delimiters][Rainbaw delimiters]]
 - [[#programming-languages][Programming languages]]
   - [[#elisp][Elisp]]
   - [[#scala][Scala]]
@@ -464,31 +464,6 @@ Welcome to the dark side ;)
 
 #+end_src
 
-** Smartparens
-
-#+begin_src emacs-lisp
-
-  (use-package smartparens
-    :after evil
-    :hook (emacs-lisp-mode . smartparens-strict-mode)
-    :config
-    (smartparens-global-mode t)
-    (sp-pair "'" nil :actions :rem))
-
-  (use-package evil-smartparens
-    :hook (smartparens-enabled . evil-smart-parens-mode))
-
-#+end_src
-
-** Rainbaw delimiters
-
-#+begin_src emacs-lisp
-
-  (use-package rainbow-delimiters
-    :hook emacs-lisp-mode)
-
-#+end_src
-
 ** Undo/Redo
 
 #+begin_src emacs-lisp
@@ -747,6 +722,31 @@ Autocompletion
       (lsp-mode . dap-mode)
       (lsp-mode . dap-ui-mode))
 
+
+#+end_src
+
+** Smartparens
+
+#+begin_src emacs-lisp
+
+  (use-package smartparens
+    :after evil
+    :hook (emacs-lisp-mode . smartparens-strict-mode)
+    :config
+    (smartparens-global-mode t)
+    (sp-pair "'" nil :actions :rem))
+
+  (use-package evil-smartparens
+    :hook (smartparens-enabled . evil-smart-parens-mode))
+
+#+end_src
+
+** Rainbaw delimiters
+
+#+begin_src emacs-lisp
+
+  (use-package rainbow-delimiters
+    :hook emacs-lisp-mode)
 
 #+end_src
 
