@@ -473,6 +473,31 @@ Welcome to the dark side ;)
 
 #+end_src
 
+** Smartparens
+
+#+begin_src emacs-lisp
+
+  (use-package smartparens
+    :after evil
+    :hook (emacs-lisp-mode . smartparens-strict-mode)
+    :config
+    (smartparens-global-mode t)
+    (sp-pair "'" nil :actions :rem))
+
+  (use-package evil-smartparens
+    :hook (smartparens-enabled . evil-smart-parens-mode))
+
+#+end_src
+
+** Rainbaw delimiters
+
+#+begin_src emacs-lisp
+
+  (use-package rainbow-delimiters
+    :hook emacs-lisp-mode)
+
+#+end_src
+
 ** Undo/Redo
 
 #+begin_src emacs-lisp
