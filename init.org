@@ -62,6 +62,9 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#make-tab-cycle-anywhere][Make TAB cycle anywhere]]
   - [[#update-table-of-contents-on-save][Update Table of Contents on Save]]
   - [[#auto-tangle-configuration-files][Auto-tangle Configuration Files]]
+- [[#misc][Misc.]]
+- [[#xkca][xkca]]
+- [[#runtime-performance][Runtime Performance]]
 :END:
 
 * Startup performance
@@ -1092,7 +1095,7 @@ Read xkcd comics in Emacs!
      :keymaps 'xkcd-mode-map
      "h" 'xkcd-prev
      "l" 'xkcd-next
-     "r" 'xkcd-random))
+     "r" 'xkcd-rand))
 
 #+end_src
 
