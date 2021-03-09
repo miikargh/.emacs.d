@@ -579,7 +579,7 @@ Setup projectile for powerful project management.
     :config
     (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
     (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
-    )
+    (setq projectile-enable-caching t))
 
   (use-package counsel-projectile
     :config (counsel-projectile-mode))
