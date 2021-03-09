@@ -13,17 +13,6 @@
 
 (add-hook 'emacs-startup-hook #'miika/display-startup-time)
 
-;; NOTE: If you want to move everything out of the ~/.emacs.d folder
-;; reliably, set `user-emacs-directory` before loading no-littering!
-;(setq user-emacs-directory "~/.cache/emacs")
-
-(use-package no-littering)
-
-;; no-littering doesn't set this by default so we must place
-;; auto save files in the same path as it uses for sessions
-(setq auto-save-file-name-transforms
-      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -42,6 +31,29 @@
 
 ;; Uncomment the following for debugging emacs startup
 ;; (setq use-package-verbose t)
+
+(use-package auto-package-update
+  :custom
+  ;; (auto-package-update-interval 7)
+  (auto-package-update-prompt-before-update t)
+  (auto-package-update-hide-results t)
+  :config
+  (auto-package-update-maybe)))
+  ;; (auto-package-update-at-time "09:00"))
+
+(use-package exec-path-from-shell
+  :init (exec-path-from-shell-initialize))
+
+;; NOTE: If you want to move everything out of the ~/.emacs.d folder
+;; reliably, set `user-emacs-directory` before loading no-littering!
+;(setq user-emacs-directory "~/.cache/emacs")
+
+(use-package no-littering)
+
+;; no-littering doesn't set this by default so we must place
+;; auto save files in the same path as it uses for sessions
+(setq auto-save-file-name-transforms
+      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
@@ -105,14 +117,18 @@
   (setq nyan-animate-nyancat t
         nyan-wavy-trail t))
 
-(use-package exec-path-from-shell
-  :init (exec-path-from-shell-initialize))
+(defmacro with-system (type &rest body)
+  "Evaluate BODY if `system-type' equals TYPE."
+  (declare (indent defun))
+  `(when (eq system-type ',type)
+     ,@body))
 
-;; Mac stuff
-(setq mac-option-key-is-meta nil
-      mac-command-key-is-meta t
-      mac-command-modifier 'meta
-      mac-option-modifier 'none)
+(with-system darwin ;; Darqwin == MacOS
+  (message "MacOS detected")
+  (setq mac-option-key-is-meta nil
+        mac-command-key-is-meta t
+        mac-command-modifier 'meta
+        mac-option-modifier 'none))
 
 ;; Make ESC quit prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -385,7 +401,7 @@
   :config
   (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
   (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
-  )
+  (setq projectile-enable-caching t))
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
@@ -412,7 +428,7 @@
         ("<tab>" . miika/company-complete-selection))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (company-idle-delay 0.1))
 
 ;; Nicer UI
 (use-package company-box
