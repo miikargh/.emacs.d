@@ -460,11 +460,7 @@ Global keybindings live here. You can find mode specific keybindings by the conf
     (general-define-key
       :states 'insert
       :keymaps 'override
-      "M-j" 'company-select-next)
-
-    (general-define-key
-      :states 'insert
-      :keymaps 'override
+      "M-j" 'company-select-next
       "M-k" 'company-select-previous)
 
     (general-create-definer miika/leader-keys
