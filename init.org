@@ -146,6 +146,7 @@ I don't use Emacs from command line so it is necessary to load the environment l
     :init (exec-path-from-shell-initialize))
 
 #+end_src
+
 * Keep Folders Clean
 
 We use the [[https://github.com/emacscollective/no-littering/blob/master/no-littering.el][no-littering]] package to keep folders where we edit files and the Emacs configuration folder clean!  It knows about a wide variety of variables for built in Emacs features as well as those from community packages so it can be much easier than finding and setting these variables yourself.
