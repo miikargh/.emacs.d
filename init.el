@@ -289,11 +289,7 @@
   (general-define-key
     :states 'insert
     :keymaps 'override
-    "M-j" 'company-select-next)
-
-  (general-define-key
-    :states 'insert
-    :keymaps 'override
+    "M-j" 'company-select-next
     "M-k" 'company-select-previous)
 
   (general-create-definer miika/leader-keys
@@ -748,3 +744,16 @@ If there is no such buffer, start a new `vterm' with NAME."
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'miika/org-babel-tangle-config)))
+
+(use-package xkcd
+  :commands (xkcd-get xkcd)
+  :config
+  (general-define-key
+   :states '(normal emacs)
+   :keymaps 'xkcd-mode-map
+   "h" 'xkcd-prev
+   "l" 'xkcd-next
+   "r" 'xkcd-rand))
+
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))
