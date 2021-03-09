@@ -38,7 +38,7 @@
   (auto-package-update-prompt-before-update t)
   (auto-package-update-hide-results t)
   :config
-  (auto-package-update-maybe)))
+  (auto-package-update-maybe))
   ;; (auto-package-update-at-time "09:00"))
 
 (use-package exec-path-from-shell
@@ -267,17 +267,6 @@
   :config
   (evil-collection-init))
 
-(use-package smartparens
-  :after evil
-  :config
-  (smartparens-global-mode t)
-  (sp-pair "'" nil :actions :rem))
-
-(use-package evil-smartparens
-  :after (smartparens)
-  :init
-  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
-
 (use-package evil-commentary
   :after evil
   :init (evil-commentary-mode))
@@ -293,6 +282,19 @@
   :config (evil-multiedit-default-keybinds))
 
 (use-package evil-easymotion)
+
+(use-package smartparens
+  :after evil
+  :hook (emacs-lisp-mode . smartparens-strict-mode)
+  :config
+  (smartparens-global-mode t)
+  (sp-pair "'" nil :actions :rem))
+
+(use-package evil-smartparens
+  :hook (smartparens-enabled . evil-smart-parens-mode))
+
+(use-package rainbow-delimiters
+  :hook emacs-lisp-mode)
 
 (use-package undo-fu
   :config
@@ -773,3 +775,6 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+
+(use-package gcmh
+  :init (gcmh-mode 1))
