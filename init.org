@@ -444,17 +444,6 @@ Welcome to the dark side ;)
     :config
     (evil-collection-init))
 
-  (use-package smartparens
-    :after evil
-    :config
-    (smartparens-global-mode t)
-    (sp-pair "'" nil :actions :rem))
-
-  (use-package evil-smartparens
-    :after (smartparens)
-    :init
-    (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
-
   (use-package evil-commentary
     :after evil
     :init (evil-commentary-mode))
