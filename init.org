@@ -1080,3 +1080,35 @@ This snippet adds a hook to =org-mode= buffers so that =miika/org-babel-tangle-c
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'miika/org-babel-tangle-config)))
 
 #+end_src
+
+* Misc.
+* xkca
+
+Read xkcd comics in Emacs!
+
+#+begin_src emacs-lisp
+
+  (use-package xkcd
+    :commands (xkcd-get xkcd)
+    :config
+    (general-define-key
+     :states '(normal emacs)
+     :keymaps 'xkcd-mode-map
+     "h" 'xkcd-prev
+     "l" 'xkcd-next
+     "r" 'xkcd-random))
+
+#+end_src
+
+#+RESULTS:
+
+* Runtime Performance
+
+Dial the GC threshold back down so that garbage collection happens more frequently but in less time.
+
+#+begin_src emacs-lisp
+
+  ;; Make gc pauses faster by decreasing the threshold.
+  (setq gc-cons-threshold (* 2 1000 1000))
+
+#+end_src
