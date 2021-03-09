@@ -162,9 +162,6 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 
 #+end_src
 
-#+RESULTS:
-| .* | /Users/miikamoilanen/.emacs.d/var/auto-save/ | t |
-
 * UI Config
 ** Simplify UI and add line numbers
 
