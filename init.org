@@ -12,6 +12,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   ;;       in Emacs and init.el will be generated automatically!
 
 #+end_src
+
 * Table of Contents
 :PROPERTIES:
 :TOC:      :include all :ignore this
