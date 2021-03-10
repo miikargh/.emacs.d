@@ -75,7 +75,9 @@
 (dolist (mode '(org-mode-hook
                 term-mode-hook
                 eshell-mode-hook
-                vterm-mode-hook))
+                vterm-mode-hook
+                jupyter-repl-mode-hook
+                ))
 (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'light)
@@ -470,10 +472,11 @@
       (lsp-ui-doc-hide)
     (lsp-ui-doc-show)))
 
-(use-package company-lsp
-  :after comapny-mode
-  :config
-  (setq company-lsp-cache-candidates 'auto))
+;; It would appear that company-lsp is not on melpa anymore :thinking:
+;; (use-package company-lsp
+;;   :after comapny-mode
+;;   :config
+;;   (setq company-lsp-cache-candidates 'auto))
 
 (use-package posframe
   :after lsp-ui)
@@ -486,16 +489,18 @@
 
 (use-package smartparens
   :after evil
-  :hook (emacs-lisp-mode . smartparens-strict-mode)
+  ;; :hook (emacs-lisp-mode . smartparens-strict-mode)
   :config
   (smartparens-global-mode t)
+  (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
   (sp-pair "'" nil :actions :rem))
 
 (use-package evil-smartparens
-  :hook (smartparens-enabled . evil-smart-parens-mode))
+  :after smartparens
+  :config
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
-(use-package rainbow-delimiters
-  :hook emacs-lisp-mode)
+(use-package rainbow-delimiters)
 
 (miika/leader-keys
   :keymaps 'emacs-lisp-mode-map
@@ -505,6 +510,8 @@
   "ed" '(eval-defun :which-key "Eval defun")
   "er" '(eval-region :which-key "Eval region")
   "eb" '(eval-region :which-key "Eval buffer"))
+
+(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
 
 (use-package scala-mode
   :mode "\\.scala\\'"
@@ -529,18 +536,90 @@
   :config
   (setq lsp-metals-treeview-show-when-views-received nil))
 
-(use-package conda
+(defun miika/open-ipython-repl ()
+  "Open an IPython REPL."
+  (interactive)
+  (require 'python)
+  (let ((python-shell-interpreter "ipython")
+        (python-shell-interpreter-args "-i --simple-prompt --no-color-info"))
+    (pop-to-buffer
+     (process-buffer (run-python nil nil t)))))
+
+
+(use-package python-mode
+  :hook (python-mode . lsp-deferred)
+  :custom
+  (python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
   :config
-    (custom-set-variables
-    '(conda-anaconda-home (expand-file-name "~/miniconda3/")))
-    (setq conda-env-home-directory (expand-file-name "~/miniconda3/"))
-    (conda-env-initialize-interactive-shells)
-    (conda-env-autoactivate-mode t)
-    (add-to-list 'global-mode-string
-                '(conda-env-current-name (" conda:" conda-env-current-name " "))
-                'append)
-    (conda-env-initialize-eshell)
-   :after (eshell))
+  (miika/leader-keys
+    :keymap 'python-mode-map
+    "mw" '(conda-env-activate :which-key "Workon enviroment")
+    "ms" '(:ignore t :which-key "Shell")
+    "mss" '(run-python :which-key "Python shell")
+    "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
+    "msj" '(miika/open-jupyter-repl :which-key "Jupyter shell")
+    "er" '(python-shell-send-region :which-key "Send region")
+    "ed" '(python-shell-send-defun :which-key "Send defun")
+    "eb" '(python-shell-send-buffer :which-key "Send buffer")
+    "ef" '(python-shell-send-file :which-key "Send file")))
+
+(use-package conda
+  :commands (conda-env-activate
+             conda-env-list)
+  :config
+  (custom-set-variables
+   '(conda-anaconda-home (expand-file-name "~/miniconda3/")))
+  (setq conda-env-home-directory (expand-file-name "~/miniconda3/"))
+  (conda-env-initialize-interactive-shells)
+  (conda-env-autoactivate-mode t)
+  (add-to-list 'global-mode-string
+               '(conda-env-current-name (" conda:" conda-env-current-name " "))
+               'append)
+  (conda-env-initialize-eshell)
+  :after eshell)
+
+(defun miika/jupyter-run-repl (kernel-name &optional repl-name associate-buffer client-class display)
+  "Same as jupyter-run-repl but non interactive call finds kernelspecs with display name instead of kernel name."
+  (interactive (list (car (jupyter-completing-read-kernelspec
+                           nil current-prefix-arg))
+                     (when current-prefix-arg
+                       (read-string "REPL Name: "))
+                     t nil t))
+  (or client-class (setq client-class 'jupyter-repl-client))
+  (jupyter-error-if-not-client-class-p client-class 'jupyter-repl-client)
+  (unless (called-interactively-p 'interactive)
+    (or (when-let* ((name (car (miika/jupyter-find-kernelspecs-by-display-name kernel-name))))
+          (setq kernel-name name))
+        (error "No kernel found for prefix (%s), run python -m ipykernel install --user --name=$CONDA_DEFAULT_ENV to install kernell from conda env" kernel-name)))
+  ;; For `jupyter-start-new-kernel', we don't require this at top-level since
+  ;; there are many ways to interact with a kernel, e.g. through a notebook
+  ;; server, and we don't want to load any unnecessary files.
+  (require 'jupyter-kernel-process-manager)
+  (cl-destructuring-bind (_manager client)
+      (jupyter-start-new-kernel kernel-name client-class)
+    (jupyter-bootstrap-repl client repl-name associate-buffer display)))
+
+(defun miika/jupyter-find-kernelspecs-by-display-name (name &optional refresh)
+  "Find jupyter kernel specs by display name"
+  (let* ((specs (jupyter-available-kernelspecs refresh))
+         (display-names (if (null specs) (error "No kernelspecs available")
+                          (mapcar (lambda (k) (plist-get (cddr k) :display_name))
+                             specs))))
+    (nth (- (length display-names)
+            (length (member name display-names)))
+         specs)))
+
+(defun miika/open-jupyter-repl ()
+  "Open a Jupyter REPL:"
+  (interactive)
+  (miika/jupyter-run-repl conda-env-current-name))
+
+(use-package jupyter
+  :commands (miika/open-jupyter-repl
+             miika/run-jupyter-repl
+             jupyter-run-server-repl
+             jupyter-run-repl
+             jupyter-server-list-kernels))
 
 (use-package magit
   :commands magit-status
