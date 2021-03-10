@@ -770,6 +770,8 @@ This section of the config contains configuration for specific programming langu
     "er" '(eval-region :which-key "Eval region")
     "eb" '(eval-region :which-key "Eval buffer"))
 
+  (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+
 #+end_src
 
 ** Scala
