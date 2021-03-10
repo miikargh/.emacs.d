@@ -135,9 +135,6 @@ Here is a small function that will print out the time it takes for Emacs to star
 
 #+end_src
 
-#+RESULTS:
-: t
-
 * Load environment
 
 I don't use Emacs from command line so it is necessary to load the environment like this. This is also slowing down the startup time of Emacs quite a bit. One fix would be to load the path once and save to a file like in doom emacs.
@@ -1151,8 +1148,6 @@ Read xkcd comics in Emacs!
      "r" 'xkcd-rand))
 
 #+end_src
-
-#+RESULTS:
 
 * Runtime Performance
 
