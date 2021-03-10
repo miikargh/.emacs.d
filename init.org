@@ -732,22 +732,24 @@ Autocompletion
 
   (use-package smartparens
     :after evil
-    :hook (emacs-lisp-mode . smartparens-strict-mode)
+    ;; :hook (emacs-lisp-mode . smartparens-strict-mode)
     :config
     (smartparens-global-mode t)
+    (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
     (sp-pair "'" nil :actions :rem))
 
   (use-package evil-smartparens
-    :hook (smartparens-enabled . evil-smart-parens-mode))
+    :after smartparens
+    :config
+    (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
 #+end_src
 
-** Rainbaw delimiters
+** Rainbow delimiters
 
 #+begin_src emacs-lisp
 
-  (use-package rainbow-delimiters
-    :hook emacs-lisp-mode)
+  (use-package rainbow-delimiters)
 
 #+end_src
 
