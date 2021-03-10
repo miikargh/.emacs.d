@@ -192,7 +192,9 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
     (dolist (mode '(org-mode-hook
                     term-mode-hook
                     eshell-mode-hook
-                    vterm-mode-hook))
+                    vterm-mode-hook
+                    jupyter-repl-mode-hook
+                    ))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
   #+end_src
