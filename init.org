@@ -630,29 +630,20 @@ Autocompletion
 
 #+begin_src emacs-lisp
 
-  (defun miika/company-complete-selection ()
-    "Insert the selected candidate or the first if none are selected.
-      From: https://www.reddit.com/r/emacs/comments/kmeuft/companymode_not_autocompleting_first_candidate/"
-    (interactive)
-    (if company-selection
-        (company-complete-selection)
-      (company-complete-number 1)))
-
   (use-package company
-    ;; :after (lsp-mode emacs-lisp-mode)
-    :hook (emacs-lisp-mode . company-mode)
-    ;; :init
-    ;; (add-hook 'emacs-lisp-mode-hook 'company-mode)
-    :bind
-    (:map company-active-map
-          ("<tab>" . miika/company-complete-selection))
-    :custom
-    (company-minimum-prefix-length 1)
-    (company-idle-delay 0.1))
+      ;; :after (lsp-mode emacs-lisp-mode)
+      :hook ((emacs-lisp-mode . company-mode)
+             (lsp-mode . company-mode))
+      :bind
+      (:map company-active-map
+            ("<tab>" . miika/company-complete-selection))
+      :custom
+      (company-minimum-prefix-length 1)
+      (company-idle-delay 0.1))
 
-  ;; Nicer UI
-  (use-package company-box
-    :hook (company-mode . company-box-mode))
+    ;; Nicer UI
+    (use-package company-box
+      :hook (company-mode . company-box-mode))
 
 
 #+end_src
