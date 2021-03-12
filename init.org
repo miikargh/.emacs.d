@@ -813,17 +813,22 @@ Remember to install =pyls= for lsp to work with python.
     (let ((python-shell-interpreter "ipython")
           (python-shell-interpreter-args "-i --simple-prompt --no-color-info"))
       (pop-to-buffer
-       (process-buffer (run-python nil nil t)))))
+        (process-buffer (run-python nil nil t)))))
 
 
-  (use-package python-mode
+  (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
+
+  (use-package python
     :hook (python-mode . lsp-deferred)
-    :custom
-    (python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
     :config
+    (message "Activating python jebajebs")
+    (setq python-indent-guess-indent-offset t)
+    (setq python-indent-guess-indent-offset-verbose nil)
+    (setq python-indent-offset 4)
     (miika/leader-keys
       :keymap 'python-mode-map
       "mw" '(conda-env-activate :which-key "Workon enviroment")
+      ;; "mw" '(pyvenv-workon :which-key "Workon enviroment")
       "ms" '(:ignore t :which-key "Shell")
       "mss" '(run-python :which-key "Python shell")
       "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
