@@ -401,29 +401,20 @@
   :defer t
   :config (global-flycheck-mode))
 
-(defun miika/company-complete-selection ()
-  "Insert the selected candidate or the first if none are selected.
-    From: https://www.reddit.com/r/emacs/comments/kmeuft/companymode_not_autocompleting_first_candidate/"
-  (interactive)
-  (if company-selection
-      (company-complete-selection)
-    (company-complete-number 1)))
-
 (use-package company
-  ;; :after (lsp-mode emacs-lisp-mode)
-  :hook (emacs-lisp-mode . company-mode)
-  ;; :init
-  ;; (add-hook 'emacs-lisp-mode-hook 'company-mode)
-  :bind
-  (:map company-active-map
-        ("<tab>" . miika/company-complete-selection))
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.1))
+    ;; :after (lsp-mode emacs-lisp-mode)
+    :hook ((emacs-lisp-mode . company-mode)
+           (lsp-mode . company-mode))
+    :bind
+    (:map company-active-map
+          ("<tab>" . miika/company-complete-selection))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.1))
 
-;; Nicer UI
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+  ;; Nicer UI
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 
 (use-package lsp-mode
   ;; Optional - enable lsp-mode automatically in scala files
@@ -448,6 +439,7 @@
   (setq lsp-log-io nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-completion-mode t)
   (miika/leader-keys
     :keymap lsp-mode-map
     "mfa" '(lsp-format-buffer :which-key "Format buffer")
@@ -489,7 +481,6 @@
 
 (use-package smartparens
   :after evil
-  ;; :hook (emacs-lisp-mode . smartparens-strict-mode)
   :config
   (smartparens-global-mode t)
   (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
@@ -543,17 +534,22 @@
   (let ((python-shell-interpreter "ipython")
         (python-shell-interpreter-args "-i --simple-prompt --no-color-info"))
     (pop-to-buffer
-     (process-buffer (run-python nil nil t)))))
+      (process-buffer (run-python nil nil t)))))
 
 
-(use-package python-mode
+(setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
+
+(use-package python
   :hook (python-mode . lsp-deferred)
-  :custom
-  (python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
   :config
+  (message "Activating python jebajebs")
+  (setq python-indent-guess-indent-offset t)
+  (setq python-indent-guess-indent-offset-verbose nil)
+  (setq python-indent-offset 4)
   (miika/leader-keys
     :keymap 'python-mode-map
     "mw" '(conda-env-activate :which-key "Workon enviroment")
+    ;; "mw" '(pyvenv-workon :which-key "Workon enviroment")
     "ms" '(:ignore t :which-key "Shell")
     "mss" '(run-python :which-key "Python shell")
     "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
@@ -562,6 +558,20 @@
     "ed" '(python-shell-send-defun :which-key "Send defun")
     "eb" '(python-shell-send-buffer :which-key "Send buffer")
     "ef" '(python-shell-send-file :which-key "Send file")))
+
+(defun miika/lsp-restart-if-on ()
+  "Restarts LSP if it is already on"
+  (if (bound-and-true-p lsp-mode)
+      (lsp-restart-workspace)))
+
+(defun miika/python-after-env-activate-setup ()
+  "Sets up python after evirnoment activation"
+  ;; (setq python-shell-interpreter (expand-file-name "bin/python" conda-env-current-name))
+  ;; (setq python-shell-interpreter (expand-file-name "bin/python" pyvenv-virtual-env))
+  ;; (setq lsp-pyls-plugins-jedi-use-pyenv-environment)
+  (miika/lsp-restart-if-on))
+
+
 
 (use-package conda
   :commands (conda-env-activate
@@ -576,7 +586,19 @@
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append)
   (conda-env-initialize-eshell)
-  :after eshell)
+  ;; Make sure lsp is started/restarted after conda env is initialized
+  (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
+  :after conda)
+
+(setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs"))
+
+;; (use-package pyvenv
+;;   ;; :diminish
+;;   :config
+;;   (setq pyvenv-mode-line-indicator
+;;         '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
+;;     (add-hook 'pyvenv-post-activate-hooks #'miika/python-after-env-activate-setup)
+;;   (pyvenv-mode +1))
 
 (defun miika/jupyter-run-repl (kernel-name &optional repl-name associate-buffer client-class display)
   "Same as jupyter-run-repl but non interactive call finds kernelspecs with display name instead of kernel name."
@@ -620,6 +642,12 @@
              jupyter-run-server-repl
              jupyter-run-repl
              jupyter-server-list-kernels))
+
+;; (use-package lsp-python-ms
+;;   :after lsp-mode
+;;   :config
+;;   (setq lsp-python-ms-auto-install-server t)
+;;   (setq lsp-python-ms-executable python-shell-interpreter))
 
 (use-package magit
   :commands magit-status
