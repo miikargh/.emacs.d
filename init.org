@@ -675,6 +675,7 @@ Autocompletion
     (setq lsp-log-io nil)
     (setq lsp-prefer-flymake nil)
     (setq lsp-headerline-breadcrumb-enable nil)
+    (setq lsp-completion-mode t)
     (miika/leader-keys
       :keymap lsp-mode-map
       "mfa" '(lsp-format-buffer :which-key "Format buffer")
