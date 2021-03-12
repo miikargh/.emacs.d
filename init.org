@@ -724,7 +724,6 @@ Autocompletion
 
   (use-package smartparens
     :after evil
-    ;; :hook (emacs-lisp-mode . smartparens-strict-mode)
     :config
     (smartparens-global-mode t)
     (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
