@@ -944,6 +944,18 @@ Remember to install =pyls= for lsp to work with python.
 
 #+end_src
 
+*** LSP
+
+#+begin_src emacs-lisp
+
+  ;; (use-package lsp-python-ms
+  ;;   :after lsp-mode
+  ;;   :config
+  ;;   (setq lsp-python-ms-auto-install-server t)
+  ;;   (setq lsp-python-ms-executable python-shell-interpreter))
+
+#+end_src
+
 * Git
 
 #+begin_src emacs-lisp
