@@ -22,6 +22,7 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#initialize-package-sources][Initialize package sources]]
   - [[#keep-packages-up-to-date][Keep packages up to date]]
 - [[#load-environment][Load environment]]
+  - [[#set-macos-gui-app-env][Set MacOS GUI app env]]
 - [[#keep-folders-clean][Keep Folders Clean]]
 - [[#ui-config][UI Config]]
   - [[#simplify-ui-and-add-line-numbers][Simplify UI and add line numbers]]
@@ -139,14 +140,46 @@ Here is a small function that will print out the time it takes for Emacs to star
 
 * Load environment
 
-I don't use Emacs from command line so it is necessary to load the environment like this. This is also slowing down the startup time of Emacs quite a bit. One fix would be to load the path once and save to a file like in doom emacs.
+I don't use Emacs from command line so it is necessary to load the environment like using the next snippet:
 
 #+begin_src emacs-lisp
 
-  (use-package exec-path-from-shell
-    :init (exec-path-from-shell-initialize))
+  ;; (use-package exec-path-from-shell
+  ;;   :init (exec-path-from-shell-initialize))
 
 #+end_src
+
+** Set MacOS GUI app env
+
+Alternatively, if you're running macOS, you can set up GUI app environment like the following:
+
+- Add environment variables to =/etc/launchd.conf=
+
+  #+begin_src shell
+
+  setenv PATH /usr/local/bin
+
+  #+end_src
+
+- This changes will take effect if you reboot your machine.
+- If you'd rather not do that you can run the following in your terminal:
+
+#+begin_src shell
+
+  egrep "^setenv\ " /etc/launchd.conf | xargs -t -L 1 launchctl
+
+#+end_src
+
+- Then restart Dock and Spotlight
+
+  #+begin_src shell
+
+  killall Dock
+  killall Spotlight
+
+  #+end_src
+
+  That should do it.
 
 * Keep Folders Clean
 
