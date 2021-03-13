@@ -688,7 +688,6 @@ Autocompletion
     (use-package company-box
       :hook (company-mode . company-box-mode))
 
-
 #+end_src
 
 ** LSP
@@ -757,7 +756,6 @@ Autocompletion
       :hook
       (lsp-mode . dap-mode)
       (lsp-mode . dap-ui-mode))
-
 
 #+end_src
 
