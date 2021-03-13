@@ -665,10 +665,18 @@ Autocompletion
 
 #+begin_src emacs-lisp
 
+  (defun miika/company-complete-selection ()
+    "Insert the selected candidate or the first if none are selected.
+      From: https://www.reddit.com/r/emacs/comments/kmeuft/companymode_not_autocompleting_first_candidate/"
+    (interactive)
+    (if company-selection
+        (company-complete-selection)
+      (company-complete-number 1)))
+
   (use-package company
       ;; :after (lsp-mode emacs-lisp-mode)
       :hook ((emacs-lisp-mode . company-mode)
-             (lsp-mode . company-mode))
+            (lsp-mode . company-mode))
       :bind
       (:map company-active-map
             ("<tab>" . miika/company-complete-selection))
@@ -856,10 +864,10 @@ Remember to install =pyls= for lsp to work with python.
   (use-package python
     :hook (python-mode . lsp-deferred)
     :config
-    (message "Activating python jebajebs")
     (setq python-indent-guess-indent-offset t)
     (setq python-indent-guess-indent-offset-verbose nil)
     (setq python-indent-offset 4)
+    (setq lsp-completion-mode t)
     (miika/leader-keys
       :keymap 'python-mode-map
       "mw" '(conda-env-activate :which-key "Workon enviroment")
