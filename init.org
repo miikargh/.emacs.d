@@ -26,6 +26,7 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#keep-folders-clean][Keep Folders Clean]]
 - [[#ui-config][UI Config]]
   - [[#simplify-ui-and-add-line-numbers][Simplify UI and add line numbers]]
+  - [[#show-time-on-modeline][Show time on modeline]]
   - [[#font-setup][Font setup]]
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
@@ -57,6 +58,7 @@ Much of this configuration is copied and some times modified from davivil's exce
     - [[#virtualenv][Virtualenv]]
     - [[#jupyter][Jupyter]]
     - [[#lsp][LSP]]
+  - [[#cc][C/C++]]
 - [[#git][Git]]
 - [[#terminals-and-shells][Terminals and shells]]
   - [[#eshell][Eshell]]
@@ -231,6 +233,14 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
   #+end_src
+
+** Show time on modeline
+
+#+begin_src emacs-lisp
+
+  (display-time-mode 1)
+
+#+end_src
 
 ** Font setup
 
@@ -632,8 +642,7 @@ Setup projectile for powerful project management.
     ;; ("SPC p" . projectile-command-map)
     :init
     ;; NOTE: Set this to the folder where you keep your Git repos!
-    (when (file-directory-p "~/dev")
-      (setq projectile-project-search-path '("~/dev")))
+    (setq projectile-project-search-path '("~/dev" "/mnt/c/gamedev/"))
     (setq projectile-switch-project-action #'projectile-dired)
     :config
     (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
@@ -997,6 +1006,18 @@ Remember to install =pyls= for lsp to work with python.
 
 #+end_src
 
+** C/C++
+#+begin_src emacs-lisp
+
+  (use-package cc-mode
+    :config
+    (add-hook 'c-mode-hook 'lsp)
+    (add-hook 'c++-mode-hook 'lsp)
+    (with-eval-after-load 'lsp-mode
+      (require 'dap-cpptools)))
+
+#+end_src
+
 * Git
 
 #+begin_src emacs-lisp
@@ -1140,6 +1161,9 @@ TODO: Better documentation of the huge code block below.
     (message "`multi-vterm' dedicated window has exist."))
 
 #+end_src
+
+#+RESULTS:
+: miika/multi-vterm-dedicated-open
 
 * Hydra
 

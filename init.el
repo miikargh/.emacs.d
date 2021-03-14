@@ -80,6 +80,8 @@
                 ))
 (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+(display-time-mode 1)
+
 (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'light)
 
 (use-package doom-themes
@@ -386,8 +388,7 @@
   ;; ("SPC p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/dev")
-    (setq projectile-project-search-path '("~/dev")))
+  (setq projectile-project-search-path '("~/dev" "/mnt/c/gamedev/"))
   (setq projectile-switch-project-action #'projectile-dired)
   :config
   (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
@@ -656,6 +657,13 @@
 ;;   :config
 ;;   (setq lsp-python-ms-auto-install-server t)
 ;;   (setq lsp-python-ms-executable python-shell-interpreter))
+
+(use-package cc-mode
+  :config
+  (add-hook 'c-mode-hook 'lsp)
+  (add-hook 'c++-mode-hook 'lsp)
+  (with-eval-after-load 'lsp-mode
+    (require 'dap-cpptools)))
 
 (use-package magit
   :commands magit-status
