@@ -388,7 +388,7 @@
   ;; ("SPC p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (setq projectile-project-search-path '("~/dev" "/mnt/c/gamedev/"))
+  (setq projectile-project-search-path '("~/dev" "/mnt/c/gamedev/unreal_projects"))
   (setq projectile-switch-project-action #'projectile-dired)
   :config
   (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
@@ -658,12 +658,22 @@
 ;;   (setq lsp-python-ms-auto-install-server t)
 ;;   (setq lsp-python-ms-executable python-shell-interpreter))
 
+(setq-default c-basic-offset 4)
+
+(use-package clang-format
+  :commands (clang-format-buffer clang-format-region))
+
 (use-package cc-mode
   :config
   (add-hook 'c-mode-hook 'lsp)
   (add-hook 'c++-mode-hook 'lsp)
   (with-eval-after-load 'lsp-mode
-    (require 'dap-cpptools)))
+    (require 'dap-cpptools))
+  (miika/leader-keys
+    :keymaps '(c++-mode-map c-mode-map)
+    "mc" '(compile :which-key "Compile file")
+    "mfa" '(clang-format-buffer :which-key "Format buffer")
+    "mfr" '(clang-format-region :which-key "Format region")))
 
 (use-package magit
   :commands magit-status
