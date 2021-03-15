@@ -675,6 +675,14 @@
     "mfa" '(clang-format-buffer :which-key "Format buffer")
     "mfr" '(clang-format-region :which-key "Format region")))
 
+(use-package csharp-mode
+  :mode "\\.cs\\'"
+  :config
+  (add-hook 'csharp-mode-hook 'lsp-deferred)
+  (electric-pair-mode 1)
+  (electric-pair-local-mode 2)
+  (smartparens-global-mode nil))
+
 (use-package magit
   :commands magit-status
   :config
