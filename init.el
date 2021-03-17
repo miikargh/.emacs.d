@@ -121,19 +121,6 @@
   (setq nyan-animate-nyancat t
         nyan-wavy-trail t))
 
-(defmacro with-system (type &rest body)
-  "Evaluate BODY if `system-type' equals TYPE."
-  (declare (indent defun))
-  `(when (eq system-type ',type)
-     ,@body))
-
-(with-system darwin ;; Darqwin == MacOS
-  (message "MacOS detected")
-  (setq mac-option-key-is-meta nil
-        mac-command-key-is-meta t
-        mac-command-modifier 'meta
-        mac-option-modifier 'none))
-
 ;; Make ESC quit prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -141,7 +128,7 @@
   (defun miika/open-user-init-file ()
     "Edit emacs config, in another window."
     (interactive)
-    (find-file (expand-file-name "~/.emacs.d/init.org")))
+    (find-file miika/init-file-path))
 
 
   ;; todo highlighting
@@ -153,6 +140,31 @@
 
 (use-package command-log-mode
   :commands command-log-mode)
+
+(defmacro with-system (type &rest body)
+  "Evaluate BODY if `system-type' equals TYPE."
+  (declare (indent defun))
+  `(when (eq system-type ',type)
+     ,@body))
+
+(defmacro with-system-not (type &rest body)
+  "Evaluate BODY if `system-type' does not equal TYPE."
+  (declare (indent defun))
+  `(when (not (eq system-type ',type))
+     ,@body))
+
+(with-system darwin ;; Darqwin == MacOS
+  (message "MacOS detected")
+  (setq mac-option-key-is-meta nil
+        mac-command-key-is-meta t
+        mac-command-modifier 'meta
+        mac-option-modifier 'none))
+
+(if (eq system-type 'windows-nt)
+  (progn
+    (message "Windows detected")
+    (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
+  (setq miika/init-file-path (expand-file-path "~/.emacs.d/init.org")))
 
 (use-package ivy
   :diminish
@@ -728,18 +740,19 @@
         (vterm-send-string (concat (s-join " " args) "\n")))
         (switch-to-buffer buf)))
 
-(use-package multi-vterm)
-
-(use-package vterm
-  :after (multi-vterm)
-  :commands (vterm vterm-other-window vterm-mode)
-  :config
-  (with-eval-after-load 'em-term
-    (defun eshell-exec-visual (&rest args)
-      (apply #'eshell-exec-in-vterm args)))
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-  (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-  (setq vterm-max-scrollback 10000))
+;; vterm doesn't work on windows sadly
+(with-system-not 'windows-nt
+  (use-package multi-vterm)
+  (use-package vterm
+    :after (multi-vterm)
+    :commands (vterm vterm-other-window vterm-mode)
+    :config
+    (with-eval-after-load 'em-term
+      (defun eshell-exec-visual (&rest args)
+        (apply #'eshell-exec-in-vterm args)))
+    (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+    (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+    (setq vterm-max-scrollback 10000)))
 
 (defun miika/switch-to-vterm-buffer ()
   "Switch to a vterm buffer, or create one."
@@ -897,7 +910,7 @@ If there is no such buffer, start a new `vterm' with NAME."
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun miika/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                      (expand-file-name "~/.emacs.d/init.org"))
+                      miika/init-file-path)
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))

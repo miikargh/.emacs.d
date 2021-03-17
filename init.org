@@ -31,9 +31,9 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
 - [[#basic-config][Basic config]]
-  - [[#os-specific-config][OS specific config]]
-    - [[#mac][Mac]]
-  - [[#misc][Misc.]]
+- [[#os-specific-config][OS specific config]]
+  - [[#mac][Mac]]
+  - [[#windows][Windows]]
 - [[#ivy-and-counsel][Ivy and counsel]]
 - [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
@@ -299,7 +299,33 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 #+end_src
 
 * Basic config
-** OS specific config
+Random stuff I can't seem to place anywhere else.
+
+#+begin_src emacs-lisp
+
+    ;; Make ESC quit prompts
+    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+
+    (defun miika/open-user-init-file ()
+      "Edit emacs config, in another window."
+      (interactive)
+      (find-file miika/init-file-path))
+
+
+    ;; todo highlighting
+    (use-package hl-todo
+    :config (hl-todo-mode))
+
+
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+  (use-package command-log-mode
+    :commands command-log-mode)
+
+#+end_src
+
+* OS specific config
 
 I use Emacs on both MacOS and Linux so here are is a macro copied from [[https://stackoverflow.com/a/26137517][stackoverflow]] to easily do stuff based on your current OS:
 
@@ -309,6 +335,12 @@ I use Emacs on both MacOS and Linux so here are is a macro copied from [[https:/
     "Evaluate BODY if `system-type' equals TYPE."
     (declare (indent defun))
     `(when (eq system-type ',type)
+       ,@body))
+
+  (defmacro with-system-not (type &rest body)
+    "Evaluate BODY if `system-type' does not equal TYPE."
+    (declare (indent defun))
+    `(when (not (eq system-type ',type))
        ,@body))
 
 #+end_src
@@ -328,33 +360,22 @@ Stuff that makes Emacs on MacOS usable.
 
 #+end_src
 
-** Misc.
+*** Windows
 
-Random stuff I can't seem to place anywhere else.
+Yeah, I know.
 
 #+begin_src emacs-lisp
 
-    ;; Make ESC quit prompts
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-
-    (defun miika/open-user-init-file ()
-      "Edit emacs config, in another window."
-      (interactive)
-      (find-file (expand-file-name "~/.emacs.d/init.org")))
-
-
-    ;; todo highlighting
-    (use-package hl-todo
-    :config (hl-todo-mode))
-
-
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-  (use-package command-log-mode
-    :commands command-log-mode)
+  (if (eq system-type 'windows-nt)
+    (progn
+      (message "Windows detected")
+      (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
+    (setq miika/init-file-path (expand-file-path "~/.emacs.d/init.org")))
 
 #+end_src
+
+#+RESULTS:
+: c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org
 
 * Ivy and counsel
 
@@ -1116,18 +1137,19 @@ TODO: Better documentation of the huge code block below.
           (vterm-send-string (concat (s-join " " args) "\n")))
           (switch-to-buffer buf)))
 
-  (use-package multi-vterm)
-
-  (use-package vterm
-    :after (multi-vterm)
-    :commands (vterm vterm-other-window vterm-mode)
-    :config
-    (with-eval-after-load 'em-term
-      (defun eshell-exec-visual (&rest args)
-        (apply #'eshell-exec-in-vterm args)))
-    (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-    (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-    (setq vterm-max-scrollback 10000))
+  ;; vterm doesn't work on windows sadly
+  (with-system-not 'windows-nt
+    (use-package multi-vterm)
+    (use-package vterm
+      :after (multi-vterm)
+      :commands (vterm vterm-other-window vterm-mode)
+      :config
+      (with-eval-after-load 'em-term
+        (defun eshell-exec-visual (&rest args)
+          (apply #'eshell-exec-in-vterm args)))
+      (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+      (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+      (setq vterm-max-scrollback 10000)))
 
   (defun miika/switch-to-vterm-buffer ()
     "Switch to a vterm buffer, or create one."
@@ -1188,9 +1210,6 @@ TODO: Better documentation of the huge code block below.
     (message "`multi-vterm' dedicated window has exist."))
 
 #+end_src
-
-#+RESULTS:
-: miika/multi-vterm-dedicated-open
 
 * Hydra
 
@@ -1350,7 +1369,7 @@ This snippet adds a hook to =org-mode= buffers so that =miika/org-babel-tangle-c
   ;; Automatically tangle our Emacs.org config file when we save it
   (defun miika/org-babel-tangle-config ()
     (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/.emacs.d/init.org"))
+                        miika/init-file-path)
       ;; Dynamic scoping to the rescue
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
