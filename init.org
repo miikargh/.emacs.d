@@ -674,7 +674,7 @@ Setup projectile for powerful project management.
     ;; ("SPC p" . projectile-command-map)
     :init
     ;; NOTE: Set this to the folder where you keep your Git repos!
-    (setq projectile-project-search-path '("~/dev" "/mnt/c/gamedev/unreal_projects"))
+    (setq projectile-project-search-path '("~/dev" "~/gamedev"))
     (setq projectile-switch-project-action #'projectile-dired)
     :config
     (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
