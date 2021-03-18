@@ -245,9 +245,18 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 
 ** Font setup
 
+- On mac run
+
+  #+begin_src shell
+
+    brew tap homebrew/cask-fonts
+    brew install font-monoid
+
+  #+end_src
+
   #+begin_src emacs-lisp
 
-    (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'light)
+    (set-face-attribute 'default nil :font "Monoid" :height 130 :weight 'light)
 
   #+end_src
 
