@@ -80,13 +80,11 @@
                 ))
 (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-<<<<<<< HEAD
 (display-time-mode 1)
 
-(set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'light)
-=======
-(set-face-attribute 'default nil :font "Monoid" :height 130 :weight 'light)
->>>>>>> Added latest changes
+(if (eq system-type 'gnu/linux)
+    (set-face-attribute 'default nil :font "Monoid NF" :height 130 :weight 'light)
+  (set-face-attribute 'default nil :font "Monoid" :height 130 :weight 'light))
 
 (use-package doom-themes
   :config
@@ -168,7 +166,7 @@
   (progn
     (message "Windows detected")
     (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
-  (setq miika/init-file-path (expand-file-path "~/.emacs.d/init.org")))
+  (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
 
 (use-package ivy
   :diminish
