@@ -80,16 +80,20 @@
                 ))
 (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+<<<<<<< HEAD
 (display-time-mode 1)
 
 (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'light)
+=======
+(set-face-attribute 'default nil :font "Monoid" :height 130 :weight 'light)
+>>>>>>> Added latest changes
 
 (use-package doom-themes
   :config
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-dracula t)
+  (load-theme 'doom-horizon t)
 
   ;; Enable flashing mode-line on errors
   ;; (doom-themes-visual-bell-config)
@@ -514,6 +518,11 @@
 
 (use-package rainbow-delimiters)
 
+(use-package hl-todo
+  :ensure t
+  :config
+  (setq global-hl-todo-mode t))
+
 (miika/leader-keys
   :keymaps 'emacs-lisp-mode-map
   :states '(normal visual)
@@ -900,7 +909,8 @@ If there is no such buffer, start a new `vterm' with NAME."
   (require 'org-tempo)
 
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
 
 (setq org-cycle-emulate-tab nil)
 
