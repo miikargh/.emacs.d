@@ -41,8 +41,8 @@
   (auto-package-update-maybe))
   ;; (auto-package-update-at-time "09:00"))
 
-;; (use-package exec-path-from-shell
-;;   :init (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :init (exec-path-from-shell-initialize))
 
 ;; NOTE: If you want to move everything out of the ~/.emacs.d folder
 ;; reliably, set `user-emacs-directory` before loading no-littering!
@@ -404,7 +404,7 @@
   ;; ("SPC p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (setq projectile-project-search-path '("~/dev" "/mnt/c/gamedev/unreal_projects"))
+  (setq projectile-project-search-path '("~/dev" "~/gamedev"))
   (setq projectile-switch-project-action #'projectile-dired)
   :config
   (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
@@ -479,7 +479,11 @@
   (setq lsp-ui-doc-position 'at-point
         lsp-ui-doc-delay 0.0
         lsp-ui-doc-show-with-cursor nil
-        lsp-ui-sideline-show-diagnostics t))
+        lsp-ui-sideline-show-diagnostics t
+        lsp-ui-sideline-ignore-duplicate t
+        lsp-ui-sideline-show-code-actions nil
+        lsp-ui-doc-show-with-mouse nil
+        lsp-lens-mode nil))
 
 
 (defun miika/toggle-lsp-ui-doc ()
@@ -699,10 +703,27 @@
 (use-package csharp-mode
   :mode "\\.cs\\'"
   :config
-  (add-hook 'csharp-mode-hook 'lsp-deferred)
-  (electric-pair-mode 1)
-  (electric-pair-local-mode 2)
-  (smartparens-global-mode nil))
+  (add-hook 'csharp-mode-hook 'lsp-deferred))
+
+;; https://github.com/godotengine/emacs-gdscript-mode#known-issues
+(defun lsp--gdscript-ignore-errors (original-function &rest args)
+  "Ignore the error message resulting from Godot not replying to the `JSONRPC' request."
+  (if (string-equal major-mode "gdscript-mode")
+      (let ((json-data (nth 0 args)))
+        (if (and (string= (gethash "jsonrpc" json-data "") "2.0")
+                 (not (gethash "id" json-data nil))
+                 (not (gethash "method" json-data nil)))
+            nil ; (message "Method not found")
+          (apply original-function args)))
+    (apply original-function args)))
+;; Runs the function `lsp--gdscript-ignore-errors` around `lsp--get-message-type` to suppress unknown notification errors.
+
+(use-package gdscript-mode
+  :mode "\\.gd\\'"
+  :config
+  (add-hook 'gdscript-mode-hook 'lsp-deferred)
+  (advice-add #'lsp--get-message-type :around #'lsp--gdscript-ignore-errors)
+  (setq gdscript-godot-executable (expand-file-name "~/bin/godot")))
 
 (use-package magit
   :commands magit-status
