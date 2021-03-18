@@ -444,7 +444,7 @@
   :commands (lsp lsp-deferred)
   :hook
   (scala-mode . lsp)
-  (lsp-mode . lsp-lens-mode)
+  ;; (lsp-mode . lsp-lens-mode)
   :init
   (setq lsp-enable-file-watchers nil
         lsp-enable-folding nil
@@ -480,8 +480,7 @@
         lsp-ui-sideline-show-diagnostics t
         lsp-ui-sideline-ignore-duplicate t
         lsp-ui-sideline-show-code-actions nil
-        lsp-ui-doc-show-with-mouse nil
-        lsp-lens-mode nil))
+        lsp-ui-doc-show-with-mouse nil))
 
 
 (defun miika/toggle-lsp-ui-doc ()
