@@ -816,6 +816,17 @@ Autocompletion
 
 #+end_src
 
+** Highlight TODO's
+
+#+begin_src emacs-lisp
+
+  (use-package hl-todo
+    :ensure t
+    :config
+    (setq global-hl-todo-mode t))
+
+#+end_src
+
 * Programming languages
 
 This section of the config contains configuration for specific programming languages.
