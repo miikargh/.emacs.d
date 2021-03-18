@@ -61,6 +61,7 @@ Much of this configuration is copied and some times modified from davivil's exce
     - [[#lsp][LSP]]
   - [[#cc][C/C++]]
   - [[#c][C#]]
+  - [[#gdscript][GDScript]]
 - [[#git][Git]]
 - [[#terminals-and-shells][Terminals and shells]]
   - [[#eshell][Eshell]]
