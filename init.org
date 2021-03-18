@@ -1339,7 +1339,8 @@ TODO: Better documentation of the huge code block below.
       (require 'org-tempo)
 
       (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
+      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+      (add-to-list 'org-structure-template-alist '("js" . "src javascript")))
 
   #+end_src
 
