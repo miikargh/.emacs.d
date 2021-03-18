@@ -50,6 +50,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#lsp][LSP]]
   - [[#smartparens][Smartparens]]
   - [[#rainbow-delimiters][Rainbow delimiters]]
+  - [[#highlight-todos][Highlight TODO's]]
 - [[#programming-languages][Programming languages]]
   - [[#elisp][Elisp]]
   - [[#scala][Scala]]
