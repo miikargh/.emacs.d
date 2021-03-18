@@ -1074,17 +1074,42 @@ Remember to install =pyls= for lsp to work with python.
 
 ** C#
 
-Unity <3
+Unity tip: Sometimes the omnisharp server doesn't work. Try rebuilding the project and regenerating project files.
 
 #+begin_src emacs-lisp
 
   (use-package csharp-mode
     :mode "\\.cs\\'"
     :config
-    (add-hook 'csharp-mode-hook 'lsp-deferred)
-    (electric-pair-mode 1)
-    (electric-pair-local-mode 2)
-    (smartparens-global-mode nil))
+    (add-hook 'csharp-mode-hook 'lsp-deferred))
+
+#+end_src
+
+** GDScript
+
+Develop games with Godot!
+
+#+begin_src emacs-lisp
+
+  ;; https://github.com/godotengine/emacs-gdscript-mode#known-issues
+  (defun lsp--gdscript-ignore-errors (original-function &rest args)
+    "Ignore the error message resulting from Godot not replying to the `JSONRPC' request."
+    (if (string-equal major-mode "gdscript-mode")
+        (let ((json-data (nth 0 args)))
+          (if (and (string= (gethash "jsonrpc" json-data "") "2.0")
+                   (not (gethash "id" json-data nil))
+                   (not (gethash "method" json-data nil)))
+              nil ; (message "Method not found")
+            (apply original-function args)))
+      (apply original-function args)))
+  ;; Runs the function `lsp--gdscript-ignore-errors` around `lsp--get-message-type` to suppress unknown notification errors.
+
+  (use-package gdscript-mode
+    :mode "\\.gd\\'"
+    :config
+    (add-hook 'gdscript-mode-hook 'lsp-deferred)
+    (advice-add #'lsp--get-message-type :around #'lsp--gdscript-ignore-errors)
+    (setq gdscript-godot-executable (expand-file-name "~/bin/godot")))
 
 #+end_src
 
