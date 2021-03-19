@@ -83,7 +83,7 @@
 (display-time-mode 1)
 
 (if (eq system-type 'gnu/linux)
-    (set-face-attribute 'default nil :font "Monoid NF" :height 130 :weight 'light)
+    (set-face-attribute 'default nil :font "Monoid NF" :height 120 :weight 'light)
   (set-face-attribute 'default nil :font "Monoid" :height 130 :weight 'light))
 
 (use-package doom-themes
