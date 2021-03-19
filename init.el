@@ -74,12 +74,14 @@
         mac-command-modifier 'meta
         mac-option-modifier 'none
         miika/default-font "Monoid"
-        miika/org-font "Monoid"))
+        miika/org-font "Monoid"
+        miika/default-font-height 120))
 
 (with-system gnu/linux
   (message "Linux detected")
   (setq miika/default-font "Monoid NF"
-        miika/org-font "Monoid NF"))
+        miika/org-font "Monoid NF"
+        miika/default-font-height 130))
 
 (if (eq system-type 'windows-nt)
   (progn
@@ -134,9 +136,7 @@
 
 (display-time-mode 1)
 
-(if (eq system-type 'gnu/linux)
-    (set-face-attribute 'default nil :font "Monoid NF" :height 120 :weight 'light)
-  (set-face-attribute 'default nil :font "Monoid" :height 130 :weight 'light))
+(set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight 'light)
 
 (use-package doom-themes
   :config
