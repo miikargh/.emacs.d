@@ -44,6 +44,8 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#tab-width][Tab width]]
   - [[#use-spaces-instead-of-tabs][Use spaces instead of tabs]]
 - [[#project-management][Project management]]
+  - [[#projectile][Projectile]]
+  - [[#treemacs][Treemacs]]
 - [[#ide][IDE]]
   - [[#flycheck][Flycheck]]
   - [[#company][Company]]
@@ -602,10 +604,12 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       "bk" '(kill-current-buffer :which-key "Kill current buffer")
       "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
-      ;; Text and themes
+      ;; Toggle
       "t" '(:ignore t :which-key "Toggle")
       "tt" '(counsel-load-theme :which-key "Load theme")
       "ts" '(hydra-text-scale/body :which-key "Scale text")
+      "te" '(treemacs :which-key "Toggle treemacs")
+
 
       ;; Window management
       "w" '(:keymap evil-window-map :package evil)
@@ -664,6 +668,8 @@ Set global tab width to 2 spaces. Change it by language basis if other lengths d
 
 * Project management
 
+** Projectile
+
 Setup projectile for powerful project management.
 
 #+begin_src emacs-lisp
@@ -685,6 +691,15 @@ Setup projectile for powerful project management.
 
   (use-package counsel-projectile
     :config (counsel-projectile-mode))
+
+#+end_src
+
+** Treemacs
+
+#+begin_src emacs-lisp
+
+  (use-package treemacs
+    :commands treemacs)
 
 #+end_src
 

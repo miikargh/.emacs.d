@@ -348,10 +348,12 @@
     "bk" '(kill-current-buffer :which-key "Kill current buffer")
     "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
-    ;; Text and themes
+    ;; Toggle
     "t" '(:ignore t :which-key "Toggle")
     "tt" '(counsel-load-theme :which-key "Load theme")
     "ts" '(hydra-text-scale/body :which-key "Scale text")
+    "te" '(treemacs :which-key "Toggle treemacs")
+
 
     ;; Window management
     "w" '(:keymap evil-window-map :package evil)
@@ -411,6 +413,9 @@
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
+
+(use-package treemacs
+  :commands treemacs)
 
 (use-package flycheck
   :defer t
