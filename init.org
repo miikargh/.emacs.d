@@ -24,16 +24,17 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#load-environment][Load environment]]
   - [[#set-macos-gui-app-env][Set MacOS GUI app env]]
 - [[#keep-folders-clean][Keep Folders Clean]]
+- [[#os-specific-config][OS specific config]]
+  - [[#mac][Mac]]
+  - [[#linux][Linux]]
+  - [[#windows][Windows]]
+- [[#basic-config][Basic config]]
 - [[#ui-config][UI Config]]
   - [[#simplify-ui-and-add-line-numbers][Simplify UI and add line numbers]]
   - [[#show-time-on-modeline][Show time on modeline]]
   - [[#font-setup][Font setup]]
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
-- [[#basic-config][Basic config]]
-- [[#os-specific-config][OS specific config]]
-  - [[#mac][Mac]]
-  - [[#windows][Windows]]
 - [[#ivy-and-counsel][Ivy and counsel]]
 - [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
@@ -71,9 +72,9 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#vterm][Vterm]]
 - [[#hydra][Hydra]]
 - [[#org-mode][Org mode]]
-  - [[#org-fonts][Org fonts]]
   - [[#org][Org]]
   - [[#keybindings][Keybindings]]
+  - [[#org-fonts][Org fonts]]
   - [[#org-babel][Org babel]]
   - [[#structure-templates][Structure templates]]
   - [[#make-tab-cycle-anywhere][Make TAB cycle anywhere]]
@@ -208,6 +209,97 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 
 #+end_src
 
+* OS specific config
+
+I use Emacs on both MacOS and Linux so here are is a macro copied from [[https://stackoverflow.com/a/26137517][stackoverflow]] to easily do stuff based on your current OS:
+
+#+begin_src emacs-lisp
+
+  (defmacro with-system (type &rest body)
+    "Evaluate BODY if `system-type' equals TYPE."
+    (declare (indent defun))
+    `(when (eq system-type ',type)
+       ,@body))
+
+  (defmacro with-system-not (type &rest body)
+    "Evaluate BODY if `system-type' does not equal TYPE."
+    (declare (indent defun))
+    `(when (not (eq system-type ',type))
+       ,@body))
+
+#+end_src
+
+*** Mac
+
+Stuff that makes Emacs on MacOS usable.
+
+#+begin_src emacs-lisp
+
+  (with-system darwin ;; Darqwin == MacOS
+    (message "MacOS detected")
+    (setq mac-option-key-is-meta nil
+          mac-command-key-is-meta t
+          mac-command-modifier 'meta
+          mac-option-modifier 'none
+          miika/default-font "Monoid"
+          miika/org-font "Monoid"))
+
+#+end_src
+
+*** Linux
+
+#+begin_src emacs-lisp
+
+  (with-system gnu/linux
+    (message "Linux detected")
+    (setq miika/default-font "Monoid NF"
+          miika/org-font "Monoid NF"))
+
+#+end_src
+
+*** Windows
+
+Yeah, I know.
+
+#+begin_src emacs-lisp
+
+  (if (eq system-type 'windows-nt)
+    (progn
+      (message "Windows detected")
+      (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
+    (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
+
+#+end_src
+
+#+RESULTS:
+: c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org
+* Basic config
+Random stuff I can't seem to place anywhere else.
+
+#+begin_src emacs-lisp
+
+    ;; Make ESC quit prompts
+    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+
+    (defun miika/open-user-init-file ()
+      "Edit emacs config, in another window."
+      (interactive)
+      (find-file miika/init-file-path))
+
+
+    ;; todo highlighting
+    (use-package hl-todo
+    :config (hl-todo-mode))
+
+
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+  (use-package command-log-mode
+    :commands command-log-mode)
+
+#+end_src
+
 * UI Config
 ** Simplify UI and add line numbers
 
@@ -311,85 +403,6 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
     (setq nyan-animate-nyancat t
           nyan-wavy-trail t))
 #+end_src
-
-* Basic config
-Random stuff I can't seem to place anywhere else.
-
-#+begin_src emacs-lisp
-
-    ;; Make ESC quit prompts
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-
-    (defun miika/open-user-init-file ()
-      "Edit emacs config, in another window."
-      (interactive)
-      (find-file miika/init-file-path))
-
-
-    ;; todo highlighting
-    (use-package hl-todo
-    :config (hl-todo-mode))
-
-
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-  (use-package command-log-mode
-    :commands command-log-mode)
-
-#+end_src
-
-* OS specific config
-
-I use Emacs on both MacOS and Linux so here are is a macro copied from [[https://stackoverflow.com/a/26137517][stackoverflow]] to easily do stuff based on your current OS:
-
-#+begin_src emacs-lisp
-
-  (defmacro with-system (type &rest body)
-    "Evaluate BODY if `system-type' equals TYPE."
-    (declare (indent defun))
-    `(when (eq system-type ',type)
-       ,@body))
-
-  (defmacro with-system-not (type &rest body)
-    "Evaluate BODY if `system-type' does not equal TYPE."
-    (declare (indent defun))
-    `(when (not (eq system-type ',type))
-       ,@body))
-
-#+end_src
-
-*** Mac
-
-Stuff that makes Emacs on MacOS usable.
-
-#+begin_src emacs-lisp
-
-  (with-system darwin ;; Darqwin == MacOS
-    (message "MacOS detected")
-    (setq mac-option-key-is-meta nil
-          mac-command-key-is-meta t
-          mac-command-modifier 'meta
-          mac-option-modifier 'none))
-
-#+end_src
-
-*** Windows
-
-Yeah, I know.
-
-#+begin_src emacs-lisp
-
-  (if (eq system-type 'windows-nt)
-    (progn
-      (message "Windows detected")
-      (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
-    (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
-
-#+end_src
-
-#+RESULTS:
-: c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org
 
 * Ivy and counsel
 
@@ -1300,39 +1313,6 @@ TODO: Better documentation of the huge code block below.
 
 * Org mode
 
-** Org fonts
-
-#+begin_src emacs-lisp
-
-  ;; Org-mode
-  (defun miika/org-font-setup ()
-    ;; Replace list hyphen with dot
-    (font-lock-add-keywords 'org-mode
-                            '(("^ *\\([-]\\) "
-                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
-    ;; Set faces for heading levels
-    (dolist (face '((org-level-1 . 1.2)
-                    (org-level-2 . 1.1)
-                    (org-level-3 . 1.05)
-                    (org-level-4 . 1.0)
-                    (org-level-5 . 1.1)
-                    (org-level-6 . 1.1)
-                    (org-level-7 . 1.1)
-                    (org-level-8 . 1.1)))
-      (set-face-attribute (car face) nil :font "Iosevka" :weight 'regular :height (cdr face)))
-
-    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
-
-#+end_src
-
 ** Org
 
 #+begin_src emacs-lisp
@@ -1383,6 +1363,39 @@ TODO: Better documentation of the huge code block below.
     "ed" '(org-babel-execute-src-block :which-key "Execute code block")
     "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
     "me" '(org-edit-special :which-key "Edit Special"))
+
+#+end_src
+
+** Org fonts
+
+#+begin_src emacs-lisp
+
+  ;; Org-mode
+  (defun miika/org-font-setup ()
+    ;; Replace list hyphen with dot
+    (font-lock-add-keywords 'org-mode
+                            '(("^ *\\([-]\\) "
+                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+    ;; Set faces for heading levels
+    (dolist (face '((org-level-1 . 1.2)
+                    (org-level-2 . 1.1)
+                    (org-level-3 . 1.05)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.1)))
+      (set-face-attribute (car face) nil :font miika/org-font :weight 'regular :height (cdr face)))
+
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 #+end_src
 

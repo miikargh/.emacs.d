@@ -55,6 +55,58 @@
 (setq auto-save-file-name-transforms
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
+(defmacro with-system (type &rest body)
+  "Evaluate BODY if `system-type' equals TYPE."
+  (declare (indent defun))
+  `(when (eq system-type ',type)
+     ,@body))
+
+(defmacro with-system-not (type &rest body)
+  "Evaluate BODY if `system-type' does not equal TYPE."
+  (declare (indent defun))
+  `(when (not (eq system-type ',type))
+     ,@body))
+
+(with-system darwin ;; Darqwin == MacOS
+  (message "MacOS detected")
+  (setq mac-option-key-is-meta nil
+        mac-command-key-is-meta t
+        mac-command-modifier 'meta
+        mac-option-modifier 'none
+        miika/default-font "Monoid"
+        miika/org-font "Monoid"))
+
+(with-system gnu/linux
+  (message "Linux detected")
+  (setq miika/default-font "Monoid NF"
+        miika/org-font "Monoid NF"))
+
+(if (eq system-type 'windows-nt)
+  (progn
+    (message "Windows detected")
+    (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
+  (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
+
+;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+
+  (defun miika/open-user-init-file ()
+    "Edit emacs config, in another window."
+    (interactive)
+    (find-file miika/init-file-path))
+
+
+  ;; todo highlighting
+  (use-package hl-todo
+  :config (hl-todo-mode))
+
+
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(use-package command-log-mode
+  :commands command-log-mode)
+
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -122,51 +174,6 @@
   :config
   (setq nyan-animate-nyancat t
         nyan-wavy-trail t))
-
-;; Make ESC quit prompts
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-
-  (defun miika/open-user-init-file ()
-    "Edit emacs config, in another window."
-    (interactive)
-    (find-file miika/init-file-path))
-
-
-  ;; todo highlighting
-  (use-package hl-todo
-  :config (hl-todo-mode))
-
-
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-(use-package command-log-mode
-  :commands command-log-mode)
-
-(defmacro with-system (type &rest body)
-  "Evaluate BODY if `system-type' equals TYPE."
-  (declare (indent defun))
-  `(when (eq system-type ',type)
-     ,@body))
-
-(defmacro with-system-not (type &rest body)
-  "Evaluate BODY if `system-type' does not equal TYPE."
-  (declare (indent defun))
-  `(when (not (eq system-type ',type))
-     ,@body))
-
-(with-system darwin ;; Darqwin == MacOS
-  (message "MacOS detected")
-  (setq mac-option-key-is-meta nil
-        mac-command-key-is-meta t
-        mac-command-modifier 'meta
-        mac-option-modifier 'none))
-
-(if (eq system-type 'windows-nt)
-  (progn
-    (message "Windows detected")
-    (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
-  (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
 
 (use-package ivy
   :diminish
@@ -852,33 +859,6 @@ If there is no such buffer, start a new `vterm' with NAME."
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-;; Org-mode
-(defun miika/org-font-setup ()
-  ;; Replace list hyphen with dot
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
-  ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Iosevka" :weight 'regular :height (cdr face)))
-
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
-
 (defun miika/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
@@ -919,6 +899,33 @@ If there is no such buffer, start a new `vterm' with NAME."
   "ed" '(org-babel-execute-src-block :which-key "Execute code block")
   "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
   "me" '(org-edit-special :which-key "Edit Special"))
+
+;; Org-mode
+(defun miika/org-font-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  ;; Set faces for heading levels
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font miika/org-font :weight 'regular :height (cdr face)))
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 (with-eval-after-load 'org
   (org-babel-do-load-languages
