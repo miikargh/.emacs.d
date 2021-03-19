@@ -258,7 +258,7 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 
   #+begin_src emacs-lisp
         (if (eq system-type 'gnu/linux)
-            (set-face-attribute 'default nil :font "Monoid NF" :height 130 :weight 'light)
+            (set-face-attribute 'default nil :font "Monoid NF" :height 120 :weight 'light)
           (set-face-attribute 'default nil :font "Monoid" :height 130 :weight 'light))
   #+end_src
 
