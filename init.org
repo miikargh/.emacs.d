@@ -1227,7 +1227,10 @@ TODO: Better documentation of the huge code block below.
 
   ;; vterm doesn't work on windows sadly
   (with-system-not 'windows-nt
-    (use-package multi-vterm)
+
+    (use-package multi-vterm
+      :ensure t)
+
     (use-package vterm
       :after (multi-vterm)
       :commands (vterm vterm-other-window vterm-mode)

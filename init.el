@@ -972,3 +972,16 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 (use-package gcmh
   :init (gcmh-mode 1))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(xkcd which-key use-package undo-fu scala-mode sbt-mode rainbow-delimiters org-make-toc org-bullets nyan-mode no-littering multi-vterm magit lsp-ui lsp-metals jupyter ivy-rich ivy-prescient hl-todo helpful general gdscript-mode gcmh flycheck exec-path-from-shell evil-snipe evil-smartparens evil-multiedit evil-easymotion evil-commentary evil-collection eshell-git-prompt doom-themes doom-modeline csharp-mode counsel-projectile conda company-box command-log-mode clang-format auto-package-update)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
