@@ -255,7 +255,7 @@ Stuff that makes Emacs on MacOS usable.
       (message "Linux detected")
       (setq miika/default-font "Monoid NF"
             miika/org-font "Monoid NF"
-            miika/default-font-height 130))
+            miika/default-font-height 110))
 
 #+end_src
 
