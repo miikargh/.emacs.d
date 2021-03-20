@@ -600,7 +600,7 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       ":" '(counsel-M-x :which-key "M-x")
       ";" '(eval-expression :which-key "Eval expression")
       ;; "." '(projectile-find-file :which-key "Find file in project")
-      "." '(projectile-find-file-in-directory :which-key "Find file")
+      "." '(find-file :which-key "Find file")
       "SPC" '(:keymap evilem-map :which-key "Easy motion")
       "SPC s" '(evil-avy-goto-char
                 :keymaps: 'override)
