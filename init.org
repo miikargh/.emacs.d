@@ -599,7 +599,8 @@ Global keybindings live here. You can find mode specific keybindings by the conf
     (miika/leader-keys
       ":" '(counsel-M-x :which-key "M-x")
       ";" '(eval-expression :which-key "Eval expression")
-      "." '(projectile-find-file :which-key "Find file in project")
+      ;; "." '(projectile-find-file :which-key "Find file in project")
+      "." '(projectile-find-file-in-directory :which-key "Find file")
       "SPC" '(:keymap evilem-map :which-key "Easy motion")
       "SPC s" '(evil-avy-goto-char
                 :keymaps: 'override)
@@ -635,8 +636,9 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       ;; Files
       "f" '(:ignore t :which-key "File")
       "fi" '(miika/open-user-init-file :which-key "Open init.el")
-      "ff" '(find-file :which-key "Find file")
-      "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
+      "ff" '(projectile-find-file :which-key "Find file in project")
+      ;; "ff" '(find-file :which-key "Find file")
+      ;; "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
       ;; Mode stuff
       "m" '(:ignore t :which-key "Mode")
