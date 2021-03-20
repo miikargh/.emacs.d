@@ -81,7 +81,7 @@
   (message "Linux detected")
   (setq miika/default-font "Monoid NF"
         miika/org-font "Monoid NF"
-        miika/default-font-height 130))
+        miika/default-font-height 110))
 
 (if (eq system-type 'windows-nt)
   (progn
@@ -335,7 +335,8 @@
   (miika/leader-keys
     ":" '(counsel-M-x :which-key "M-x")
     ";" '(eval-expression :which-key "Eval expression")
-    "." '(projectile-find-file :which-key "Find file in project")
+    ;; "." '(projectile-find-file :which-key "Find file in project")
+    "." '(projectile-find-file-in-directory :which-key "Find file")
     "SPC" '(:keymap evilem-map :which-key "Easy motion")
     "SPC s" '(evil-avy-goto-char
               :keymaps: 'override)
@@ -371,8 +372,9 @@
     ;; Files
     "f" '(:ignore t :which-key "File")
     "fi" '(miika/open-user-init-file :which-key "Open init.el")
-    "ff" '(find-file :which-key "Find file")
-    "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
+    "ff" '(projectile-find-file :which-key "Find file in project")
+    ;; "ff" '(find-file :which-key "Find file")
+    ;; "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
     ;; Mode stuff
     "m" '(:ignore t :which-key "Mode")
@@ -781,7 +783,10 @@
 
 ;; vterm doesn't work on windows sadly
 (with-system-not 'windows-nt
-  (use-package multi-vterm)
+
+  (use-package multi-vterm
+    :ensure t)
+
   (use-package vterm
     :after (multi-vterm)
     :commands (vterm vterm-other-window vterm-mode)
@@ -972,16 +977,3 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 (use-package gcmh
   :init (gcmh-mode 1))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(xkcd which-key use-package undo-fu scala-mode sbt-mode rainbow-delimiters org-make-toc org-bullets nyan-mode no-littering multi-vterm magit lsp-ui lsp-metals jupyter ivy-rich ivy-prescient hl-todo helpful general gdscript-mode gcmh flycheck exec-path-from-shell evil-snipe evil-smartparens evil-multiedit evil-easymotion evil-commentary evil-collection eshell-git-prompt doom-themes doom-modeline csharp-mode counsel-projectile conda company-box command-log-mode clang-format auto-package-update)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
