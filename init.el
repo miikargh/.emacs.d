@@ -488,9 +488,11 @@
 (use-package lsp-ui
   :after lsp-mode
   :config
-  (setq lsp-ui-doc-position 'at-point
+  (setq lsp-ui-doc-enable nil
+        lsp-ui-doc-position 'at-point
         lsp-ui-doc-delay 0.0
         lsp-ui-doc-show-with-cursor nil
+        lsp-ui-doc-show-with-mouse nil
         lsp-ui-sideline-show-diagnostics t
         lsp-ui-sideline-ignore-duplicate t
         lsp-ui-sideline-show-code-actions nil
