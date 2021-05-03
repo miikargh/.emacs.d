@@ -698,12 +698,6 @@
              jupyter-run-repl
              jupyter-server-list-kernels))
 
-;; (use-package lsp-python-ms
-;;   :after lsp-mode
-;;   :config
-;;   (setq lsp-python-ms-auto-install-server t)
-;;   (setq lsp-python-ms-executable python-shell-interpreter))
-
 (setq-default c-basic-offset 4)
 
 (use-package clang-format
