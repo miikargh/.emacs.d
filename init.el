@@ -504,12 +504,6 @@
       (lsp-ui-doc-hide)
     (lsp-ui-doc-show)))
 
-;; It would appear that company-lsp is not on melpa anymore :thinking:
-;; (use-package company-lsp
-;;   :after comapny-mode
-;;   :config
-;;   (setq company-lsp-cache-candidates 'auto))
-
 (use-package posframe
   :after lsp-ui)
 
