@@ -335,7 +335,8 @@
   (miika/leader-keys
     ":" '(counsel-M-x :which-key "M-x")
     ";" '(eval-expression :which-key "Eval expression")
-    "." '(projectile-find-file :which-key "Find file in project")
+    "." '(find-file :which-key "Find file in current dir")
+    ;; "." '(projectile-find-file :which-key "Find file in project")
     "SPC" '(:keymap evilem-map :which-key "Easy motion")
     "SPC s" '(evil-avy-goto-char
               :keymaps: 'override)
@@ -371,7 +372,8 @@
     ;; Files
     "f" '(:ignore t :which-key "File")
     "fi" '(miika/open-user-init-file :which-key "Open init.el")
-    "ff" '(find-file :which-key "Find file")
+    "ff" '(projectile-find-file :which-key "Find file in project")
+    ;; "ff" '(find-file :which-key "Find file")
     "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
     ;; Mode stuff
@@ -411,7 +413,7 @@
   ;; ("SPC p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (setq projectile-project-search-path '("~/dev" "~/gamedev"))
+  (setq projectile-project-search-path '("~/dev" "~/learning"))
   (setq projectile-switch-project-action #'projectile-dired)
   :config
   (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
