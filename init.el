@@ -515,6 +515,15 @@
     (lsp-mode . dap-mode)
     (lsp-mode . dap-ui-mode))
 
+(use-package eglot
+  :ensure t
+  :commands (eglot eglot-ensure)
+  (miika/leader-keys
+    :keymap lsp-mode-map
+    "mfa" '(eglot-format :which-key "Format buffer or active region")
+    "r" '(:ignore t :which-key "Refactor")
+    "rr" '(eglot-rename :which-key "Rename symbol")))
+
 (use-package smartparens
   :after evil
   :config
@@ -577,16 +586,17 @@
     (pop-to-buffer
       (process-buffer (run-python nil nil t)))))
 
-
 (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
 (use-package python
-  :hook (python-mode . lsp-deferred)
+  ;; :hook (python-mode . lsp-deferred)
+  :hook ((python-mode . eglot-ensure)
+         (python-mode . company-mode))
   :config
   (setq python-indent-guess-indent-offset t)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-offset 4)
-  (setq lsp-completion-mode t)
+  ;; (setq lsp-completion-mode t)
   (miika/leader-keys
     :keymap 'python-mode-map
     "mw" '(conda-env-activate :which-key "Workon enviroment")
@@ -595,24 +605,28 @@
     "mss" '(run-python :which-key "Python shell")
     "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
     "msj" '(miika/open-jupyter-repl :which-key "Jupyter shell")
-    "er" '(python-shell-send-region :which-key "Send region")
-    "ed" '(python-shell-send-defun :which-key "Send defun")
-    "eb" '(python-shell-send-buffer :which-key "Send buffer")
-    "ef" '(python-shell-send-file :which-key "Send file")))
+    "msr" '(python-shell-send-region :which-key "Send region")
+    "msd" '(python-shell-send-defun :which-key "Send defun")
+    "msb" '(python-shell-send-buffer :which-key "Send buffer")
+    "msf" '(python-shell-send-file :which-key "Send file")))
 
 (defun miika/lsp-restart-if-on ()
   "Restarts LSP if it is already on"
   (if (bound-and-true-p lsp-mode)
       (lsp-restart-workspace)))
 
+(defun miika/eglot-restart-if-on ()
+  "Restarts LSP if it is already on"
+  (if (bound-and-true-p eglot)
+      (eglot-reconnect)))
+
 (defun miika/python-after-env-activate-setup ()
   "Sets up python after evirnoment activation"
   ;; (setq python-shell-interpreter (expand-file-name "bin/python" conda-env-current-name))
   ;; (setq python-shell-interpreter (expand-file-name "bin/python" pyvenv-virtual-env))
   ;; (setq lsp-pyls-plugins-jedi-use-pyenv-environment)
-  (miika/lsp-restart-if-on))
-
-
+  ;; (miika/lsp-restart-if-on)
+  (miika/eglot-restart-if-on))
 
 (use-package conda
   :commands (conda-env-activate
@@ -628,7 +642,7 @@
                'append)
   (conda-env-initialize-eshell)
   ;; Make sure lsp is started/restarted after conda env is initialized
-  (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
+  ;; (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
   :after conda)
 
 (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs"))
