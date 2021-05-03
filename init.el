@@ -75,7 +75,7 @@
         mac-option-modifier 'none
         miika/default-font "Monoid"
         miika/org-font "Monoid"
-        miika/default-font-height 120))
+        miika/default-font-height 130))
 
 (with-system gnu/linux
   (message "Linux detected")
