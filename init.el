@@ -81,7 +81,7 @@
   (message "Linux detected")
   (setq miika/default-font "Monoid NF"
         miika/org-font "Monoid NF"
-        miika/default-font-height 130))
+        miika/default-font-height 110))
 
 (if (eq system-type 'windows-nt)
   (progn
@@ -374,7 +374,7 @@
     "fi" '(miika/open-user-init-file :which-key "Open init.el")
     "ff" '(projectile-find-file :which-key "Find file in project")
     ;; "ff" '(find-file :which-key "Find file")
-    "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
+    ;; "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
     ;; Mode stuff
     "m" '(:ignore t :which-key "Mode")
@@ -787,7 +787,10 @@
 
 ;; vterm doesn't work on windows sadly
 (with-system-not 'windows-nt
-  (use-package multi-vterm)
+
+  (use-package multi-vterm
+    :ensure t)
+
   (use-package vterm
     :after (multi-vterm)
     :commands (vterm vterm-other-window vterm-mode)
