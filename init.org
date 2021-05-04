@@ -64,6 +64,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#cc][C/C++]]
   - [[#c][C#]]
     - [[#problems-with-omnisharp][Problems with Omnisharp?]]
+  - [[#unity-shaders][Unity shaders]]
   - [[#gdscript][GDScript]]
 - [[#git][Git]]
 - [[#terminals-and-shells][Terminals and shells]]
@@ -703,7 +704,7 @@ Setup projectile for powerful project management.
     :config
     (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
     (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
-    (setq projectile-enable-caching t))
+    (setq projectile-enable-caching nil))
 
   (use-package counsel-projectile
     :config (counsel-projectile-mode))
@@ -1127,7 +1128,19 @@ Unity tip: Sometimes the omnisharp server doesn't work. Try rebuilding the proje
 - Go tho where you've installed omnisharp (probably at =~/.emacs/var/lsp/sever/server/omnisharp-roslyn/<version>=).
 - Edit the =run= file so that the =mono_cmd= variable points to *GLOBAL* mono installation.
 
+** Unity shaders
+
+#+begin_src emacs-lisp
+
+      (use-package shader-mode
+        :mode "\\.shader\\'"
+        :mode "\\.compute\\'")
+
+#+end_src
+
+
 ** GDScript
+
 
 Develop games with Godot!
 

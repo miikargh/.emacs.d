@@ -418,7 +418,7 @@
   :config
   (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
   (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
-  (setq projectile-enable-caching t))
+  (setq projectile-enable-caching nil))
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
@@ -719,6 +719,10 @@
   :mode "\\.cs\\'"
   :config
   (add-hook 'csharp-mode-hook 'lsp-deferred))
+
+(use-package shader-mode
+  :mode "\\.shader\\'"
+  :mode "\\.compute\\'")
 
 ;; https://github.com/godotengine/emacs-gdscript-mode#known-issues
 (defun lsp--gdscript-ignore-errors (original-function &rest args)
