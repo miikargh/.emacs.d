@@ -1117,7 +1117,9 @@ Unity tip: Sometimes the omnisharp server doesn't work. Try rebuilding the proje
   (use-package csharp-mode
     :mode "\\.cs\\'"
     :config
-    (add-hook 'csharp-mode-hook 'lsp-deferred))
+    (add-hook 'csharp-mode-hook 'eglot-ensure))
+
+;; https://github.com/joaotavora/eglot/issues/241
 
 #+end_src
 

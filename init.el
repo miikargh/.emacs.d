@@ -716,9 +716,11 @@
     "mfr" '(clang-format-region :which-key "Format region")))
 
 (use-package csharp-mode
-  :mode "\\.cs\\'"
-  :config
-  (add-hook 'csharp-mode-hook 'lsp-deferred))
+    :mode "\\.cs\\'"
+    :config
+    (add-hook 'csharp-mode-hook 'eglot-ensure))
+
+;; https://github.com/joaotavora/eglot/issues/241
 
 (use-package shader-mode
   :mode "\\.shader\\'"
