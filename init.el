@@ -557,13 +557,22 @@
 (use-package scala-mode
   :mode "\\.scala\\'"
   :interpreter
-  ("scala" . scala-mode))
+  ("scala" . scala-mode)
+  :hook ((scala-mode . eglot-ensure))
+  :config
+  (miika/leader-keys
+    :keymap scala-mode-map
+    "mfa" '(eglot-format-buffer :which-key "Format buffer")
+    "mfr" '(eglot-format :which-key "Format Region")))
+
+
 
 (use-package sbt-mode
   :after scala-mode
   :commands sbt-start sbt-command
   :config
   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+
   ;; allows using SPACE when in the minibuffer
   (substitute-key-definition
    'minibuffer-complete-word
@@ -572,10 +581,10 @@
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
-(use-package lsp-metals
-  :after scala-mode
-  :config
-  (setq lsp-metals-treeview-show-when-views-received nil))
+;; (use-package lsp-metals
+;;   :after scala-mode
+;;   :config
+;;   (setq lsp-metals-treeview-show-when-views-received nil))
 
 (defun miika/open-ipython-repl ()
   "Open an IPython REPL."
