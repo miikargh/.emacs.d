@@ -157,6 +157,7 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
+
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
