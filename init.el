@@ -75,7 +75,7 @@
         mac-option-modifier 'none
         miika/default-font "Monoid"
         miika/org-font "Monoid"
-        miika/default-font-height 130))
+        miika/default-font-height 120))
 
 (with-system gnu/linux
   (message "Linux detected")
@@ -143,7 +143,7 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-horizon t)
+  (load-theme 'doom-solarized-light t)
 
   ;; Enable flashing mode-line on errors
   ;; (doom-themes-visual-bell-config)
@@ -156,6 +156,7 @@
 
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
+
 
 (use-package doom-modeline
   :ensure t
@@ -453,74 +454,74 @@
   (use-package company-box
     :hook (company-mode . company-box-mode))
 
-(use-package lsp-mode
-  ;; Optional - enable lsp-mode automatically in scala files
-  :commands (lsp lsp-deferred)
-  :hook
-  (scala-mode . lsp)
-  ;; (lsp-mode . lsp-lens-mode)
-  :init
-  (setq lsp-enable-file-watchers nil
-        lsp-enable-folding nil
-        lsp-enable-text-document-color nil
-        lsp-enable-indentation nil
-        lsp-enable-on-type-formatting nil
-        lsp-keymap-prefix "C-c l")
+;; (use-package lsp-mode
+;;   ;; Optional - enable lsp-mode automatically in scala files
+;;   :commands (lsp lsp-deferred)
+;;   :hook
+;;   (scala-mode . lsp)
+;;   ;; (lsp-mode . lsp-lens-mode)
+;;   :init
+;;   (setq lsp-enable-file-watchers nil
+;;         lsp-enable-folding nil
+;;         lsp-enable-text-document-color nil
+;;         lsp-enable-indentation nil
+;;         lsp-enable-on-type-formatting nil
+;;         lsp-keymap-prefix "C-c l")
 
-  :config
-  ;; Uncomment following section if you would like to tune lsp-mode performance according to
-  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-  (setq gc-cons-threshold 100000000) ;; 100mb
-  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (setq lsp-idle-delay 0.500)
-  (setq lsp-log-io nil)
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-completion-mode t)
-  (miika/leader-keys
-    :keymap lsp-mode-map
-    "mfa" '(lsp-format-buffer :which-key "Format buffer")
-    "mfr" '(lsp-format-region :which-key "Format region")
-    "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
-    "r" '(:ignore t :which-key "Refactor")
-    "rr" '(lsp-rename :which-key "Rename symbol")))
+;;   :config
+;;   ;; Uncomment following section if you would like to tune lsp-mode performance according to
+;;   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+;;   (setq gc-cons-threshold 100000000) ;; 100mb
+;;   (setq read-process-output-max (* 1024 1024)) ;; 1mb
+;;   (setq lsp-idle-delay 0.500)
+;;   (setq lsp-log-io nil)
+;;   (setq lsp-prefer-flymake nil)
+;;   (setq lsp-headerline-breadcrumb-enable nil)
+;;   (setq lsp-completion-mode t)
+;;   (miika/leader-keys
+;;     :keymap lsp-mode-map
+;;     "mfa" '(lsp-format-buffer :which-key "Format buffer")
+;;     "mfr" '(lsp-format-region :which-key "Format region")
+;;     "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
+;;     "r" '(:ignore t :which-key "Refactor")
+;;     "rr" '(lsp-rename :which-key "Rename symbol")))
 
-(use-package lsp-ui
-  :after lsp-mode
-  :config
-  (setq lsp-ui-doc-enable nil
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-delay 0.0
-        lsp-ui-doc-show-with-cursor nil
-        lsp-ui-doc-show-with-mouse nil
-        lsp-ui-sideline-show-diagnostics t
-        lsp-ui-sideline-ignore-duplicate t
-        lsp-ui-sideline-show-code-actions nil
-        lsp-ui-doc-show-with-mouse nil))
+;; (use-package lsp-ui
+;;   :after lsp-mode
+;;   :config
+;;   (setq lsp-ui-doc-enable nil
+;;         lsp-ui-doc-position 'at-point
+;;         lsp-ui-doc-delay 0.0
+;;         lsp-ui-doc-show-with-cursor nil
+;;         lsp-ui-doc-show-with-mouse nil
+;;         lsp-ui-sideline-show-diagnostics t
+;;         lsp-ui-sideline-ignore-duplicate t
+;;         lsp-ui-sideline-show-code-actions nil
+;;         lsp-ui-doc-show-with-mouse nil))
 
 
-(defun miika/toggle-lsp-ui-doc ()
-  "Show lsp-ui-doc if if it is hidden and hides if not."
-  (interactive)
-  (if (lsp-ui-doc--visible-p)
-      (lsp-ui-doc-hide)
-    (lsp-ui-doc-show)))
+;; (defun miika/toggle-lsp-ui-doc ()
+;;   "Show lsp-ui-doc if if it is hidden and hides if not."
+;;   (interactive)
+;;   (if (lsp-ui-doc--visible-p)
+;;       (lsp-ui-doc-hide)
+;;     (lsp-ui-doc-show)))
 
-(use-package posframe
-  :after lsp-ui)
+;; (use-package posframe
+;;   :after lsp-ui)
 
-(use-package dap-mode
-    :commands dap-debug
-    :hook
-    (lsp-mode . dap-mode)
-    (lsp-mode . dap-ui-mode))
+;; (use-package dap-mode
+;;     :commands dap-debug
+;;     :hook
+;;     (lsp-mode . dap-mode)
+;;     (lsp-mode . dap-ui-mode))
 
 (use-package eglot
   :ensure t
-  :commands (eglot eglot-ensure)
+  :config
+  ;; (eglot-work)
   (miika/leader-keys
-    :keymap lsp-mode-map
-    "mfa" '(eglot-format :which-key "Format buffer or active region")
+    :keymap eglot-mode-map
     "r" '(:ignore t :which-key "Refactor")
     "rr" '(eglot-rename :which-key "Rename symbol")))
 
@@ -557,13 +558,22 @@
 (use-package scala-mode
   :mode "\\.scala\\'"
   :interpreter
-  ("scala" . scala-mode))
+  ("scala" . scala-mode)
+  :hook ((scala-mode . eglot-ensure))
+  :config
+  (miika/leader-keys
+    :keymap scala-mode-map
+    "mfa" '(eglot-format-buffer :which-key "Format buffer")
+    "mfr" '(eglot-format :which-key "Format Region")))
+
+
 
 (use-package sbt-mode
   :after scala-mode
   :commands sbt-start sbt-command
   :config
   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+
   ;; allows using SPACE when in the minibuffer
   (substitute-key-definition
    'minibuffer-complete-word
@@ -572,10 +582,10 @@
    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
-(use-package lsp-metals
-  :after scala-mode
-  :config
-  (setq lsp-metals-treeview-show-when-views-received nil))
+;; (use-package lsp-metals
+;;   :after scala-mode
+;;   :config
+;;   (setq lsp-metals-treeview-show-when-views-received nil))
 
 (defun miika/open-ipython-repl ()
   "Open an IPython REPL."
@@ -588,11 +598,12 @@
 
 (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
-(use-package python
-  ;; :hook (python-mode . lsp-deferred)
-  :hook ((python-mode . eglot-ensure)
-         (python-mode . company-mode))
-  :config
+(use-package python-black
+  :demand t
+  :after python)
+
+(defun miika/python-setup ()
+  "Setup Python"
   (setq python-indent-guess-indent-offset t)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-offset 4)
@@ -602,13 +613,20 @@
     "mw" '(conda-env-activate :which-key "Workon enviroment")
     ;; "mw" '(pyvenv-workon :which-key "Workon enviroment")
     "ms" '(:ignore t :which-key "Shell")
-    "mss" '(run-python :which-key "Python shell")
+    "mss" '(run-python :which-key"Python shell")
     "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
     "msj" '(miika/open-jupyter-repl :which-key "Jupyter shell")
     "msr" '(python-shell-send-region :which-key "Send region")
     "msd" '(python-shell-send-defun :which-key "Send defun")
     "msb" '(python-shell-send-buffer :which-key "Send buffer")
-    "msf" '(python-shell-send-file :which-key "Send file")))
+    "msf" '(python-shell-send-file :which-key "Send file")
+    "mfa" '(python-black-buffer :which-key "Format buffer")
+    "mfr" '(python-black-format-region :which-ley "Format region"))
+  (message "Python mode activated"))
+
+(add-hook 'python-mode-hook 'miika/python-setup)
+(add-hook 'python-mode-hook 'eglot-ensure)
+(add-hook 'python-mode-hook 'company-mode)
 
 (defun miika/lsp-restart-if-on ()
   "Restarts LSP if it is already on"
@@ -642,7 +660,7 @@
                'append)
   (conda-env-initialize-eshell)
   ;; Make sure lsp is started/restarted after conda env is initialized
-  ;; (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
+  (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
   :after conda)
 
 (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs"))
@@ -745,6 +763,9 @@
   (add-hook 'gdscript-mode-hook 'lsp-deferred)
   (advice-add #'lsp--get-message-type :around #'lsp--gdscript-ignore-errors)
   (setq gdscript-godot-executable (expand-file-name "~/bin/godot")))
+
+(use-package markdown-preview-mode
+  :after (markdown-mode))
 
 (use-package magit
   :commands magit-status
@@ -901,8 +922,7 @@ If there is no such buffer, start a new `vterm' with NAME."
 (with-eval-after-load 'org
   (org-babel-do-load-languages
     'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t))))
+    '((emacs-lisp . t))))
 
 ;; (use-package visual-fill-column
 ;;   :hook (org-mode . miika/org-mode-visual-fill))
@@ -945,8 +965,7 @@ If there is no such buffer, start a new `vterm' with NAME."
 (with-eval-after-load 'org
   (org-babel-do-load-languages
   'org-babel-load-languages
-  '((emacs-lisp . t)
-    (python . t)))
+  '((emacs-lisp . t)))
 
   (setq org-confirm-babel-evaluate nil))
 
@@ -987,3 +1006,19 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 (use-package gcmh
   :init (gcmh-mode 1))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values
+   '((eval conda-env-activate "kymsote-nlp-structurizer")
+     (eval setq python-shell-interpreter
+           (expand-file-name "~/miniconda3/envs/kymsote-nlp-structurizer/bin/python"))
+     (eval message "DIR LOCALS LOADED"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
