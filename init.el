@@ -763,6 +763,9 @@
   (advice-add #'lsp--get-message-type :around #'lsp--gdscript-ignore-errors)
   (setq gdscript-godot-executable (expand-file-name "~/bin/godot")))
 
+(use-package markdown-preview-mode
+  :after (markdown-mode))
+
 (use-package magit
   :commands magit-status
   :config
