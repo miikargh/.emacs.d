@@ -597,11 +597,12 @@
 
 (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
-(use-package python
-  ;; :hook (python-mode . lsp-deferred)
-  :hook ((python-mode . eglot-ensure)
-         (python-mode . company-mode))
-  :config
+(use-package python-black
+  :demand t
+  :after python)
+
+(defun miika/python-setup ()
+  "Setup Python"
   (setq python-indent-guess-indent-offset t)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-offset 4)
@@ -611,13 +612,20 @@
     "mw" '(conda-env-activate :which-key "Workon enviroment")
     ;; "mw" '(pyvenv-workon :which-key "Workon enviroment")
     "ms" '(:ignore t :which-key "Shell")
-    "mss" '(run-python :which-key "Python shell")
+    "mss" '(run-python :which-key"Python shell")
     "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
     "msj" '(miika/open-jupyter-repl :which-key "Jupyter shell")
     "msr" '(python-shell-send-region :which-key "Send region")
     "msd" '(python-shell-send-defun :which-key "Send defun")
     "msb" '(python-shell-send-buffer :which-key "Send buffer")
-    "msf" '(python-shell-send-file :which-key "Send file")))
+    "msf" '(python-shell-send-file :which-key "Send file")
+    "mfa" '(python-black-buffer :which-key "Format buffer")
+    "mfr" '(python-black-format-region :which-ley "Format region"))
+  (message "Python mode activated"))
+
+(add-hook 'python-mode-hook 'miika/python-setup)
+(add-hook 'python-mode-hook 'eglot-ensure)
+(add-hook 'python-mode-hook 'company-mode)
 
 (defun miika/lsp-restart-if-on ()
   "Restarts LSP if it is already on"
@@ -651,7 +659,7 @@
                'append)
   (conda-env-initialize-eshell)
   ;; Make sure lsp is started/restarted after conda env is initialized
-  ;; (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
+  (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
   :after conda)
 
 (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs"))
