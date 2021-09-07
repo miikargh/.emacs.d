@@ -910,8 +910,7 @@ If there is no such buffer, start a new `vterm' with NAME."
 (with-eval-after-load 'org
   (org-babel-do-load-languages
     'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t))))
+    '((emacs-lisp . t))))
 
 ;; (use-package visual-fill-column
 ;;   :hook (org-mode . miika/org-mode-visual-fill))
@@ -954,8 +953,7 @@ If there is no such buffer, start a new `vterm' with NAME."
 (with-eval-after-load 'org
   (org-babel-do-load-languages
   'org-babel-load-languages
-  '((emacs-lisp . t)
-    (python . t)))
+  '((emacs-lisp . t)))
 
   (setq org-confirm-babel-evaluate nil))
 
