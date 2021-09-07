@@ -418,7 +418,7 @@
   :config
   (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
   (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
-  (setq projectile-enable-caching t))
+  (setq projectile-enable-caching nil))
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
@@ -716,9 +716,15 @@
     "mfr" '(clang-format-region :which-key "Format region")))
 
 (use-package csharp-mode
-  :mode "\\.cs\\'"
-  :config
-  (add-hook 'csharp-mode-hook 'lsp-deferred))
+    :mode "\\.cs\\'"
+    :config
+    (add-hook 'csharp-mode-hook 'eglot-ensure))
+
+;; https://github.com/joaotavora/eglot/issues/241
+
+(use-package shader-mode
+  :mode "\\.shader\\'"
+  :mode "\\.compute\\'")
 
 ;; https://github.com/godotengine/emacs-gdscript-mode#known-issues
 (defun lsp--gdscript-ignore-errors (original-function &rest args)
