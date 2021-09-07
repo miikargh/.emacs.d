@@ -453,74 +453,74 @@
   (use-package company-box
     :hook (company-mode . company-box-mode))
 
-(use-package lsp-mode
-  ;; Optional - enable lsp-mode automatically in scala files
-  :commands (lsp lsp-deferred)
-  :hook
-  (scala-mode . lsp)
-  ;; (lsp-mode . lsp-lens-mode)
-  :init
-  (setq lsp-enable-file-watchers nil
-        lsp-enable-folding nil
-        lsp-enable-text-document-color nil
-        lsp-enable-indentation nil
-        lsp-enable-on-type-formatting nil
-        lsp-keymap-prefix "C-c l")
+;; (use-package lsp-mode
+;;   ;; Optional - enable lsp-mode automatically in scala files
+;;   :commands (lsp lsp-deferred)
+;;   :hook
+;;   (scala-mode . lsp)
+;;   ;; (lsp-mode . lsp-lens-mode)
+;;   :init
+;;   (setq lsp-enable-file-watchers nil
+;;         lsp-enable-folding nil
+;;         lsp-enable-text-document-color nil
+;;         lsp-enable-indentation nil
+;;         lsp-enable-on-type-formatting nil
+;;         lsp-keymap-prefix "C-c l")
 
-  :config
-  ;; Uncomment following section if you would like to tune lsp-mode performance according to
-  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-  (setq gc-cons-threshold 100000000) ;; 100mb
-  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (setq lsp-idle-delay 0.500)
-  (setq lsp-log-io nil)
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-completion-mode t)
-  (miika/leader-keys
-    :keymap lsp-mode-map
-    "mfa" '(lsp-format-buffer :which-key "Format buffer")
-    "mfr" '(lsp-format-region :which-key "Format region")
-    "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
-    "r" '(:ignore t :which-key "Refactor")
-    "rr" '(lsp-rename :which-key "Rename symbol")))
+;;   :config
+;;   ;; Uncomment following section if you would like to tune lsp-mode performance according to
+;;   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+;;   (setq gc-cons-threshold 100000000) ;; 100mb
+;;   (setq read-process-output-max (* 1024 1024)) ;; 1mb
+;;   (setq lsp-idle-delay 0.500)
+;;   (setq lsp-log-io nil)
+;;   (setq lsp-prefer-flymake nil)
+;;   (setq lsp-headerline-breadcrumb-enable nil)
+;;   (setq lsp-completion-mode t)
+;;   (miika/leader-keys
+;;     :keymap lsp-mode-map
+;;     "mfa" '(lsp-format-buffer :which-key "Format buffer")
+;;     "mfr" '(lsp-format-region :which-key "Format region")
+;;     "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
+;;     "r" '(:ignore t :which-key "Refactor")
+;;     "rr" '(lsp-rename :which-key "Rename symbol")))
 
-(use-package lsp-ui
-  :after lsp-mode
-  :config
-  (setq lsp-ui-doc-enable nil
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-delay 0.0
-        lsp-ui-doc-show-with-cursor nil
-        lsp-ui-doc-show-with-mouse nil
-        lsp-ui-sideline-show-diagnostics t
-        lsp-ui-sideline-ignore-duplicate t
-        lsp-ui-sideline-show-code-actions nil
-        lsp-ui-doc-show-with-mouse nil))
+;; (use-package lsp-ui
+;;   :after lsp-mode
+;;   :config
+;;   (setq lsp-ui-doc-enable nil
+;;         lsp-ui-doc-position 'at-point
+;;         lsp-ui-doc-delay 0.0
+;;         lsp-ui-doc-show-with-cursor nil
+;;         lsp-ui-doc-show-with-mouse nil
+;;         lsp-ui-sideline-show-diagnostics t
+;;         lsp-ui-sideline-ignore-duplicate t
+;;         lsp-ui-sideline-show-code-actions nil
+;;         lsp-ui-doc-show-with-mouse nil))
 
 
-(defun miika/toggle-lsp-ui-doc ()
-  "Show lsp-ui-doc if if it is hidden and hides if not."
-  (interactive)
-  (if (lsp-ui-doc--visible-p)
-      (lsp-ui-doc-hide)
-    (lsp-ui-doc-show)))
+;; (defun miika/toggle-lsp-ui-doc ()
+;;   "Show lsp-ui-doc if if it is hidden and hides if not."
+;;   (interactive)
+;;   (if (lsp-ui-doc--visible-p)
+;;       (lsp-ui-doc-hide)
+;;     (lsp-ui-doc-show)))
 
-(use-package posframe
-  :after lsp-ui)
+;; (use-package posframe
+;;   :after lsp-ui)
 
-(use-package dap-mode
-    :commands dap-debug
-    :hook
-    (lsp-mode . dap-mode)
-    (lsp-mode . dap-ui-mode))
+;; (use-package dap-mode
+;;     :commands dap-debug
+;;     :hook
+;;     (lsp-mode . dap-mode)
+;;     (lsp-mode . dap-ui-mode))
 
 (use-package eglot
   :ensure t
-  :commands (eglot eglot-ensure)
+  :config
+  ;; (eglot-work)
   (miika/leader-keys
-    :keymap lsp-mode-map
-    "mfa" '(eglot-format :which-key "Format buffer or active region")
+    :keymap eglot-mode-map
     "r" '(:ignore t :which-key "Refactor")
     "rr" '(eglot-rename :which-key "Rename symbol")))
 
