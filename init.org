@@ -323,6 +323,8 @@ Random stuff I can't seem to place anywhere else.
     (tooltip-mode -1)
     (set-fringe-mode 5) ;; Padding on sides
     (menu-bar-mode -1)
+    (setq visible-bell 1)
+
 
     (show-paren-mode 1)
 
