@@ -44,6 +44,7 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#editing][Editing]]
   - [[#tab-width][Tab width]]
   - [[#use-spaces-instead-of-tabs][Use spaces instead of tabs]]
+  - [[#formatting][Formatting]]
 - [[#project-management][Project management]]
   - [[#projectile][Projectile]]
   - [[#treemacs][Treemacs]]
