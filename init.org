@@ -698,6 +698,15 @@ Set global tab width to 2 spaces. Change it by language basis if other lengths d
   (setq-default indent-tabs-mode nil)
 #+end_src
 
+** Formatting
+
+#+begin_src emacs-lisp
+
+  (use-package format-all
+    :commands (format-all-buffer format-all-mode))
+
+#+end_src
+
 * Project management
 
 ** Projectile
