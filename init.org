@@ -984,7 +984,7 @@ Remember to install =pyls= for lsp to work with python.
     (let ((python-shell-interpreter "ipython")
           (python-shell-interpreter-args "-i --simple-prompt --no-color-info"))
       (pop-to-buffer
-        (process-buffer (run-python nil nil t)))))
+       (process-buffer (run-python nil nil t)))))
 
   (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
