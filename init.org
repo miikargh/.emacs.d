@@ -722,7 +722,9 @@ Setup projectile for powerful project management.
     (setq projectile-project-search-path '("~/dev" "~/learning"))
     (setq projectile-switch-project-action #'projectile-dired)
     :config
-    (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
+    (setq projectile-globally-ignored-directories
+          (append '(".bloop" ".bsp" ".metals" "target" ".mypy_cache")
+                  projectile-globally-ignored-directories))
     (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
     (setq projectile-enable-caching nil))
 
