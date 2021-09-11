@@ -752,7 +752,12 @@ Stuff that makes Emacs behave more like an IDE.
 
   (use-package flycheck
     :defer t
-    :config (global-flycheck-mode))
+    :config
+    (global-flycheck-mode)
+    (miika/leader-keys
+      :keymap flycheck-mode-map
+      "ne" '(flycheck-next-error :which-key "Go to next error")))
+
 
 #+end_src
 
