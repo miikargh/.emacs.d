@@ -118,14 +118,17 @@
 (tooltip-mode -1)
 (set-fringe-mode 5) ;; Padding on sides
 (menu-bar-mode -1)
+;; (setq visible-bell 1)
+(setq ring-bell-function 'ignore)
+
 
 (show-paren-mode 1)
 
 
 
 (column-number-mode)
-(global-display-line-numbers-mode t)
-(setq display-line-numbers-type 'relative)
+;; (global-display-line-numbers-mode nil)
+;; (setq display-line-numbers-type 'relative)
 
 
 ;; Disable line numbers from some modes
