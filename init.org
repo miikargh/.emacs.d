@@ -1169,7 +1169,6 @@ Unity tip: Sometimes the omnisharp server doesn't work. Try rebuilding the proje
 
 ** GDScript
 
-
 Develop games with Godot!
 
 #+begin_src emacs-lisp
