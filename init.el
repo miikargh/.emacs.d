@@ -118,14 +118,17 @@
 (tooltip-mode -1)
 (set-fringe-mode 5) ;; Padding on sides
 (menu-bar-mode -1)
+;; (setq visible-bell 1)
+(setq ring-bell-function 'ignore)
+
 
 (show-paren-mode 1)
 
 
 
 (column-number-mode)
-(global-display-line-numbers-mode t)
-(setq display-line-numbers-type 'relative)
+;; (global-display-line-numbers-mode nil)
+;; (setq display-line-numbers-type 'relative)
 
 
 ;; Disable line numbers from some modes
@@ -411,6 +414,9 @@
 
 (setq-default indent-tabs-mode nil)
 
+(use-package format-all
+  :commands (format-all-buffer format-all-mode))
+
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -422,7 +428,9 @@
   (setq projectile-project-search-path '("~/dev" "~/learning"))
   (setq projectile-switch-project-action #'projectile-dired)
   :config
-  (setq projectile-globally-ignored-directories (append '(".bloop" ".bsp" ".metals" "target") projectile-globally-ignored-directories))
+  (setq projectile-globally-ignored-directories
+        (append '(".bloop" ".bsp" ".metals" "target" ".mypy_cache")
+                projectile-globally-ignored-directories))
   (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
   (setq projectile-enable-caching nil))
 
@@ -434,7 +442,11 @@
 
 (use-package flycheck
   :defer t
-  :config (global-flycheck-mode))
+  :config
+  (global-flycheck-mode)
+  (miika/leader-keys
+    :keymap flycheck-mode-map
+    "ne" '(flycheck-next-error :which-key "Go to next error")))
 
 (defun miika/company-complete-selection ()
   "Insert the selected candidate or the first if none are selected.
@@ -599,7 +611,7 @@
   (let ((python-shell-interpreter "ipython")
         (python-shell-interpreter-args "-i --simple-prompt --no-color-info"))
     (pop-to-buffer
-      (process-buffer (run-python nil nil t)))))
+     (process-buffer (run-python nil nil t)))))
 
 (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
@@ -630,43 +642,50 @@
   (message "Python mode activated"))
 
 (add-hook 'python-mode-hook 'miika/python-setup)
-(add-hook 'python-mode-hook 'eglot-ensure)
 (add-hook 'python-mode-hook 'company-mode)
+(add-hook 'python-mode-hook 'miika/conda-autoactivate)
 
-(defun miika/lsp-restart-if-on ()
-  "Restarts LSP if it is already on"
-  (if (bound-and-true-p lsp-mode)
-      (lsp-restart-workspace)))
+(defun miika/conda-env-activate (name)
+  "Switch to environment NAME."
+  (let* ((env-name name)
+         (env-dir (conda-env-name-to-dir env-name)))
+    (conda-env-activate-path env-dir)))
 
-(defun miika/eglot-restart-if-on ()
-  "Restarts LSP if it is already on"
-  (if (bound-and-true-p eglot)
-      (eglot-reconnect)))
+(defun miika/conda-autoactivate ()
+  "Sets up conda environment based on project directory."
+  (message "Python mode detected. Trying auto conda env activation.")
+  (let ((project-name (projectile-project-name))
+        (envs (conda-env-candidates)))
+    (message (concat "Activating conda environment " project-name))
+    (if (member project-name envs)
+        (progn
+          (conda-env-activate project-name)
+          (message (concat "Conda env " project-name " activated")))
+      (message (concat "No such environment as " project-name)))))
+
 
 (defun miika/python-after-env-activate-setup ()
   "Sets up python after evirnoment activation"
-  ;; (setq python-shell-interpreter (expand-file-name "bin/python" conda-env-current-name))
-  ;; (setq python-shell-interpreter (expand-file-name "bin/python" pyvenv-virtual-env))
-  ;; (setq lsp-pyls-plugins-jedi-use-pyenv-environment)
-  ;; (miika/lsp-restart-if-on)
-  (miika/eglot-restart-if-on))
+  (setq python-shell-interpreter (expand-file-name "bin/python" conda-env-current-path))
+  (eglot-ensure))
+
 
 (use-package conda
   :commands (conda-env-activate
-             conda-env-list)
+             conda-env-list
+             conda-env-candidates)
   :config
   (custom-set-variables
    '(conda-anaconda-home (expand-file-name "~/miniconda3/")))
   (setq conda-env-home-directory (expand-file-name "~/miniconda3/"))
   (conda-env-initialize-interactive-shells)
-  (conda-env-autoactivate-mode t)
+  ;; (conda-env-autoactivate-mode t)
   (add-to-list 'global-mode-string
                '(conda-env-current-name (" conda:" conda-env-current-name " "))
                'append)
   (conda-env-initialize-eshell)
   ;; Make sure lsp is started/restarted after conda env is initialized
-  (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup)
-  :after conda)
+  (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup))
 
 (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs"))
 
