@@ -1203,6 +1203,26 @@ Develop games with Godot!
     :after (markdown-mode))
 #+end_src
 
+** Docker
+
+#+begin_src emacs-lisp
+
+  (use-package dockerfile-mode
+    :mode "Dockerfile\\'")
+
+  (use-package docker-compose-mode)
+
+#+end_src
+
+** YAML
+
+#+begin_src emacs-lisp
+
+  (use-package yaml-mode)
+
+#+end_src
+
+
 * Git
 
 #+begin_src emacs-lisp
