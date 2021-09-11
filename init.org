@@ -67,6 +67,8 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#unity-shaders][Unity shaders]]
   - [[#gdscript][GDScript]]
   - [[#markdown][Markdown]]
+  - [[#docker][Docker]]
+  - [[#yaml][YAML]]
 - [[#git][Git]]
 - [[#terminals-and-shells][Terminals and shells]]
   - [[#eshell][Eshell]]
