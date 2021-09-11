@@ -90,24 +90,27 @@
   (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
 
 ;; Make ESC quit prompts
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
-  (defun miika/open-user-init-file ()
-    "Edit emacs config, in another window."
-    (interactive)
-    (find-file miika/init-file-path))
+(defun miika/open-user-init-file ()
+  "Edit emacs config, in another window."
+  (interactive)
+  (find-file miika/init-file-path))
 
 
-  ;; todo highlighting
-  (use-package hl-todo
-  :config (hl-todo-mode))
+;; todo highlighting
+(use-package hl-todo
+:config (hl-todo-mode))
 
 
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (use-package command-log-mode
   :commands command-log-mode)
+
+;; Hide native comp warnings
+(setq native-comp-async-report-warnings-errors nil)
 
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
@@ -286,7 +289,9 @@
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (evil-set-initial-state 'dashboard-mode 'normal)
+  (setq evil-want-keybinding nil))
+
 
 (use-package evil-collection
   :after evil
@@ -767,6 +772,13 @@
 (use-package markdown-preview-mode
   :after (markdown-mode))
 
+(use-package dockerfile-mode
+  :mode "Dockerfile\\'")
+
+(use-package docker-compose-mode)
+
+(use-package yaml-mode)
+
 (use-package magit
   :commands magit-status
   :config
@@ -1006,19 +1018,3 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 (use-package gcmh
   :init (gcmh-mode 1))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(safe-local-variable-values
-   '((eval conda-env-activate "kymsote-nlp-structurizer")
-     (eval setq python-shell-interpreter
-           (expand-file-name "~/miniconda3/envs/kymsote-nlp-structurizer/bin/python"))
-     (eval message "DIR LOCALS LOADED"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
