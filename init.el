@@ -1022,6 +1022,9 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'miika/org-babel-tangle-config)))
 
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
+
 (use-package xkcd
   :commands (xkcd-get xkcd)
   :config
