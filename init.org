@@ -67,6 +67,8 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#unity-shaders][Unity shaders]]
   - [[#gdscript][GDScript]]
   - [[#markdown][Markdown]]
+  - [[#docker][Docker]]
+  - [[#yaml][YAML]]
 - [[#git][Git]]
 - [[#terminals-and-shells][Terminals and shells]]
   - [[#eshell][Eshell]]
@@ -281,25 +283,28 @@ Random stuff I can't seem to place anywhere else.
 
 #+begin_src emacs-lisp
 
-    ;; Make ESC quit prompts
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
-    (defun miika/open-user-init-file ()
-      "Edit emacs config, in another window."
-      (interactive)
-      (find-file miika/init-file-path))
+  (defun miika/open-user-init-file ()
+    "Edit emacs config, in another window."
+    (interactive)
+    (find-file miika/init-file-path))
 
 
-    ;; todo highlighting
-    (use-package hl-todo
-    :config (hl-todo-mode))
+  ;; todo highlighting
+  (use-package hl-todo
+  :config (hl-todo-mode))
 
 
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
   (use-package command-log-mode
     :commands command-log-mode)
+
+  ;; Hide native comp warnings
+  (setq native-comp-async-report-warnings-errors nil)
 
 #+end_src
 
@@ -537,7 +542,9 @@ Welcome to the dark side ;)
     (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
     (evil-set-initial-state 'messages-buffer-mode 'normal)
-    (evil-set-initial-state 'dashboard-mode 'normal))
+    (evil-set-initial-state 'dashboard-mode 'normal)
+    (setq evil-want-keybinding nil))
+
 
   (use-package evil-collection
     :after evil
@@ -1162,7 +1169,6 @@ Unity tip: Sometimes the omnisharp server doesn't work. Try rebuilding the proje
 
 ** GDScript
 
-
 Develop games with Godot!
 
 #+begin_src emacs-lisp
@@ -1195,6 +1201,26 @@ Develop games with Godot!
   (use-package markdown-preview-mode
     :after (markdown-mode))
 #+end_src
+
+** Docker
+
+#+begin_src emacs-lisp
+
+  (use-package dockerfile-mode
+    :mode "Dockerfile\\'")
+
+  (use-package docker-compose-mode)
+
+#+end_src
+
+** YAML
+
+#+begin_src emacs-lisp
+
+  (use-package yaml-mode)
+
+#+end_src
+
 
 * Git
 
