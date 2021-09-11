@@ -277,8 +277,6 @@ Yeah, I know.
 
 #+end_src
 
-#+RESULTS:
-: c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org
 * Basic config
 Random stuff I can't seem to place anywhere else.
 
@@ -864,8 +862,6 @@ Autocompletion
 
 #+end_src
 
-#+RESULTS:
-
 ** Smartparens
 
 #+begin_src emacs-lisp
@@ -1179,7 +1175,6 @@ Unity tip: Sometimes the omnisharp server doesn't work. Try rebuilding the proje
 
 #+end_src
 
-
 ** GDScript
 
 Develop games with Godot!
@@ -1233,7 +1228,6 @@ Develop games with Godot!
   (use-package yaml-mode)
 
 #+end_src
-
 
 * Git
 
