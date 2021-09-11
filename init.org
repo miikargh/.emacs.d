@@ -281,25 +281,28 @@ Random stuff I can't seem to place anywhere else.
 
 #+begin_src emacs-lisp
 
-    ;; Make ESC quit prompts
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 
-    (defun miika/open-user-init-file ()
-      "Edit emacs config, in another window."
-      (interactive)
-      (find-file miika/init-file-path))
+  (defun miika/open-user-init-file ()
+    "Edit emacs config, in another window."
+    (interactive)
+    (find-file miika/init-file-path))
 
 
-    ;; todo highlighting
-    (use-package hl-todo
-    :config (hl-todo-mode))
+  ;; todo highlighting
+  (use-package hl-todo
+  :config (hl-todo-mode))
 
 
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
   (use-package command-log-mode
     :commands command-log-mode)
+
+  ;; Hide native comp warnings
+  (setq native-comp-async-report-warnings-errors nil)
 
 #+end_src
 
