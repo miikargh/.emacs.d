@@ -561,6 +561,13 @@
   :config
   (setq global-hl-todo-mode t))
 
+(use-package parinfer-rust-mode
+    :hook (emacs-lisp-mode clojure-mode)
+    :init
+    (setq parinfer-rust-auto-download t)
+    :config
+    (setq-local smartparens-global-mode nil))
+
 (miika/leader-keys
   :keymaps 'emacs-lisp-mode-map
   :states '(normal visual)
@@ -571,6 +578,30 @@
   "eb" '(eval-region :which-key "Eval buffer"))
 
 (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+
+(use-package clojure-mode
+  :hook (clojure-mode . rainbow-delimiters-mode)
+  :config)
+
+(use-package cider
+  :hook clojure-mode
+  :config
+  (miika/leader-keys
+    :keymap 'clojure-mode-map
+    "ms" '(:ignore :which-key "Cider")
+    "msi" '(cider-jack-in :which-key "Cider jack-in")
+    "msj" '(cider-jack-in-cljs :which-key "Cider jack-in cljs")
+    "e" '(:ignore :which-key "Eval")
+    "er" '(cider-eval-region :which-key "Eval region")
+    "ed" '(cider-eval-defun-at-point :which-key "Eval defun")
+    "eb" '(cider-eval-buffer :which-key "Eval buffer")
+    "mf" '(:ignore :which-key "Format")
+    "mfa" '(cider-format-buffer :which-key "Format buffer")
+    "mfr" '(cider-format-region :which-key "Format region")
+    "mfd" '(cider-format-defun :which-key "Format defun")))
+
+(use-package parinfer-rust-mode
+  :hook (clojure-mode emacs-lisp-mode))
 
 (use-package scala-mode
   :mode "\\.scala\\'"
