@@ -1717,6 +1717,26 @@ This snippet adds a hook to =org-mode= buffers so that =miika/org-babel-tangle-c
 
 #+end_src
 
+* LaTeX
+
+#+begin_src emacs-lisp
+
+  ;; (add-hook 'latex-mode-hook 'company-mode)
+
+  (use-package auctex
+    :after 'LaTeX-mode)
+
+#+end_src
+
+* Spell checking
+
+#+begin_src emacs-lisp
+
+  (use-package flycheck-grammarly
+    :hook latex-mode)
+
+#+end_src
+
 * Misc.
 ** Emojify
 Add emojis. Emojis are nice.
