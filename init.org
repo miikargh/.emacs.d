@@ -1212,6 +1212,48 @@ Remember to install =pyls= for lsp to work with python.
 
 #+end_src
 
+
+** Web
+
+#+begin_src emacs-lisp
+  ;; (use-package web-mode
+  ;;   :mode ("\\.tsx\\'" "\\.jsx\\'")
+  ;;   :ensure t)
+
+  ;; (use-package typescript-mode
+  ;;   :ensure t)
+
+  ;; (use-package tide
+  ;;   :ensure t
+  ;;   :config
+  ;;   (miika/leader-keys
+  ;;     :keymap tide-mode-map
+  ;;     "r" '(:ignore t :which-key "Refactor")
+  ;;     "rr" '(tide-rename-symbol-at-location :which-key "Rename symbol")
+  ;;     "rf" '(tide-rename-file :which-key "Rename file")
+  ;;     "gd" '(tide-jump-to-definition :which-key "Jump to definition")
+  ;;     "gr" '(tide-references :which-key "Goto reference")))
+
+  ;; (defun miika/setup-tide-mode ()
+  ;;   (interactive)
+  ;;   (flycheck-mode +1)
+  ;;   (eldoc-mode +1)
+  ;;   (tide-hl-identifier-mode +1)
+  ;;   (company-mode +1))
+
+  ;; (add-hook 'typescript-mode-hook #'miika/setup-tide-mode)
+
+
+
+  ;; (add-hook 'web-mode-hook
+  ;;           (lambda ()
+  ;;             (when (string-equal "tsx" (file-name-extension buffer-file-name))
+  ;;               (miika/setup-tide-mode))))
+
+  ;; (flycheck-add-mode 'typescript-tslint 'web-mode)
+
+#+end_src
+
 ** C/C++
 #+begin_src emacs-lisp
 
