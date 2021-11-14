@@ -595,10 +595,16 @@
 (add-hook 'emacs-lisp-mode-hook 'aggressive-indent-mode)
 (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 
+(use-package flycheck-clj-kondo
+  :ensure t)
+
 (use-package clojure-mode
-  :init
+  :ensure t
+  :config
   (add-hook 'clojure-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook 'aggressive-indent-mode))
+  (add-hook 'clojure-mode-hook 'aggressive-indent-mode)
+  (require 'flycheck-clj-kondo)
+  (message "Clojure mode activated"))
 
 (use-package cider
   :hook clojure-mode
