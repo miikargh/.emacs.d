@@ -1358,9 +1358,21 @@ Develop games with Godot!
 
 #+begin_src emacs-lisp
 
-  (use-package yaml-mode)
+  (use-package highlight-indent-guides
+    :ensure t
+    :commands highlight-indent-guides-mode)
+
+  (use-package yaml-mode
+    :hook (format-all highlight-indent-guides-mode)
+    :config
+    (miika/leader-keys
+      :states '(normal visual)
+      :keymap 'org-mode-map
+      "mf" '(:ignore t :which-key "Format")
+      "mfa" '(format-all-buffer :which-key "Format buffer")))
 
 #+end_src
+
 
 * Git
 
