@@ -267,7 +267,7 @@ Stuff that makes Emacs on MacOS usable.
       (message "Linux detected")
       (setq miika/default-font "Monoid NF"
             miika/org-font "Monoid NF"
-            miika/default-font-height 110))
+            miika/default-font-height 120))
 
 #+end_src
 
@@ -335,7 +335,7 @@ Random stuff I can't seem to place anywhere else.
 
 
     (column-number-mode)
-    ;; (global-display-line-numbers-mode nil)
+    (global-display-line-numbers-mode t)
     ;; (setq display-line-numbers-type 'relative)
 
 
@@ -575,8 +575,6 @@ Welcome to the dark side ;)
     (call-interactively 'evil-shift-right)
     (evil-normal-state)
     (evil-visual-restore))
-
-
 
   (use-package evil
     :init
