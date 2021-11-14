@@ -621,6 +621,10 @@ Welcome to the dark side ;)
       (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
   (use-package evil-multiedit
+    :bind
+    (:map evil-multiedit-mode-map
+          ("M-j" . evil-multiedit-next)
+          ("M-k" . evil-multiedit-prev))
     :config (evil-multiedit-default-keybinds))
 
   (use-package evil-easymotion)
