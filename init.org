@@ -970,27 +970,33 @@ This section of the config contains configuration for specific programming langu
 
 #+begin_src emacs-lisp
 
-    (use-package clojure-mode
-      :init
-      (add-hook 'clojure-mode-hook 'paredit-mode)
-      (add-hook 'clojure-mode-hook 'aggressive-indent-mode))
+  (use-package flycheck-clj-kondo
+    :ensure t)
 
-    (use-package cider
-      :hook clojure-mode
-      :config
-      (miika/leader-keys
-        :keymap 'clojure-mode-map
-        "ms" '(:ignore t :which-key "Cider")
-        "msi" '(cider-jack-in :which-key "Cider jack-in")
-        "msj" '(cider-jack-in-cljs :which-key "Cider jack-in cljs")
-        "e" '(:ignore t :which-key "Eval")
-        "er" '(cider-eval-region :which-key "Eval region")
-        "ed" '(cider-eval-defun-at-point :which-key "Eval defun")
-        "eb" '(cider-eval-buffer :which-key "Eval buffer")
-        "mf" '(:ignore t :which-key "Format")
-        "mfa" '(cider-format-buffer :which-key "Format buffer")
-        "mfr" '(cider-format-region :which-key "Format region")
-        "mfd" '(cider-format-defun :which-key "Format defun")))
+  (use-package clojure-mode
+    :ensure t
+    :config
+    (add-hook 'clojure-mode-hook 'paredit-mode)
+    (add-hook 'clojure-mode-hook 'aggressive-indent-mode)
+    (require 'flycheck-clj-kondo)
+    (message "Clojure mode activated"))
+
+  (use-package cider
+    :hook clojure-mode
+    :config
+    (miika/leader-keys
+      :keymap 'clojure-mode-map
+      "ms" '(:ignore t :which-key "Cider")
+      "msi" '(cider-jack-in :which-key "Cider jack-in")
+      "msj" '(cider-jack-in-cljs :which-key "Cider jack-in cljs")
+      "e" '(:ignore t :which-key "Eval")
+      "er" '(cider-eval-region :which-key "Eval region")
+      "ed" '(cider-eval-defun-at-point :which-key "Eval defun")
+      "eb" '(cider-eval-buffer :which-key "Eval buffer")
+      "mf" '(:ignore t :which-key "Format")
+      "mfa" '(cider-format-buffer :which-key "Format buffer")
+      "mfr" '(cider-format-region :which-key "Format region")
+      "mfd" '(cider-format-defun :which-key "Format defun")))
 
 #+end_src
 
