@@ -35,6 +35,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#font-setup][Font setup]]
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
+- [[#vertico-consult-embark-orderless][Vertico, Consult, Embark, Orderless]]
 - [[#ivy-and-counsel][Ivy and counsel]]
 - [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
@@ -50,7 +51,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#treemacs][Treemacs]]
 - [[#ide][IDE]]
   - [[#flycheck][Flycheck]]
-  - [[#company][Company]]
+  - [[#autocompletion][Autocompletion]]
   - [[#lsp][LSP]]
   - [[#smartparens][Smartparens]]
   - [[#rainbow-delimiters][Rainbow delimiters]]
@@ -65,6 +66,7 @@ Much of this configuration is copied and some times modified from davivil's exce
     - [[#conda][Conda]]
     - [[#virtualenv][Virtualenv]]
     - [[#jupyter][Jupyter]]
+  - [[#web][Web]]
   - [[#cc][C/C++]]
   - [[#c][C#]]
     - [[#problems-with-omnisharp][Problems with Omnisharp?]]
@@ -79,14 +81,16 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#vterm][Vterm]]
 - [[#hydra][Hydra]]
 - [[#org-mode][Org mode]]
+  - [[#org-fonts][Org fonts]]
   - [[#org][Org]]
   - [[#keybindings][Keybindings]]
-  - [[#org-fonts][Org fonts]]
   - [[#org-babel][Org babel]]
   - [[#structure-templates][Structure templates]]
   - [[#make-tab-cycle-anywhere][Make TAB cycle anywhere]]
   - [[#update-table-of-contents-on-save][Update Table of Contents on Save]]
   - [[#auto-tangle-configuration-files][Auto-tangle Configuration Files]]
+- [[#latex][LaTeX]]
+- [[#spell-checking][Spell checking]]
 - [[#misc][Misc.]]
   - [[#emojify][Emojify]]
   - [[#xkcd][xkcd]]
@@ -263,7 +267,7 @@ Stuff that makes Emacs on MacOS usable.
       (message "Linux detected")
       (setq miika/default-font "Monoid NF"
             miika/org-font "Monoid NF"
-            miika/default-font-height 110))
+            miika/default-font-height 120))
 
 #+end_src
 
@@ -331,7 +335,7 @@ Random stuff I can't seem to place anywhere else.
 
 
     (column-number-mode)
-    ;; (global-display-line-numbers-mode nil)
+    (global-display-line-numbers-mode t)
     ;; (setq display-line-numbers-type 'relative)
 
 
@@ -380,7 +384,7 @@ Random stuff I can't seem to place anywhere else.
     ;; Global settings (defaults)
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    (load-theme 'doom-solarized-light t)
+    (load-theme 'doom-spacegrey t)
 
     ;; Enable flashing mode-line on errors
     ;; (doom-themes-visual-bell-config)
@@ -419,69 +423,121 @@ Random stuff I can't seem to place anywhere else.
           nyan-wavy-trail t))
 #+end_src
 
+* Vertico, Consult, Embark, Orderless
+
+#+begin_src emacs-lisp
+  (use-package vertico
+    :bind (:map vertico-map
+                ("M-j" . vertico-next)
+                ("M-k" . vertico-previous)
+                ("C-f" . vertico-exit))
+    :custom
+    (vertico-cycle t)
+    ;; :custom-face
+    ;; (vertico-current ((t (:background "#3a3f5a"))))
+    :init
+    (vertico-mode))
+
+  (use-package orderless
+    :init
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+
+
+  (use-package consult
+    :demand t
+    :custom
+    (completion-in-region-function #'consult-completion-in-region))
+
+  (use-package embark
+    :ensure t
+    :bind
+    (("M-." . embark-act)
+     ("C-." . embark-dwin)
+     ("C-h B" . embark-bindings)))
+
+  (use-package marginalia
+    :after vertico
+    :custom
+    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :init
+    (marginalia-mode))
+
+#+end_src
+
 * Ivy and counsel
 
 #+begin_src emacs-lisp
-
-  (use-package ivy
-    :diminish
-    :bind (("C-s" . swiper)
-           :map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)
-           ("C-l" . ivy-alt-done)
-           ("M-j" . ivy-next-line)
-           ("M-k" . ivy-previous-line)
-           :map ivy-switch-buffer-map
-           ("C-k" . ivy-previous-line)
-           ("C-l" . ivy-done)
-           ("C-d" . ivy-switch-buffer-kill)
-           :map ivy-reverse-i-search-map
-           ("C-k" . ivy-previous-line)
-           ("C-d" . ivy-reverse-i-search-kill))
-    :config
-    :init (ivy-mode 1))
-
-
 
   (use-package which-key
     :defer 0
     :diminish wich-key-mode
     :config
-      (setq which-key-idle-delay 0.3)
-      (which-key-mode))
+    (setq which-key-idle-delay 0.3)
+    (which-key-mode))
 
-  (use-package ivy-rich
-    :after ivy
-    :config (ivy-rich-mode 1))
+  ;; (use-package ivy
+  ;;   :diminish
+  ;;   :bind (("C-s" . swiper)
+  ;;          :map ivy-minibuffer-map
+  ;;          ("TAB" . ivy-alt-done)
+  ;;          ("C-l" . ivy-alt-done)
+  ;;          ("M-j" . ivy-next-line)
+  ;;          ("M-k" . ivy-previous-line)
+  ;;          :map ivy-switch-buffer-map
+  ;;          ("C-k" . ivy-previous-line)
+  ;;          ("C-l" . ivy-done)
+  ;;          ("C-d" . ivy-switch-buffer-kill)
+  ;;          :map ivy-reverse-i-search-map
+  ;;          ("C-k" . ivy-previous-line)
+  ;;          ("C-d" . ivy-reverse-i-search-kill))
+  ;;   :config
+  ;;   (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
+  ;;   :init (ivy-mode 1))
 
-  (use-package counsel
-    :after ivy
-    :bind (("M-x" . counsel-M-x)
-           ("C-x b" . counsel-ibuffer)
-           ("C-x C-f" . counsel-find-file)
-           :map minibuffer-local-map
-           ("C-r" . 'counsel-minibuffer-history))
-    :config
-    (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"))
+  ;; (use-package ivy-xref
+  ;;   :ensure t
+  ;;   :init
+  ;;   (when (>= emacs-major-version 27)
+  ;;     (setq xref-show-definitions-function #'ivy-xref-show-defs))
+  ;;   (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
-  (use-package ivy-prescient
-    :after counsel
-    :custom
-    (ivy-prescient-enable-filtering nil)
-    :config
-    ;; Uncomment the following line to have sorting remembered across sessions!
-    (prescient-persist-mode 1)
-    (ivy-prescient-mode 1))
+  ;; (use-package ivy-rich
+  ;;   :after ivy
+  ;;   :config (ivy-rich-mode 1))
+
+  ;; (use-package counsel
+  ;;   :after ivy
+  ;;   :bind (("M-x" . counsel-M-x)
+  ;;          ("C-x b" . counsel-ibuffer)
+  ;;          ("C-x C-f" . counsel-find-file)
+  ;;          :map minibuffer-local-map
+  ;;          ("C-r" . 'counsel-minibuffer-history))
+  ;;   :config
+  ;;   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"))
+
+  ;; (use-package ivy-prescient
+  ;;   :after counsel
+  ;;   :custom
+  ;;   (ivy-prescient-enable-filtering nil)
+  ;;   :config
+  ;;   ;; Uncomment the following line to have sorting remembered across sessions!
+  ;;   (prescient-persist-mode 1)
+  ;;   (ivy-prescient-mode 1))
 
   (use-package helpful
     :commands (helpful-callable helpful-variable helpful-command helpful-key)
-    :custom
-    (counsel-describe-function-function #'helpful-callable)
-    (counsel-describe-variable-function #'helpful-variable)
+    ;; :custom
+    ;; (counsel-describe-function-function #'helpful-callable)
+    ;; (counsel-describe-variable-function #'helpful-variable)
     :bind
-    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-function] . helpful-function)
     ([remap describe-command] . helpful-command)
-    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-variable] . helpful-variable)
     ([remap describe-key] . helpful-key))
 
 #+end_src
@@ -519,8 +575,6 @@ Welcome to the dark side ;)
     (call-interactively 'evil-shift-right)
     (evil-normal-state)
     (evil-visual-restore))
-
-
 
   (use-package evil
     :init
@@ -569,6 +623,10 @@ Welcome to the dark side ;)
       (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
   (use-package evil-multiedit
+    :bind
+    (:map evil-multiedit-mode-map
+          ("M-j" . evil-multiedit-next)
+          ("M-k" . evil-multiedit-prev))
     :config (evil-multiedit-default-keybinds))
 
   (use-package evil-easymotion)
@@ -595,11 +653,11 @@ Global keybindings live here. You can find mode specific keybindings by the conf
   (use-package general
     :config
 
-    (general-define-key
-      :states 'insert
-      :keymaps 'override
-      "M-j" 'company-select-next
-      "M-k" 'company-select-previous)
+    ;; (general-define-key
+    ;;  :states 'insert
+    ;;  :keymaps 'override
+    ;;  "M-j" 'company-select-next
+    ;;  "M-k" 'company-select-previous)
 
     (general-create-definer miika/leader-keys
       ;; :keymaps '(normal visual emacs)
@@ -609,18 +667,25 @@ Global keybindings live here. You can find mode specific keybindings by the conf
     (general-define-key
      :states '(normal visual emacs)
      :keymaps 'override
-     "/" '(swiper :which-key "swiper"))
+     "/" '(consult-line :which-key "Search")
+     "n" '(newline :which-key "Inser newline")
+     ;; "/" '(swiper :which-key "Search")
+     )
 
     (miika/leader-keys
-      ":" '(counsel-M-x :which-key "M-x")
+      ;; ":" '(counsel-M-x :which-key "M-x")
+      ":" '(execute-extended-command :which-key "M-x")
       ";" '(eval-expression :which-key "Eval expression")
-      "." '(find-file :which-key "Find file in current dir")
+      "." '(consult-projectile :which-key "Consult projectile")
       ;; "." '(projectile-find-file :which-key "Find file in project")
       "SPC" '(:keymap evilem-map :which-key "Easy motion")
       "SPC s" '(evil-avy-goto-char
                 :keymaps: 'override)
       "SPC S" '(evil-avy-goto-char-2
                 :keymaps: 'override)
+
+      "s"  '(:ignore t :which-key "Search")
+      "ss" '(consult-ripgrep :which-key "Ripgrep")
 
       ;; "/" '(swiper :which-key "swiper")
 
@@ -630,14 +695,14 @@ Global keybindings live here. You can find mode specific keybindings by the conf
 
       ;; Buffers
       "b" '(:ignore t :which-key "Buffer")
-      "bb" '(counsel-switch-buffer :which-key "Switch to buffer")
+      "bb" '(consult-buffer :which-key "Switch to buffer")
       "bv" '(miika/switch-to-vterm-buffer :which-key "Switch to vterm buffer")
       "bk" '(kill-current-buffer :which-key "Kill current buffer")
       "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
       ;; Toggle
       "t" '(:ignore t :which-key "Toggle")
-      "tt" '(counsel-load-theme :which-key "Load theme")
+      "tt" '(consult-theme :which-key "Load theme")
       "ts" '(hydra-text-scale/body :which-key "Scale text")
       "te" '(treemacs :which-key "Toggle treemacs")
 
@@ -651,7 +716,7 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       ;; Files
       "f" '(:ignore t :which-key "File")
       "fi" '(miika/open-user-init-file :which-key "Open init.el")
-      "ff" '(projectile-find-file :which-key "Find file in project")
+      "ff" '(find-file :which-key "Find file")
       ;; "ff" '(find-file :which-key "Find file")
       ;; "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
@@ -717,7 +782,7 @@ Setup projectile for powerful project management.
   (use-package projectile
     :diminish projectile-mode
     :config (projectile-mode)
-    :custom ((projectile-completion-system 'ivy))
+    ;; :custom ((projectile-completion-system 'ivy))
     ;; :bind-keymap
     ;; ("SPC p" . projectile-command-map)
     :init
@@ -731,8 +796,10 @@ Setup projectile for powerful project management.
     (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
     (setq projectile-enable-caching nil))
 
-  (use-package counsel-projectile
-    :config (counsel-projectile-mode))
+  ;; (use-package counsel-projectile
+  ;;   :config (counsel-projectile-mode))
+
+  (use-package consult-projectile)
 
 #+end_src
 
@@ -761,12 +828,9 @@ Stuff that makes Emacs behave more like an IDE.
       :keymap flycheck-mode-map
       "ne" '(flycheck-next-error :which-key "Go to next error")))
 
-
 #+end_src
 
-** Company
-
-Autocompletion
+** Autocompletion
 
 #+begin_src emacs-lisp
 
@@ -778,93 +842,45 @@ Autocompletion
         (company-complete-selection)
       (company-complete-number 1)))
 
-  (use-package company
-      ;; :after (lsp-mode emacs-lisp-mode)
-      :hook ((emacs-lisp-mode . company-mode)
-            (lsp-mode . company-mode))
-      :bind
-      (:map company-active-map
-            ("<tab>" . miika/company-complete-selection))
-      :custom
-      (company-minimum-prefix-length 1)
-      (company-idle-delay 0.1))
+  ;; (use-package company
+  ;;     ;; :after (lsp-mode emacs-lisp-mode)
+  ;;     :hook ((emacs-lisp-mode . company-mode)
+  ;;           (lsp-mode . company-mode))
+  ;;     :bind
+  ;;     (:map company-active-map
+  ;;           ("<tab>" . miika/company-complete-selection))
+  ;;     :custom
+  ;;     (company-minimum-prefix-length 1)
+  ;;     (company-idle-delay 0.1))
 
-    ;; Nicer UI
-    (use-package company-box
-      :hook (company-mode . company-box-mode))
+  ;;   ;; Nicer UI
+  ;;   (use-package company-box
+  ;;     :hook (company-mode . company-box-mode))
+
+  (use-package corfu
+    :ensure t
+    :bind
+    (:map corfu-map
+          ("M-j" . corfu-next)
+          ("M-k" . corfu-previous)
+          ("<tab>" . corfu-insert))
+    :custom
+    (corfu-cycle t)
+    :config
+    (corfu-global-mode))
 
 #+end_src
+
 
 ** LSP
 
 #+begin_src emacs-lisp
 
-  ;; (use-package lsp-mode
-  ;;   ;; Optional - enable lsp-mode automatically in scala files
-  ;;   :commands (lsp lsp-deferred)
-  ;;   :hook
-  ;;   (scala-mode . lsp)
-  ;;   ;; (lsp-mode . lsp-lens-mode)
-  ;;   :init
-  ;;   (setq lsp-enable-file-watchers nil
-  ;;         lsp-enable-folding nil
-  ;;         lsp-enable-text-document-color nil
-  ;;         lsp-enable-indentation nil
-  ;;         lsp-enable-on-type-formatting nil
-  ;;         lsp-keymap-prefix "C-c l")
-
-  ;;   :config
-  ;;   ;; Uncomment following section if you would like to tune lsp-mode performance according to
-  ;;   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-  ;;   (setq gc-cons-threshold 100000000) ;; 100mb
-  ;;   (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  ;;   (setq lsp-idle-delay 0.500)
-  ;;   (setq lsp-log-io nil)
-  ;;   (setq lsp-prefer-flymake nil)
-  ;;   (setq lsp-headerline-breadcrumb-enable nil)
-  ;;   (setq lsp-completion-mode t)
-  ;;   (miika/leader-keys
-  ;;     :keymap lsp-mode-map
-  ;;     "mfa" '(lsp-format-buffer :which-key "Format buffer")
-  ;;     "mfr" '(lsp-format-region :which-key "Format region")
-  ;;     "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
-  ;;     "r" '(:ignore t :which-key "Refactor")
-  ;;     "rr" '(lsp-rename :which-key "Rename symbol")))
-
-  ;; (use-package lsp-ui
-  ;;   :after lsp-mode
-  ;;   :config
-  ;;   (setq lsp-ui-doc-enable nil
-  ;;         lsp-ui-doc-position 'at-point
-  ;;         lsp-ui-doc-delay 0.0
-  ;;         lsp-ui-doc-show-with-cursor nil
-  ;;         lsp-ui-doc-show-with-mouse nil
-  ;;         lsp-ui-sideline-show-diagnostics t
-  ;;         lsp-ui-sideline-ignore-duplicate t
-  ;;         lsp-ui-sideline-show-code-actions nil
-  ;;         lsp-ui-doc-show-with-mouse nil))
-
-
-  ;; (defun miika/toggle-lsp-ui-doc ()
-  ;;   "Show lsp-ui-doc if if it is hidden and hides if not."
-  ;;   (interactive)
-  ;;   (if (lsp-ui-doc--visible-p)
-  ;;       (lsp-ui-doc-hide)
-  ;;     (lsp-ui-doc-show)))
-
-  ;; (use-package posframe
-  ;;   :after lsp-ui)
-
-  ;; (use-package dap-mode
-  ;;     :commands dap-debug
-  ;;     :hook
-  ;;     (lsp-mode . dap-mode)
-  ;;     (lsp-mode . dap-ui-mode))
-
   (use-package eglot
     :ensure t
     :config
     ;; (eglot-work)
+    (setq eglot-stay-out-of '(flymake))
     (miika/leader-keys
       :keymap eglot-mode-map
       "r" '(:ignore t :which-key "Refactor")
@@ -1038,6 +1054,15 @@ Remember to install =pyls= for lsp to work with python.
       (pop-to-buffer
        (process-buffer (run-python nil nil t)))))
 
+  (defun miika/open-python-repl ()
+    "Open a normal python REPL."
+    (interactive)
+    (require 'python)
+    (let ((python-shell-interpreter "python")
+          (python-shell-interpreter-args "-i --simple-prompt --no-color-info"))
+      (pop-to-buffer
+       (process-buffer (run-python nil nil t)))))
+
   (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
   (use-package python-black
@@ -1049,14 +1074,17 @@ Remember to install =pyls= for lsp to work with python.
     (setq python-indent-guess-indent-offset t)
     (setq python-indent-guess-indent-offset-verbose nil)
     (setq python-indent-offset 4)
+    (setq python-shell-completion-native-enable nil) ; IPython repl breaks without this ATM
     ;; (setq lsp-completion-mode t)
+    (flymake-mode-off)
     (miika/leader-keys
       :keymap 'python-mode-map
       "mw" '(conda-env-activate :which-key "Workon enviroment")
       ;; "mw" '(pyvenv-workon :which-key "Workon enviroment")
       "ms" '(:ignore t :which-key "Shell")
       "mss" '(run-python :which-key"Python shell")
-      "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
+      ;; "msi" '(miika/open-ipython-repl :which-key "Ipython shell")
+      "msi" '(miika/open-python-repl :which-key "Python shell")
       "msj" '(miika/open-jupyter-repl :which-key "Jupyter shell")
       "msr" '(python-shell-send-region :which-key "Send region")
       "msd" '(python-shell-send-defun :which-key "Send defun")
@@ -1067,7 +1095,7 @@ Remember to install =pyls= for lsp to work with python.
     (message "Python mode activated"))
 
   (add-hook 'python-mode-hook 'miika/python-setup)
-  (add-hook 'python-mode-hook 'company-mode)
+  ;; (add-hook 'python-mode-hook 'company-mode)
   (add-hook 'python-mode-hook 'miika/conda-autoactivate)
 
 #+end_src
@@ -1186,6 +1214,48 @@ Remember to install =pyls= for lsp to work with python.
 
 #+end_src
 
+
+** Web
+
+#+begin_src emacs-lisp
+  ;; (use-package web-mode
+  ;;   :mode ("\\.tsx\\'" "\\.jsx\\'")
+  ;;   :ensure t)
+
+  ;; (use-package typescript-mode
+  ;;   :ensure t)
+
+  ;; (use-package tide
+  ;;   :ensure t
+  ;;   :config
+  ;;   (miika/leader-keys
+  ;;     :keymap tide-mode-map
+  ;;     "r" '(:ignore t :which-key "Refactor")
+  ;;     "rr" '(tide-rename-symbol-at-location :which-key "Rename symbol")
+  ;;     "rf" '(tide-rename-file :which-key "Rename file")
+  ;;     "gd" '(tide-jump-to-definition :which-key "Jump to definition")
+  ;;     "gr" '(tide-references :which-key "Goto reference")))
+
+  ;; (defun miika/setup-tide-mode ()
+  ;;   (interactive)
+  ;;   (flycheck-mode +1)
+  ;;   (eldoc-mode +1)
+  ;;   (tide-hl-identifier-mode +1)
+  ;;   (company-mode +1))
+
+  ;; (add-hook 'typescript-mode-hook #'miika/setup-tide-mode)
+
+
+
+  ;; (add-hook 'web-mode-hook
+  ;;           (lambda ()
+  ;;             (when (string-equal "tsx" (file-name-extension buffer-file-name))
+  ;;               (miika/setup-tide-mode))))
+
+  ;; (flycheck-add-mode 'typescript-tslint 'web-mode)
+
+#+end_src
+
 ** C/C++
 #+begin_src emacs-lisp
 
@@ -1290,9 +1360,21 @@ Develop games with Godot!
 
 #+begin_src emacs-lisp
 
-  (use-package yaml-mode)
+  (use-package highlight-indent-guides
+    :ensure t
+    :commands highlight-indent-guides-mode)
+
+  (use-package yaml-mode
+    :hook (format-all highlight-indent-guides-mode)
+    :config
+    (miika/leader-keys
+      :states '(normal visual)
+      :keymap 'org-mode-map
+      "mf" '(:ignore t :which-key "Format")
+      "mfa" '(format-all-buffer :which-key "Format buffer")))
 
 #+end_src
+
 
 * Git
 
@@ -1457,57 +1539,6 @@ TODO: Better documentation of the huge code block below.
 #+end_src
 
 * Org mode
-** Org
-
-#+begin_src emacs-lisp
-
-  (defun miika/org-mode-setup ()
-    (org-indent-mode)
-    (variable-pitch-mode 1)
-    (visual-line-mode 1))
-
-  (use-package org
-    :hook (org-mode . miika/org-mode-setup)
-    :config
-    (setq org-ellipsis " ▾")
-    (miika/org-font-setup))
-
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    ;; :custom
-    ;; (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
-    )
-
-
-  (defun miika/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-
-  (with-eval-after-load 'org
-    (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t))))
-
-  ;; (use-package visual-fill-column
-  ;;   :hook (org-mode . miika/org-mode-visual-fill))
-
-#+end_src
-
-** Keybindings
-
-#+begin_src emacs-lisp
-
-  (miika/leader-keys
-    :states '(normal visual)
-    :keymap 'org-mode-map
-    "e" '(:ignore t :which-key "Execute")
-    "ed" '(org-babel-execute-src-block :which-key "Execute code block")
-    "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
-    "me" '(org-edit-special :which-key "Edit Special"))
-
-#+end_src
 
 ** Org fonts
 
@@ -1542,6 +1573,86 @@ TODO: Better documentation of the huge code block below.
 
 #+end_src
 
+** Org
+
+#+begin_src emacs-lisp
+
+  (defun miika/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
+
+
+  (use-package org
+    :hook (org-mode . miika/org-mode-setup)
+    :config
+    (setq org-ellipsis " ▾")
+    (miika/org-font-setup)
+    )
+
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+
+  (defvar miika/bibs '("~/bib/references.bib"))
+
+  (use-package citeproc
+    :config
+    (setq org-cite-csl-styles-dir "~/bib/csl")
+    (setq org-cite-csl--fallback-style-file "~/bib/csl/apa.csl")
+    (setq org-cite-export-processors '((t csl))))
+
+  (use-package citar
+    :after org
+    ;; :commands org-cite-insert
+    :custom (citar-bibliography miika/bibs)
+    :config
+    (miika/leader-keys
+      :keymap 'org-mode-map
+      "ci" '(org-cite-insert :which-key "Insert citation"))
+    (miika/leader-keys
+      :keymap 'LaTeX-mode-map
+      "ci" '(citar-insert-citation :which-key "Insert citation"))
+    (setq org-cite-global-bibliography miika/bibs)
+    (setq org-cite-insert-processor 'citar)
+    (setq org-cite-follow-processor 'citar)
+    (setq org-cite-activate-processor 'citar))
+
+  (defun miika/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t))))
+
+  ;; Citation styles: https://blog.tecosaur.com/tmio/2021-07-31-citations.html#cite-styles
+
+  ;; (use-package visual-fill-column
+  ;;   :hook (org-mode . miika/org-mode-visual-fill))
+
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+
+  (miika/leader-keys
+    :states '(normal visual)
+    :keymap 'org-mode-map
+    "e" '(:ignore t :which-key "Execute/Export")
+    "ed" '(org-babel-execute-src-block :which-key "Execute code block")
+    "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
+    "ee" '(org-export-dispatch :which-key "Export")
+    "me" '(org-edit-special :which-key "Edit Special"))
+
+#+end_src
+
 ** Org babel
 
   To execute or export code in org-mode code blocks, you’ll need to set up org-babel-load-languages for each language you’d like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
@@ -1550,8 +1661,9 @@ TODO: Better documentation of the huge code block below.
 
     (with-eval-after-load 'org
       (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t)))
+       'org-babel-load-languages
+       '((emacs-lisp . t)
+         (latex . t)))
 
       (setq org-confirm-babel-evaluate nil))
 
@@ -1604,6 +1716,26 @@ This snippet adds a hook to =org-mode= buffers so that =miika/org-babel-tangle-c
         (org-babel-tangle))))
 
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'miika/org-babel-tangle-config)))
+
+#+end_src
+
+* LaTeX
+
+#+begin_src emacs-lisp
+
+  ;; (add-hook 'latex-mode-hook 'company-mode)
+
+  (use-package auctex
+    :after 'LaTeX-mode)
+
+#+end_src
+
+* Spell checking
+
+#+begin_src emacs-lisp
+
+  (use-package flycheck-grammarly
+    :hook latex-mode)
 
 #+end_src
 
