@@ -419,69 +419,121 @@ Random stuff I can't seem to place anywhere else.
           nyan-wavy-trail t))
 #+end_src
 
+* Vertico, Consult, Embark, Orderless
+
+#+begin_src emacs-lisp
+  (use-package vertico
+    :bind (:map vertico-map
+                ("M-j" . vertico-next)
+                ("M-k" . vertico-previous)
+                ("C-f" . vertico-exit))
+    :custom
+    (vertico-cycle t)
+    ;; :custom-face
+    ;; (vertico-current ((t (:background "#3a3f5a"))))
+    :init
+    (vertico-mode))
+
+  (use-package orderless
+    :init
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+
+
+  (use-package consult
+    :demand t
+    :custom
+    (completion-in-region-function #'consult-completion-in-region))
+
+  (use-package embark
+    :ensure t
+    :bind
+    (("M-." . embark-act)
+     ("C-." . embark-dwin)
+     ("C-h B" . embark-bindings)))
+
+  (use-package marginalia
+    :after vertico
+    :custom
+    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :init
+    (marginalia-mode))
+
+#+end_src
+
 * Ivy and counsel
 
 #+begin_src emacs-lisp
-
-  (use-package ivy
-    :diminish
-    :bind (("C-s" . swiper)
-           :map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)
-           ("C-l" . ivy-alt-done)
-           ("M-j" . ivy-next-line)
-           ("M-k" . ivy-previous-line)
-           :map ivy-switch-buffer-map
-           ("C-k" . ivy-previous-line)
-           ("C-l" . ivy-done)
-           ("C-d" . ivy-switch-buffer-kill)
-           :map ivy-reverse-i-search-map
-           ("C-k" . ivy-previous-line)
-           ("C-d" . ivy-reverse-i-search-kill))
-    :config
-    :init (ivy-mode 1))
-
-
 
   (use-package which-key
     :defer 0
     :diminish wich-key-mode
     :config
-      (setq which-key-idle-delay 0.3)
-      (which-key-mode))
+    (setq which-key-idle-delay 0.3)
+    (which-key-mode))
 
-  (use-package ivy-rich
-    :after ivy
-    :config (ivy-rich-mode 1))
+  ;; (use-package ivy
+  ;;   :diminish
+  ;;   :bind (("C-s" . swiper)
+  ;;          :map ivy-minibuffer-map
+  ;;          ("TAB" . ivy-alt-done)
+  ;;          ("C-l" . ivy-alt-done)
+  ;;          ("M-j" . ivy-next-line)
+  ;;          ("M-k" . ivy-previous-line)
+  ;;          :map ivy-switch-buffer-map
+  ;;          ("C-k" . ivy-previous-line)
+  ;;          ("C-l" . ivy-done)
+  ;;          ("C-d" . ivy-switch-buffer-kill)
+  ;;          :map ivy-reverse-i-search-map
+  ;;          ("C-k" . ivy-previous-line)
+  ;;          ("C-d" . ivy-reverse-i-search-kill))
+  ;;   :config
+  ;;   (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
+  ;;   :init (ivy-mode 1))
 
-  (use-package counsel
-    :after ivy
-    :bind (("M-x" . counsel-M-x)
-           ("C-x b" . counsel-ibuffer)
-           ("C-x C-f" . counsel-find-file)
-           :map minibuffer-local-map
-           ("C-r" . 'counsel-minibuffer-history))
-    :config
-    (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"))
+  ;; (use-package ivy-xref
+  ;;   :ensure t
+  ;;   :init
+  ;;   (when (>= emacs-major-version 27)
+  ;;     (setq xref-show-definitions-function #'ivy-xref-show-defs))
+  ;;   (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 
-  (use-package ivy-prescient
-    :after counsel
-    :custom
-    (ivy-prescient-enable-filtering nil)
-    :config
-    ;; Uncomment the following line to have sorting remembered across sessions!
-    (prescient-persist-mode 1)
-    (ivy-prescient-mode 1))
+  ;; (use-package ivy-rich
+  ;;   :after ivy
+  ;;   :config (ivy-rich-mode 1))
+
+  ;; (use-package counsel
+  ;;   :after ivy
+  ;;   :bind (("M-x" . counsel-M-x)
+  ;;          ("C-x b" . counsel-ibuffer)
+  ;;          ("C-x C-f" . counsel-find-file)
+  ;;          :map minibuffer-local-map
+  ;;          ("C-r" . 'counsel-minibuffer-history))
+  ;;   :config
+  ;;   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"))
+
+  ;; (use-package ivy-prescient
+  ;;   :after counsel
+  ;;   :custom
+  ;;   (ivy-prescient-enable-filtering nil)
+  ;;   :config
+  ;;   ;; Uncomment the following line to have sorting remembered across sessions!
+  ;;   (prescient-persist-mode 1)
+  ;;   (ivy-prescient-mode 1))
 
   (use-package helpful
     :commands (helpful-callable helpful-variable helpful-command helpful-key)
-    :custom
-    (counsel-describe-function-function #'helpful-callable)
-    (counsel-describe-variable-function #'helpful-variable)
+    ;; :custom
+    ;; (counsel-describe-function-function #'helpful-callable)
+    ;; (counsel-describe-variable-function #'helpful-variable)
     :bind
-    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-function] . helpful-function)
     ([remap describe-command] . helpful-command)
-    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-variable] . helpful-variable)
     ([remap describe-key] . helpful-key))
 
 #+end_src
@@ -595,11 +647,11 @@ Global keybindings live here. You can find mode specific keybindings by the conf
   (use-package general
     :config
 
-    (general-define-key
-      :states 'insert
-      :keymaps 'override
-      "M-j" 'company-select-next
-      "M-k" 'company-select-previous)
+    ;; (general-define-key
+    ;;  :states 'insert
+    ;;  :keymaps 'override
+    ;;  "M-j" 'company-select-next
+    ;;  "M-k" 'company-select-previous)
 
     (general-create-definer miika/leader-keys
       ;; :keymaps '(normal visual emacs)
@@ -609,18 +661,25 @@ Global keybindings live here. You can find mode specific keybindings by the conf
     (general-define-key
      :states '(normal visual emacs)
      :keymaps 'override
-     "/" '(swiper :which-key "swiper"))
+     "/" '(consult-line :which-key "Search")
+     "n" '(newline :which-key "Inser newline")
+     ;; "/" '(swiper :which-key "Search")
+     )
 
     (miika/leader-keys
-      ":" '(counsel-M-x :which-key "M-x")
+      ;; ":" '(counsel-M-x :which-key "M-x")
+      ":" '(execute-extended-command :which-key "M-x")
       ";" '(eval-expression :which-key "Eval expression")
-      "." '(find-file :which-key "Find file in current dir")
+      "." '(consult-projectile :which-key "Consult projectile")
       ;; "." '(projectile-find-file :which-key "Find file in project")
       "SPC" '(:keymap evilem-map :which-key "Easy motion")
       "SPC s" '(evil-avy-goto-char
                 :keymaps: 'override)
       "SPC S" '(evil-avy-goto-char-2
                 :keymaps: 'override)
+
+      "s"  '(:ignore t :which-key "Search")
+      "ss" '(consult-ripgrep :which-key "Ripgrep")
 
       ;; "/" '(swiper :which-key "swiper")
 
@@ -630,14 +689,14 @@ Global keybindings live here. You can find mode specific keybindings by the conf
 
       ;; Buffers
       "b" '(:ignore t :which-key "Buffer")
-      "bb" '(counsel-switch-buffer :which-key "Switch to buffer")
+      "bb" '(consult-buffer :which-key "Switch to buffer")
       "bv" '(miika/switch-to-vterm-buffer :which-key "Switch to vterm buffer")
       "bk" '(kill-current-buffer :which-key "Kill current buffer")
       "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
       ;; Toggle
       "t" '(:ignore t :which-key "Toggle")
-      "tt" '(counsel-load-theme :which-key "Load theme")
+      "tt" '(consult-theme :which-key "Load theme")
       "ts" '(hydra-text-scale/body :which-key "Scale text")
       "te" '(treemacs :which-key "Toggle treemacs")
 
@@ -651,7 +710,7 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       ;; Files
       "f" '(:ignore t :which-key "File")
       "fi" '(miika/open-user-init-file :which-key "Open init.el")
-      "ff" '(projectile-find-file :which-key "Find file in project")
+      "ff" '(find-file :which-key "Find file")
       ;; "ff" '(find-file :which-key "Find file")
       ;; "f ." '(projectile-find-file-in-directory :which-key "Find file in dir")
 
@@ -717,7 +776,7 @@ Setup projectile for powerful project management.
   (use-package projectile
     :diminish projectile-mode
     :config (projectile-mode)
-    :custom ((projectile-completion-system 'ivy))
+    ;; :custom ((projectile-completion-system 'ivy))
     ;; :bind-keymap
     ;; ("SPC p" . projectile-command-map)
     :init
@@ -731,8 +790,10 @@ Setup projectile for powerful project management.
     (setq projectile-globally-ignored-files (append '(".#*" "#*") projectile-globally-ignored-files))
     (setq projectile-enable-caching nil))
 
-  (use-package counsel-projectile
-    :config (counsel-projectile-mode))
+  ;; (use-package counsel-projectile
+  ;;   :config (counsel-projectile-mode))
+
+  (use-package consult-projectile)
 
 #+end_src
 
@@ -761,12 +822,9 @@ Stuff that makes Emacs behave more like an IDE.
       :keymap flycheck-mode-map
       "ne" '(flycheck-next-error :which-key "Go to next error")))
 
-
 #+end_src
 
-** Company
-
-Autocompletion
+** Autocompletion
 
 #+begin_src emacs-lisp
 
@@ -778,93 +836,45 @@ Autocompletion
         (company-complete-selection)
       (company-complete-number 1)))
 
-  (use-package company
-      ;; :after (lsp-mode emacs-lisp-mode)
-      :hook ((emacs-lisp-mode . company-mode)
-            (lsp-mode . company-mode))
-      :bind
-      (:map company-active-map
-            ("<tab>" . miika/company-complete-selection))
-      :custom
-      (company-minimum-prefix-length 1)
-      (company-idle-delay 0.1))
+  ;; (use-package company
+  ;;     ;; :after (lsp-mode emacs-lisp-mode)
+  ;;     :hook ((emacs-lisp-mode . company-mode)
+  ;;           (lsp-mode . company-mode))
+  ;;     :bind
+  ;;     (:map company-active-map
+  ;;           ("<tab>" . miika/company-complete-selection))
+  ;;     :custom
+  ;;     (company-minimum-prefix-length 1)
+  ;;     (company-idle-delay 0.1))
 
-    ;; Nicer UI
-    (use-package company-box
-      :hook (company-mode . company-box-mode))
+  ;;   ;; Nicer UI
+  ;;   (use-package company-box
+  ;;     :hook (company-mode . company-box-mode))
+
+  (use-package corfu
+    :ensure t
+    :bind
+    (:map corfu-map
+          ("M-j" . corfu-next)
+          ("M-k" . corfu-previous)
+          ("<tab>" . corfu-insert))
+    :custom
+    (corfu-cycle t)
+    :config
+    (corfu-global-mode))
 
 #+end_src
+
 
 ** LSP
 
 #+begin_src emacs-lisp
 
-  ;; (use-package lsp-mode
-  ;;   ;; Optional - enable lsp-mode automatically in scala files
-  ;;   :commands (lsp lsp-deferred)
-  ;;   :hook
-  ;;   (scala-mode . lsp)
-  ;;   ;; (lsp-mode . lsp-lens-mode)
-  ;;   :init
-  ;;   (setq lsp-enable-file-watchers nil
-  ;;         lsp-enable-folding nil
-  ;;         lsp-enable-text-document-color nil
-  ;;         lsp-enable-indentation nil
-  ;;         lsp-enable-on-type-formatting nil
-  ;;         lsp-keymap-prefix "C-c l")
-
-  ;;   :config
-  ;;   ;; Uncomment following section if you would like to tune lsp-mode performance according to
-  ;;   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-  ;;   (setq gc-cons-threshold 100000000) ;; 100mb
-  ;;   (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  ;;   (setq lsp-idle-delay 0.500)
-  ;;   (setq lsp-log-io nil)
-  ;;   (setq lsp-prefer-flymake nil)
-  ;;   (setq lsp-headerline-breadcrumb-enable nil)
-  ;;   (setq lsp-completion-mode t)
-  ;;   (miika/leader-keys
-  ;;     :keymap lsp-mode-map
-  ;;     "mfa" '(lsp-format-buffer :which-key "Format buffer")
-  ;;     "mfr" '(lsp-format-region :which-key "Format region")
-  ;;     "ud" '(miika/toggle-lsp-ui-doc :which-key "Toggle lsp-ui-doc")
-  ;;     "r" '(:ignore t :which-key "Refactor")
-  ;;     "rr" '(lsp-rename :which-key "Rename symbol")))
-
-  ;; (use-package lsp-ui
-  ;;   :after lsp-mode
-  ;;   :config
-  ;;   (setq lsp-ui-doc-enable nil
-  ;;         lsp-ui-doc-position 'at-point
-  ;;         lsp-ui-doc-delay 0.0
-  ;;         lsp-ui-doc-show-with-cursor nil
-  ;;         lsp-ui-doc-show-with-mouse nil
-  ;;         lsp-ui-sideline-show-diagnostics t
-  ;;         lsp-ui-sideline-ignore-duplicate t
-  ;;         lsp-ui-sideline-show-code-actions nil
-  ;;         lsp-ui-doc-show-with-mouse nil))
-
-
-  ;; (defun miika/toggle-lsp-ui-doc ()
-  ;;   "Show lsp-ui-doc if if it is hidden and hides if not."
-  ;;   (interactive)
-  ;;   (if (lsp-ui-doc--visible-p)
-  ;;       (lsp-ui-doc-hide)
-  ;;     (lsp-ui-doc-show)))
-
-  ;; (use-package posframe
-  ;;   :after lsp-ui)
-
-  ;; (use-package dap-mode
-  ;;     :commands dap-debug
-  ;;     :hook
-  ;;     (lsp-mode . dap-mode)
-  ;;     (lsp-mode . dap-ui-mode))
-
   (use-package eglot
     :ensure t
     :config
     ;; (eglot-work)
+    (setq eglot-stay-out-of '(flymake))
     (miika/leader-keys
       :keymap eglot-mode-map
       "r" '(:ignore t :which-key "Refactor")
