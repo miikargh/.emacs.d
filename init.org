@@ -1537,57 +1537,6 @@ TODO: Better documentation of the huge code block below.
 #+end_src
 
 * Org mode
-** Org
-
-#+begin_src emacs-lisp
-
-  (defun miika/org-mode-setup ()
-    (org-indent-mode)
-    (variable-pitch-mode 1)
-    (visual-line-mode 1))
-
-  (use-package org
-    :hook (org-mode . miika/org-mode-setup)
-    :config
-    (setq org-ellipsis " ▾")
-    (miika/org-font-setup))
-
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    ;; :custom
-    ;; (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
-    )
-
-
-  (defun miika/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-
-  (with-eval-after-load 'org
-    (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t))))
-
-  ;; (use-package visual-fill-column
-  ;;   :hook (org-mode . miika/org-mode-visual-fill))
-
-#+end_src
-
-** Keybindings
-
-#+begin_src emacs-lisp
-
-  (miika/leader-keys
-    :states '(normal visual)
-    :keymap 'org-mode-map
-    "e" '(:ignore t :which-key "Execute")
-    "ed" '(org-babel-execute-src-block :which-key "Execute code block")
-    "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
-    "me" '(org-edit-special :which-key "Edit Special"))
-
-#+end_src
 
 ** Org fonts
 
@@ -1622,6 +1571,86 @@ TODO: Better documentation of the huge code block below.
 
 #+end_src
 
+** Org
+
+#+begin_src emacs-lisp
+
+  (defun miika/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
+
+
+  (use-package org
+    :hook (org-mode . miika/org-mode-setup)
+    :config
+    (setq org-ellipsis " ▾")
+    (miika/org-font-setup)
+    )
+
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+
+  (defvar miika/bibs '("~/bib/references.bib"))
+
+  (use-package citeproc
+    :config
+    (setq org-cite-csl-styles-dir "~/bib/csl")
+    (setq org-cite-csl--fallback-style-file "~/bib/csl/apa.csl")
+    (setq org-cite-export-processors '((t csl))))
+
+  (use-package citar
+    :after org
+    ;; :commands org-cite-insert
+    :custom (citar-bibliography miika/bibs)
+    :config
+    (miika/leader-keys
+      :keymap 'org-mode-map
+      "ci" '(org-cite-insert :which-key "Insert citation"))
+    (miika/leader-keys
+      :keymap 'LaTeX-mode-map
+      "ci" '(citar-insert-citation :which-key "Insert citation"))
+    (setq org-cite-global-bibliography miika/bibs)
+    (setq org-cite-insert-processor 'citar)
+    (setq org-cite-follow-processor 'citar)
+    (setq org-cite-activate-processor 'citar))
+
+  (defun miika/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t))))
+
+  ;; Citation styles: https://blog.tecosaur.com/tmio/2021-07-31-citations.html#cite-styles
+
+  ;; (use-package visual-fill-column
+  ;;   :hook (org-mode . miika/org-mode-visual-fill))
+
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+
+  (miika/leader-keys
+    :states '(normal visual)
+    :keymap 'org-mode-map
+    "e" '(:ignore t :which-key "Execute/Export")
+    "ed" '(org-babel-execute-src-block :which-key "Execute code block")
+    "eb" '(org-babel-execute-buffer :which-key "Execute buffer")
+    "ee" '(org-export-dispatch :which-key "Export")
+    "me" '(org-edit-special :which-key "Edit Special"))
+
+#+end_src
+
 ** Org babel
 
   To execute or export code in org-mode code blocks, you’ll need to set up org-babel-load-languages for each language you’d like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
@@ -1630,8 +1659,9 @@ TODO: Better documentation of the huge code block below.
 
     (with-eval-after-load 'org
       (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t)))
+       'org-babel-load-languages
+       '((emacs-lisp . t)
+         (latex . t)))
 
       (setq org-confirm-babel-evaluate nil))
 
