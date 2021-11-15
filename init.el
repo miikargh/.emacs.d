@@ -206,6 +206,9 @@
 
 (use-package consult
   :demand t
+  :init
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
   :custom
   (completion-in-region-function #'consult-completion-in-region))
 
@@ -499,6 +502,12 @@
 
 (use-package treemacs
   :commands treemacs)
+
+(use-package treemacs-projectile
+  :after treemacs)
+
+(use-package treemacs-magit
+  :after treemacs)
 
 (use-package flycheck
   :defer t
