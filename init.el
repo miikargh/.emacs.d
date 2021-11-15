@@ -358,11 +358,13 @@
     (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
 (use-package evil-multiedit
+  :ensure t
   :bind
   (:map evil-multiedit-mode-map
         ("M-j" . evil-multiedit-next)
         ("M-k" . evil-multiedit-prev))
-  :config (evil-multiedit-default-keybinds))
+  :config
+  (evil-multiedit-default-keybinds))
 
 (use-package evil-easymotion)
 
