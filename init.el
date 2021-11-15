@@ -206,6 +206,9 @@
 
 (use-package consult
   :demand t
+  :init
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
   :custom
   (completion-in-region-function #'consult-completion-in-region))
 
@@ -358,11 +361,13 @@
     (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
 (use-package evil-multiedit
+  :ensure t
   :bind
   (:map evil-multiedit-mode-map
         ("M-j" . evil-multiedit-next)
         ("M-k" . evil-multiedit-prev))
-  :config (evil-multiedit-default-keybinds))
+  :config
+  (evil-multiedit-default-keybinds))
 
 (use-package evil-easymotion)
 
@@ -498,6 +503,12 @@
 (use-package treemacs
   :commands treemacs)
 
+(use-package treemacs-projectile
+  :after treemacs)
+
+(use-package treemacs-magit
+  :after treemacs)
+
 (use-package flycheck
   :defer t
   :config
@@ -538,6 +549,7 @@
         ("<tab>" . corfu-insert))
   :custom
   (corfu-cycle t)
+  (corfu-auto t)
   :config
   (corfu-global-mode))
 
