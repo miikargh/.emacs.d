@@ -549,6 +549,7 @@
         ("<tab>" . corfu-insert))
   :custom
   (corfu-cycle t)
+  (corfu-auto t)
   :config
   (corfu-global-mode))
 
