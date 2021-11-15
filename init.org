@@ -812,7 +812,14 @@ Setup projectile for powerful project management.
   (use-package treemacs
     :commands treemacs)
 
+  (use-package treemacs-projectile
+    :after treemacs)
+
+  (use-package treemacs-magit
+    :after treemacs)
+
 #+end_src
+
 
 * IDE
 
