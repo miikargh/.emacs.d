@@ -203,7 +203,6 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
-
 (use-package consult
   :demand t
   :init
@@ -211,6 +210,10 @@
         xref-show-definitions-function #'consult-xref)
   :custom
   (completion-in-region-function #'consult-completion-in-region))
+
+(defun miika/consult-projectile-ripgrep (&optional initial)
+    (interactive "P")
+  (consult--grep "ripgrep" #'consult--grep-builder (projectile-project-root) initial))
 
 (use-package embark
   :ensure t
@@ -225,6 +228,12 @@
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
   :init
   (marginalia-mode))
+
+(use-package rg
+   :commands rg)
+
+ (use-package ag
+   :commands ag)
 
 (use-package which-key
   :defer 0
@@ -362,12 +371,13 @@
 
 (use-package evil-multiedit
   :ensure t
-  :bind
-  (:map evil-multiedit-mode-map
-        ("M-j" . evil-multiedit-next)
-        ("M-k" . evil-multiedit-prev))
+  ;; :bind
+  ;; (:map evil-multiedit-mode-map
+  ;;       ("M-j" . evil-multiedit-next)
+  ;;       ("M-k" . evil-multiedit-prev))
   :config
-  (evil-multiedit-default-keybinds))
+  (evil-multiedit-default-keybinds)
+  (evil-multiedit-mode))
 
 (use-package evil-easymotion)
 
@@ -411,9 +421,8 @@
               :keymaps: 'override)
 
     "s"  '(:ignore t :which-key "Search")
-    "ss" '(consult-ripgrep :which-key "Ripgrep")
-
-    ;; "/" '(swiper :which-key "swiper")
+    "ss" '(consult-ripgrep :which-key "Ripgrep cur dir")
+    "sp" '(miika/consult-projectile-ripgrep :which-key "Ripgrep project")
 
     "x" '(:keymap ctl-x-map :which-key "C-x")
     "c" '(:keymap mode-specific-map :which-key "C-c")
@@ -525,33 +534,37 @@
       (company-complete-selection)
     (company-complete-number 1)))
 
-;; (use-package company
-;;     ;; :after (lsp-mode emacs-lisp-mode)
-;;     :hook ((emacs-lisp-mode . company-mode)
-;;           (lsp-mode . company-mode))
-;;     :bind
-;;     (:map company-active-map
-;;           ("<tab>" . miika/company-complete-selection))
-;;     :custom
-;;     (company-minimum-prefix-length 1)
-;;     (company-idle-delay 0.1))
-
-;;   ;; Nicer UI
-;;   (use-package company-box
-;;     :hook (company-mode . company-box-mode))
-
-(use-package corfu
-  :ensure t
+(use-package company
+  ;; :after (lsp-mode emacs-lisp-mode)
+  :hook ((emacs-lisp-mode . company-mode)
+         (lsp-mode . company-mode))
   :bind
-  (:map corfu-map
-        ("M-j" . corfu-next)
-        ("M-k" . corfu-previous)
-        ("<tab>" . corfu-insert))
+  (:map company-active-map
+        ("<tab>" . miika/company-complete-selection))
   :custom
-  (corfu-cycle t)
-  (corfu-auto t)
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.1)
   :config
-  (corfu-global-mode))
+  (global-company-mode))
+
+;; Nicer UI
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+;; (use-package corfu
+;;   :ensure t
+;;   :bind
+;;   (:map corfu-map
+;;         ("M-j" . corfu-next)
+;;         ("M-k" . corfu-previous)
+;;         ("<tab>" . corfu-insert))
+;;   :custom
+;;   (corfu-cycle t)
+;;   (corfu-auto t)
+;;   (corfu-preview-current t)
+;;   :config
+;;   (setq tab-always-indent 'complete)
+;;   (corfu-global-mode))
 
 (use-package eglot
   :ensure t
@@ -692,7 +705,7 @@
   (setq python-indent-offset 4)
   (setq python-shell-completion-native-enable nil) ; IPython repl breaks without this ATM
   ;; (setq lsp-completion-mode t)
-  (flymake-mode-off)
+  ;; (flymake-mode-off)
   (miika/leader-keys
     :keymap 'python-mode-map
     "mw" '(conda-env-activate :which-key "Workon enviroment")
