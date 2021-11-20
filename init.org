@@ -644,12 +644,13 @@ Welcome to the dark side ;)
 
   (use-package evil-multiedit
     :ensure t
-    :bind
-    (:map evil-multiedit-mode-map
-          ("M-j" . evil-multiedit-next)
-          ("M-k" . evil-multiedit-prev))
+    ;; :bind
+    ;; (:map evil-multiedit-mode-map
+    ;;       ("M-j" . evil-multiedit-next)
+    ;;       ("M-k" . evil-multiedit-prev))
     :config
-    (evil-multiedit-default-keybinds))
+    (evil-multiedit-default-keybinds)
+    (evil-multiedit-mode))
 
   (use-package evil-easymotion)
 
