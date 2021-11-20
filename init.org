@@ -1110,7 +1110,7 @@ Remember to install =pyls= for lsp to work with python.
     (setq python-indent-offset 4)
     (setq python-shell-completion-native-enable nil) ; IPython repl breaks without this ATM
     ;; (setq lsp-completion-mode t)
-    (flymake-mode-off)
+    ;; (flymake-mode-off)
     (miika/leader-keys
       :keymap 'python-mode-map
       "mw" '(conda-env-activate :which-key "Workon enviroment")
