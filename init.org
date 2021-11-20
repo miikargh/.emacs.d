@@ -36,6 +36,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
 - [[#vertico-consult-embark-orderless][Vertico, Consult, Embark, Orderless]]
+- [[#search][Search]]
 - [[#ivy-and-counsel][Ivy and counsel]]
 - [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
@@ -447,7 +448,6 @@ Random stuff I can't seem to place anywhere else.
           completion-category-defaults nil
           completion-category-overrides '((file (styles partial-completion)))))
 
-
   (use-package consult
     :demand t
     :init
@@ -455,6 +455,10 @@ Random stuff I can't seem to place anywhere else.
           xref-show-definitions-function #'consult-xref)
     :custom
     (completion-in-region-function #'consult-completion-in-region))
+
+  (defun miika/consult-projectile-ripgrep (&optional initial)
+      (interactive "P")
+    (consult--grep "ripgrep" #'consult--grep-builder (projectile-project-root) initial))
 
   (use-package embark
     :ensure t
@@ -471,6 +475,19 @@ Random stuff I can't seem to place anywhere else.
     (marginalia-mode))
 
 #+end_src
+
+* Search
+
+#+begin_src emacs-lisp
+
+  (use-package rg
+     :commands rg)
+
+   (use-package ag
+     :commands ag)
+
+#+end_src
+
 
 * Ivy and counsel
 
@@ -690,9 +707,8 @@ Global keybindings live here. You can find mode specific keybindings by the conf
                 :keymaps: 'override)
 
       "s"  '(:ignore t :which-key "Search")
-      "ss" '(consult-ripgrep :which-key "Ripgrep")
-
-      ;; "/" '(swiper :which-key "swiper")
+      "ss" '(consult-ripgrep :which-key "Ripgrep cur dir")
+      "sp" '(miika/consult-projectile-ripgrep :which-key "Ripgrep project")
 
       "x" '(:keymap ctl-x-map :which-key "C-x")
       "c" '(:keymap mode-specific-map :which-key "C-c")
