@@ -428,11 +428,11 @@ Random stuff I can't seem to place anywhere else.
 ** Nyan mode!
 
 #+begin_src emacs-lisp
-  (use-package nyan-mode
-    :init (nyan-mode t)
-    :config
-    (setq nyan-animate-nyancat t
-          nyan-wavy-trail t))
+  ;; (use-package nyan-mode
+  ;;   :init (nyan-mode t)
+  ;;   :config
+  ;;   (setq nyan-animate-nyancat t
+  ;;         nyan-wavy-trail t))
 #+end_src
 
 * Vertico, Consult, Embark, Orderless
