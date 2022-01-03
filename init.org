@@ -925,7 +925,7 @@ Stuff that makes Emacs behave more like an IDE.
     :ensure t
     :config
     ;; (eglot-work)
-    (setq eglot-stay-out-of '(flymake))
+    ;; (setq eglot-stay-out-of '(flymake))
     (miika/leader-keys
       :keymap eglot-mode-map
       "r" '(:ignore t :which-key "Refactor")
