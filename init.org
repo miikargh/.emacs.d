@@ -1088,6 +1088,15 @@ Remember to install =pyls= for lsp to work with python.
 
 #+end_src
 
+Or  =pylsp= if you fancy.
+
+#+begin_src shell
+
+  pip install --user "python-lsp-server[all]"
+  pip install python-lsp-black
+
+#+end_src
+
 #+begin_src emacs-lisp
 
   (defun miika/open-ipython-repl ()
