@@ -155,7 +155,7 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-spacegrey t)
+  (load-theme 'doom-one t)
 
   ;; Enable flashing mode-line on errors
   ;; (doom-themes-visual-bell-config)
@@ -169,15 +169,15 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :init (doom-modeline-mode 1)
-;;   :custom ((doom-modeline-height 15)))
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
 
-(use-package nano-modeline
-  :config
-  (setq nano-modeline-position 'bottom)
-  (nano-modeline-mode))
+;; (use-package nano-modeline
+;;   :config
+;;   (setq nano-modeline-position 'bottom)
+;;   (nano-modeline-mode))
 
 ;; NOTE: The first time you load your configuration on a new machine, you'll
 ;; need to run the following command interactively so that mode line icons
@@ -186,11 +186,11 @@
 ;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
-(use-package nyan-mode
-  :init (nyan-mode t)
-  :config
-  (setq nyan-animate-nyancat t
-        nyan-wavy-trail t))
+;; (use-package nyan-mode
+;;   :init (nyan-mode t)
+;;   :config
+;;   (setq nyan-animate-nyancat t
+;;         nyan-wavy-trail t))
 
 (use-package vertico
   :bind (:map vertico-map
@@ -580,7 +580,7 @@
   :ensure t
   :config
   ;; (eglot-work)
-  (setq eglot-stay-out-of '(flymake))
+  ;; (setq eglot-stay-out-of '(flymake))
   (miika/leader-keys
     :keymap eglot-mode-map
     "r" '(:ignore t :which-key "Refactor")
