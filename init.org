@@ -35,6 +35,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#font-setup][Font setup]]
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
+  - [[#evil-goggles][Evil goggles]]
 - [[#vertico-consult-embark-orderless][Vertico, Consult, Embark, Orderless]]
 - [[#search][Search]]
 - [[#ivy-and-counsel][Ivy and counsel]]
@@ -434,6 +435,24 @@ Random stuff I can't seem to place anywhere else.
   ;;   (setq nyan-animate-nyancat t
   ;;         nyan-wavy-trail t))
 #+end_src
+
+** Evil goggles
+
+Nice visual hints for evil-mode
+
+#+begin_src emacs-lisp
+  (use-package evil-goggles
+    :ensure t
+    :config
+    (evil-goggles-mode)
+
+    ;; optionally use diff-mode's faces; as a result, deleted text
+    ;; will be highlighed with `diff-removed` face which is typically
+    ;; some red color (as defined by the color theme)
+    ;; other faces such as `diff-added` will be used for other actions
+    (evil-goggles-use-diff-faces))
+#+end_src
+
 
 * Vertico, Consult, Embark, Orderless
 
