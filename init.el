@@ -192,6 +192,17 @@
 ;;   (setq nyan-animate-nyancat t
 ;;         nyan-wavy-trail t))
 
+(use-package evil-goggles
+  :ensure t
+  :config
+  (evil-goggles-mode)
+
+  ;; optionally use diff-mode's faces; as a result, deleted text
+  ;; will be highlighed with `diff-removed` face which is typically
+  ;; some red color (as defined by the color theme)
+  ;; other faces such as `diff-added` will be used for other actions
+  (evil-goggles-use-diff-faces))
+
 (use-package vertico
   :bind (:map vertico-map
               ("M-j" . vertico-next)
@@ -714,6 +725,9 @@
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-offset 4)
   (setq python-shell-completion-native-enable nil) ; IPython repl breaks without this ATM
+  (setq py-closing-list-dedents-bos nil)
+  (setq py-closing-list-keeps-space nil)
+  (setq py-indent-list-style 'one-level-to-beginning-of-statement)
   ;; (setq lsp-completion-mode t)
   ;; (flymake-mode-off)
   (miika/leader-keys
