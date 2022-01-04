@@ -1129,6 +1129,9 @@ Or  =pylsp= if you fancy.
     (setq python-indent-guess-indent-offset-verbose nil)
     (setq python-indent-offset 4)
     (setq python-shell-completion-native-enable nil) ; IPython repl breaks without this ATM
+    (setq py-closing-list-dedents-bos nil)
+    (setq py-closing-list-keeps-space nil)
+    (setq py-indent-list-style 'one-level-to-beginning-of-statement)
     ;; (setq lsp-completion-mode t)
     ;; (flymake-mode-off)
     (miika/leader-keys
@@ -1151,7 +1154,6 @@ Or  =pylsp= if you fancy.
   (add-hook 'python-mode-hook 'miika/python-setup)
   ;; (add-hook 'python-mode-hook 'company-mode)
   (add-hook 'python-mode-hook 'miika/conda-autoactivate)
-
 #+end_src
 
 *** Conda
