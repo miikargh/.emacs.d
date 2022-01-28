@@ -1143,6 +1143,14 @@ Or  =pylsp= if you fancy.
 
   (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
+  (add-to-list 'display-buffer-alist
+               `(,(rx bos "*python-black errors*" eos)
+                 (display-buffer-reuse-window
+                  display-buffer-below-selected)
+                 (reusable-frames . visible)
+                 (side            . bottom)
+                 (window-height   . 0spl.2)))
+
   (use-package python-black
     :demand t
     :after python)
@@ -1172,7 +1180,7 @@ Or  =pylsp= if you fancy.
       "msb" '(python-shell-send-buffer :which-key "Send buffer")
       "msf" '(python-shell-send-file :which-key "Send file")
       "mfa" '(python-black-buffer :which-key "Format buffer")
-      "mfr" '(python-black-format-region :which-ley "Format region"))
+      "mfr" '(python-black-format-region :which-key "Format region"))
     (message "Python mode activated"))
 
   (add-hook 'python-mode-hook 'miika/python-setup)
