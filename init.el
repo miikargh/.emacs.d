@@ -85,8 +85,8 @@
 
 (with-system gnu/linux
   (message "Linux detected")
-  (setq miika/default-font "Monoid NF"
-        miika/org-font "Monoid NF"
+  (setq miika/default-font "Monoid"
+        miika/org-font "Monoid"
         miika/default-font-height 120))
 
 (if (eq system-type 'windows-nt)
@@ -94,6 +94,25 @@
     (message "Windows detected")
     (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
   (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
+
+(when (and (eq system-type 'gnu/linux)
+           (getenv "WSLENV"))
+
+  ;; pgtk is only available in Emacs 29+
+  ;; without it Emacs fonts don't scale properly on
+  ;; HiDPI display
+  ;; (if (< emacs-major-version 29)
+  ;;     (set-frame-font "Cascadia Code 28")
+  ;;   (set-frame-font "Cascadia Code 14"))
+
+  ;; Teach Emacs how to open links in your default Windows browser
+  (let ((cmd-exe "/mnt/c/Windows/System2/cmd.exe")
+        (cmd-args '("/c" "start")))
+    (when (file-exists-p cmd-exe)
+      (setq browse-url-generic-program  cmd-exe
+            browse-url-generic-args     cmd-args
+            browse-url-browser-function 'browse-url-generic
+            search-web-default-browser 'browse-url-generic))))
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -118,6 +137,10 @@
 ;; Hide native comp warnings
 (setq native-comp-async-report-warnings-errors nil)
 
+;; Super smooth scrolling
+(if (< emacs-major-version 29)
+    (pixel-scroll-precision-mode))
+
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -141,7 +164,6 @@
 (dolist (mode '(org-mode-hook
                 term-mode-hook
                 eshell-mode-hook
-                vterm-mode-hook
                 jupyter-repl-mode-hook
                 ))
 (add-hook mode (lambda () (display-line-numbers-mode 0))))
@@ -155,7 +177,7 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-spacegrey t)
+  (load-theme 'doom-one t)
 
   ;; Enable flashing mode-line on errors
   ;; (doom-themes-visual-bell-config)
@@ -169,15 +191,15 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :init (doom-modeline-mode 1)
-;;   :custom ((doom-modeline-height 15)))
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
 
-(use-package nano-modeline
-  :config
-  (setq nano-modeline-position 'bottom)
-  (nano-modeline-mode))
+;; (use-package nano-modeline
+;;   :config
+;;   (setq nano-modeline-position 'bottom)
+;;   (nano-modeline-mode))
 
 ;; NOTE: The first time you load your configuration on a new machine, you'll
 ;; need to run the following command interactively so that mode line icons
@@ -186,11 +208,11 @@
 ;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
-(use-package nyan-mode
-  :init (nyan-mode t)
-  :config
-  (setq nyan-animate-nyancat t
-        nyan-wavy-trail t))
+;; (use-package nyan-mode
+;;   :init (nyan-mode t)
+;;   :config
+;;   (setq nyan-animate-nyancat t
+;;         nyan-wavy-trail t))
 
 (use-package vertico
   :bind (:map vertico-map
@@ -200,7 +222,7 @@
   :custom
   (vertico-cycle t)
   ;; :custom-face
-  ;; (vertico-current ((t (:background "#3a3f5a"))))
+  ;; (vertico-current ((t (:background "#af5a"))))
   :init
   (vertico-mode))
 
@@ -249,7 +271,7 @@
   :defer 0
   :diminish wich-key-mode
   :config
-  (setq which-key-idle-delay 0.3)
+  (setq which-key-idle-delay 0.)
   (which-key-mode))
 
 ;; (use-package ivy
@@ -441,7 +463,6 @@
     ;; Buffers
     "b" '(:ignore t :which-key "Buffer")
     "bb" '(consult-buffer :which-key "Switch to buffer")
-    "bv" '(miika/switch-to-vterm-buffer :which-key "Switch to vterm buffer")
     "bk" '(kill-current-buffer :which-key "Kill current buffer")
     "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
@@ -480,13 +501,6 @@
 
     ;; UI
     "u" '(:ignore t :which-key "UI")
-
-    ;; Terminal
-    "i" '(:ignore t :which-key "Terminal")
-    "ii" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
-    "it" '(miika/multi-vterm :which-key "Open new vterm")
-    "io" '(multi-vterm-next :which-key "Next vterm")
-    "iu" '(multi-vterm-prev :which-key "Prev vterm")
     ))
 
 (setq-default tab-width 2)
@@ -669,7 +683,7 @@
   :after scala-mode
   :commands sbt-start sbt-command
   :config
-  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/1
 
   ;; allows using SPACE when in the minibuffer
   (substitute-key-definition
@@ -702,7 +716,7 @@
     (pop-to-buffer
      (process-buffer (run-python nil nil t)))))
 
-(setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
+(setq python-shell-interpreter (expand-file-name "~/miniconda/bin/python"))
 
 (use-package python-black
   :demand t
@@ -768,8 +782,8 @@
              conda-env-candidates)
   :config
   (custom-set-variables
-   '(conda-anaconda-home (expand-file-name "~/miniconda3/")))
-  (setq conda-env-home-directory (expand-file-name "~/miniconda3/"))
+   '(conda-anaconda-home (expand-file-name "~/miniconda/")))
+  (setq conda-env-home-directory (expand-file-name "~/miniconda/"))
   (conda-env-initialize-interactive-shells)
   ;; (conda-env-autoactivate-mode t)
   (add-to-list 'global-mode-string
@@ -779,7 +793,7 @@
   ;; Make sure lsp is started/restarted after conda env is initialized
   (add-hook 'conda-postactivate-hook #'miika/python-after-env-activate-setup))
 
-(setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs"))
+(setenv "WORKON_HOME" (expand-file-name "~/miniconda/envs"))
 
 ;; (use-package pyvenv
 ;;   ;; :diminish
@@ -972,91 +986,6 @@
   ;; (eshell-git-prompt-use-theme 'powerline)
 )
 
-(defun eshell-exec-in-vterm (&rest args)
-  "https://git.jeremydormitzer.com/jdormit/dotfiles/commit/b7c4e383a2a3d8a0140376e9ebb76a3b7897848a"
-    (let* ((program (car args))
-            (buf (generate-new-buffer
-                    (concat "*" (file-name-nondirectory program) "*"))))
-        (with-current-buffer buf
-        (vterm-mode)
-        (vterm-send-string (concat (s-join " " args) "\n")))
-        (switch-to-buffer buf)))
-
-;; vterm doesn't work on windows sadly
-(with-system-not 'windows-nt
-
-  (use-package multi-vterm
-    :ensure t)
-
-  (use-package vterm
-    :after (multi-vterm)
-    :commands (vterm vterm-other-window vterm-mode)
-    :config
-    (with-eval-after-load 'em-term
-      (defun eshell-exec-visual (&rest args)
-        (apply #'eshell-exec-in-vterm args)))
-    (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-    (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-    (setq vterm-max-scrollback 10000)))
-
-(defun miika/switch-to-vterm-buffer ()
-  "Switch to a vterm buffer, or create one."
-  (interactive)
-  (ivy-read "Vterm buffer: " (counsel--buffers-with-mode #'vterm-mode)
-            :action #'miika/switch-to-vterm
-            :caller 'miika/switch-to-vterm-buffer))
-
-(defun miika/switch-to-vterm (name)
-  "Display vterm buffer with NAME and select its window.
-Reuse any existing window already displaying the named buffer.
-If there is no such buffer, start a new `vterm' with NAME."
-  (if (get-buffer name)
-      (pop-to-buffer name '((display-buffer-reuse-window
-                             display-buffer-same-window)
-                            (inhibit-same-window . nil)
-                            (reusable-frames . visible)))
-    (let ((default-directory (miika/get-project-root-dir)))
-      (vterm name))))
-
-(defun miika/multi-vterm ()
-  "Create new vterm buffer but open in project root if possible."
-  (interactive)
-  (let* ((default-directory (miika/get-project-root-dir))
-         (vterm-buffer (multi-vterm-get-buffer)))
-    (setq multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer)))
-    (set-buffer vterm-buffer)
-    (multi-vterm-internal)
-    (switch-to-buffer vterm-buffer)))
-
-(defun miika/get-project-root-dir ()
-  "Get the root directory of the current project if available."
-    (project-root
-     (or (project-current) `(transient . ,default-directory))))
-
-(defun miika/multi-vterm-dedicated-toggle ()
-  "Toggle dedicated `multi-vterm' window but in project root."
-  (interactive)
-  (if (multi-vterm-dedicated-exist-p)
-      (multi-vterm-dedicated-close)
-    (miika/multi-vterm-dedicated-open)))
-
-(defun miika/multi-vterm-dedicated-open ()
-  "Open dedicated `multi-vterm' window but in project root."
-  (interactive)
-  (if (not (multi-vterm-dedicated-exist-p))
-      (if (multi-vterm-buffer-exist-p multi-vterm-dedicated-buffer)
-          (unless (multi-vterm-window-exist-p multi-vterm-dedicated-window)
-            (multi-vterm-dedicated-get-window))
-        (let ((default-directory (miika/get-project-root-dir)))
-          (setq multi-vterm-dedicated-buffer (multi-vterm-get-buffer 'dedicated)))
-        (set-buffer (multi-vterm-dedicated-get-buffer-name))
-        (multi-vterm-dedicated-get-window)
-        (multi-vterm-internal)))
-  (set-window-buffer multi-vterm-dedicated-window (get-buffer (multi-vterm-dedicated-get-buffer-name)))
-  (set-window-dedicated-p multi-vterm-dedicated-window t)
-  (select-window multi-vterm-dedicated-window)
-  (message "`multi-vterm' dedicated window has exist."))
-
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -1146,7 +1075,7 @@ If there is no such buffer, start a new `vterm' with NAME."
    'org-babel-load-languages
    '((emacs-lisp . t))))
 
-;; Citation styles: https://blog.tecosaur.com/tmio/2021-07-31-citations.html#cite-styles
+;; Citation styles: https://blog.tecosaur.com/tmio/2021-07-1-citations.html#cite-styles
 
 ;; (use-package visual-fill-column
 ;;   :hook (org-mode . miika/org-mode-visual-fill))
