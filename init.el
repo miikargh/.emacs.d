@@ -498,6 +498,10 @@
     "it" '(miika/multi-vterm :which-key "Open new vterm")
     "io" '(multi-vterm-next :which-key "Next vterm")
     "iu" '(multi-vterm-prev :which-key "Prev vterm")
+
+    ;; Jupyter Notebooks
+    "n" '(:ignore t :which-key "Jupyter Notebooks")
+    "nl" '(ein:notebooklist-open :which-key "Open notebooklist")
     ))
 
 (setq-default tab-width 2)
@@ -563,7 +567,7 @@
   (:map company-active-map
         ("<tab>" . miika/company-complete-selection))
   :custom
-  (company-minimum-prefix-length 1)
+  (company-minimum-prefix-length 3)
   (company-idle-delay 0.1)
   :config
   (global-company-mode))
@@ -715,6 +719,14 @@
 
 (setq python-shell-interpreter (expand-file-name "~/miniconda3/bin/python"))
 
+(add-to-list 'display-buffer-alist
+             `(,(rx bos "*python-black errors*" eos)
+               (display-buffer-reuse-window
+                display-buffer-below-selected)
+               (reusable-frames . visible)
+               (side            . bottom)
+               (window-height   . 0spl.2)))
+
 (use-package python-black
   :demand t
   :after python)
@@ -744,7 +756,7 @@
     "msb" '(python-shell-send-buffer :which-key "Send buffer")
     "msf" '(python-shell-send-file :which-key "Send file")
     "mfa" '(python-black-buffer :which-key "Format buffer")
-    "mfr" '(python-black-format-region :which-ley "Format region"))
+    "mfr" '(python-black-format-region :which-key "Format region"))
   (message "Python mode activated"))
 
 (add-hook 'python-mode-hook 'miika/python-setup)
@@ -802,6 +814,10 @@
 ;;         '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
 ;;     (add-hook 'pyvenv-post-activate-hooks #'miika/python-after-env-activate-setup)
 ;;   (pyvenv-mode +1))
+
+(use-package ein
+  :defer t
+  :commands ein:notebooklist-open)
 
 (defun miika/jupyter-run-repl (kernel-name &optional repl-name associate-buffer client-class display)
   "Same as jupyter-run-repl but non interactive call finds kernelspecs with display name instead of kernel name."
