@@ -67,6 +67,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#python][Python]]
     - [[#conda][Conda]]
     - [[#virtualenv][Virtualenv]]
+    - [[#ein][EIN]]
     - [[#jupyter][Jupyter]]
   - [[#web][Web]]
   - [[#cc][C/C++]]
@@ -794,6 +795,10 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       "it" '(miika/multi-vterm :which-key "Open new vterm")
       "io" '(multi-vterm-next :which-key "Next vterm")
       "iu" '(multi-vterm-prev :which-key "Prev vterm")
+
+      ;; Jupyter Notebooks
+      "n" '(:ignore t :which-key "Jupyter Notebooks")
+      "nl" '(ein:notebooklist-open :which-key "Open notebooklist")
       ))
 
 
@@ -1236,6 +1241,17 @@ Or  =pylsp= if you fancy.
   ;;   (pyvenv-mode +1))
 
 #+end_src
+
+*** EIN
+
+#+begin_src emacs-lisp
+
+  (use-package ein
+    :defer t
+    :commands ein:notebooklist-open)
+
+#+end_src
+
 
 *** Jupyter
 
