@@ -79,7 +79,6 @@ Much of this configuration is copied and some times modified from davivil's exce
 - [[#git][Git]]
 - [[#terminals-and-shells][Terminals and shells]]
   - [[#eshell][Eshell]]
-  - [[#vterm][Vterm]]
 - [[#hydra][Hydra]]
 - [[#org-mode][Org mode]]
   - [[#org-fonts][Org fonts]]
@@ -350,7 +349,6 @@ Random stuff I can't seem to place anywhere else.
     (dolist (mode '(org-mode-hook
                     term-mode-hook
                     eshell-mode-hook
-                    vterm-mode-hook
                     jupyter-repl-mode-hook
                     ))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
@@ -729,7 +727,6 @@ Global keybindings live here. You can find mode specific keybindings by the conf
       ;; Buffers
       "b" '(:ignore t :which-key "Buffer")
       "bb" '(consult-buffer :which-key "Switch to buffer")
-      "bv" '(miika/switch-to-vterm-buffer :which-key "Switch to vterm buffer")
       "bk" '(kill-current-buffer :which-key "Kill current buffer")
       "bl" '(evil-switch-to-windows-last-buffer :which-key "Next buffer")
 
@@ -768,13 +765,6 @@ Global keybindings live here. You can find mode specific keybindings by the conf
 
       ;; UI
       "u" '(:ignore t :which-key "UI")
-
-      ;; Terminal
-      "i" '(:ignore t :which-key "Terminal")
-      "ii" '(miika/multi-vterm-dedicated-toggle :which-key "Toggle dedicated vterm")
-      "it" '(miika/multi-vterm :which-key "Open new vterm")
-      "io" '(multi-vterm-next :which-key "Next vterm")
-      "iu" '(multi-vterm-prev :which-key "Prev vterm")
       ))
 
 
@@ -1471,101 +1461,6 @@ This is a work in progress.
 
       ;; (eshell-git-prompt-use-theme 'powerline)
     )
-
-#+end_src
-
-** Vterm
-
-Very nice terminal emulation :ok_hand:
-
-TODO: Better documentation of the huge code block below.
-
-#+begin_src emacs-lisp
-
-  (defun eshell-exec-in-vterm (&rest args)
-    "https://git.jeremydormitzer.com/jdormit/dotfiles/commit/b7c4e383a2a3d8a0140376e9ebb76a3b7897848a"
-      (let* ((program (car args))
-              (buf (generate-new-buffer
-                      (concat "*" (file-name-nondirectory program) "*"))))
-          (with-current-buffer buf
-          (vterm-mode)
-          (vterm-send-string (concat (s-join " " args) "\n")))
-          (switch-to-buffer buf)))
-
-  ;; vterm doesn't work on windows sadly
-  (with-system-not 'windows-nt
-
-    (use-package multi-vterm
-      :ensure t)
-
-    (use-package vterm
-      :after (multi-vterm)
-      :commands (vterm vterm-other-window vterm-mode)
-      :config
-      (with-eval-after-load 'em-term
-        (defun eshell-exec-visual (&rest args)
-          (apply #'eshell-exec-in-vterm args)))
-      (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-      (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-      (setq vterm-max-scrollback 10000)))
-
-  (defun miika/switch-to-vterm-buffer ()
-    "Switch to a vterm buffer, or create one."
-    (interactive)
-    (ivy-read "Vterm buffer: " (counsel--buffers-with-mode #'vterm-mode)
-              :action #'miika/switch-to-vterm
-              :caller 'miika/switch-to-vterm-buffer))
-
-  (defun miika/switch-to-vterm (name)
-    "Display vterm buffer with NAME and select its window.
-  Reuse any existing window already displaying the named buffer.
-  If there is no such buffer, start a new `vterm' with NAME."
-    (if (get-buffer name)
-        (pop-to-buffer name '((display-buffer-reuse-window
-                               display-buffer-same-window)
-                              (inhibit-same-window . nil)
-                              (reusable-frames . visible)))
-      (let ((default-directory (miika/get-project-root-dir)))
-        (vterm name))))
-
-  (defun miika/multi-vterm ()
-    "Create new vterm buffer but open in project root if possible."
-    (interactive)
-    (let* ((default-directory (miika/get-project-root-dir))
-           (vterm-buffer (multi-vterm-get-buffer)))
-      (setq multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer)))
-      (set-buffer vterm-buffer)
-      (multi-vterm-internal)
-      (switch-to-buffer vterm-buffer)))
-
-  (defun miika/get-project-root-dir ()
-    "Get the root directory of the current project if available."
-      (project-root
-       (or (project-current) `(transient . ,default-directory))))
-
-  (defun miika/multi-vterm-dedicated-toggle ()
-    "Toggle dedicated `multi-vterm' window but in project root."
-    (interactive)
-    (if (multi-vterm-dedicated-exist-p)
-        (multi-vterm-dedicated-close)
-      (miika/multi-vterm-dedicated-open)))
-
-  (defun miika/multi-vterm-dedicated-open ()
-    "Open dedicated `multi-vterm' window but in project root."
-    (interactive)
-    (if (not (multi-vterm-dedicated-exist-p))
-        (if (multi-vterm-buffer-exist-p multi-vterm-dedicated-buffer)
-            (unless (multi-vterm-window-exist-p multi-vterm-dedicated-window)
-              (multi-vterm-dedicated-get-window))
-          (let ((default-directory (miika/get-project-root-dir)))
-            (setq multi-vterm-dedicated-buffer (multi-vterm-get-buffer 'dedicated)))
-          (set-buffer (multi-vterm-dedicated-get-buffer-name))
-          (multi-vterm-dedicated-get-window)
-          (multi-vterm-internal)))
-    (set-window-buffer multi-vterm-dedicated-window (get-buffer (multi-vterm-dedicated-get-buffer-name)))
-    (set-window-dedicated-p multi-vterm-dedicated-window t)
-    (select-window multi-vterm-dedicated-window)
-    (message "`multi-vterm' dedicated window has exist."))
 
 #+end_src
 
