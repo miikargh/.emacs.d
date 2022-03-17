@@ -921,7 +921,7 @@ Setup projectile for powerful project management.
 
 Stuff that makes Emacs behave more like an IDE.
 
-** Flycheck
+** Linting
 
 #+begin_src emacs-lisp
 
@@ -932,6 +932,15 @@ Stuff that makes Emacs behave more like an IDE.
     (miika/leader-keys
       :keymap flycheck-mode-map
       "ne" '(flycheck-next-error :which-key "Go to next error")))
+
+
+  (use-package flymake
+    :config
+    (miika/leader-keys
+      :keymap flymake-mode-map
+      "lj" '(flymake-goto-next-error :which-key "Go to next error")
+      "lk" '(flymake-goto-prev-error :which-key "Go to prev error")
+      "lc" '(consult-flymake :which-key "Consult linter")))
 
 #+end_src
 
