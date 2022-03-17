@@ -720,7 +720,11 @@ Welcome to the dark side ;)
     (evil-multiedit-default-keybinds)
     (evil-multiedit-mode))
 
-  (use-package evil-easymotion)
+
+  (use-package evil-mc
+    :ensure t
+    :config
+    (global-evil-mc-mode))
 
 #+end_src
 
