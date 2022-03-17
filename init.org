@@ -384,7 +384,7 @@ Random stuff I can't seem to place anywhere else.
 
   #+begin_src emacs-lisp
 
-    (set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight 'light)
+    (set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight miika/default-font-weight)
 
   #+end_src
 
