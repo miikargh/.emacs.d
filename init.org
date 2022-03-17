@@ -992,7 +992,6 @@ Stuff that makes Emacs behave more like an IDE.
 
 #+end_src
 
-
 ** LSP
 
 #+begin_src emacs-lisp
@@ -1006,6 +1005,23 @@ Stuff that makes Emacs behave more like an IDE.
       :keymap eglot-mode-map
       "r" '(:ignore t :which-key "Refactor")
       "rr" '(eglot-rename :which-key "Rename symbol")))
+
+  (use-package consult-eglot
+    :after eglot)
+
+  ;; (use-package lsp-mode
+  ;;   :config
+  ;;   (lsp-register-custom-settings
+  ;;    '(("pyls.plugins.pyls_mypy.enabled" t t)
+  ;;      ("pyls.plugins.pyls_mypy.live_mode" nil t)
+  ;;      ("pyls.plugins.pyls_black.enabled" t t)
+  ;;      ("pyls.plugins.pyls_isort.enabled" t t)))
+  ;;   :hook
+  ;;   ((python-mode . lsp)))
+
+  ;; (use-package lsp-ui
+  ;;   :after lsp-mode
+  ;;   :commands lsp-ui-mode)
 
 #+end_src
 
