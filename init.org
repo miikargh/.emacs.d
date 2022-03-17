@@ -36,12 +36,14 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
   - [[#evil-goggles][Evil goggles]]
+  - [[#solaire-mode][Solaire mode]]
 - [[#vertico-consult-embark-orderless][Vertico, Consult, Embark, Orderless]]
 - [[#search][Search]]
 - [[#ivy-and-counsel][Ivy and counsel]]
 - [[#window-management][Window management]]
 - [[#keyboard-stuff][Keyboard stuff]]
   - [[#evil][Evil]]
+  - [[#multiple-cursors][Multiple cursors]]
   - [[#undoredo][Undo/Redo]]
   - [[#global-keybindings][Global Keybindings]]
 - [[#editing][Editing]]
@@ -52,7 +54,7 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#projectile][Projectile]]
   - [[#treemacs][Treemacs]]
 - [[#ide][IDE]]
-  - [[#flycheck][Flycheck]]
+  - [[#linting][Linting]]
   - [[#autocompletion][Autocompletion]]
   - [[#lsp][LSP]]
   - [[#smartparens][Smartparens]]
@@ -75,6 +77,7 @@ Much of this configuration is copied and some times modified from davivil's exce
     - [[#problems-with-omnisharp][Problems with Omnisharp?]]
   - [[#unity-shaders][Unity shaders]]
   - [[#gdscript][GDScript]]
+  - [[#terraform][Terraform]]
   - [[#markdown][Markdown]]
   - [[#docker][Docker]]
   - [[#yaml][YAML]]
@@ -1061,6 +1064,7 @@ Stuff that makes Emacs behave more like an IDE.
     (setq global-hl-todo-mode t))
 
 #+end_src
+
 
 * Programming languages
 
