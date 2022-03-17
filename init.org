@@ -36,8 +36,6 @@ Much of this configuration is copied and some times modified from davivil's exce
   - [[#font-setup][Font setup]]
   - [[#theme-setup][Theme setup]]
   - [[#nyan-mode][Nyan mode!]]
-  - [[#evil-goggles][Evil goggles]]
-  - [[#solaire-mode][Solaire mode]]
 - [[#vertico-consult-embark-orderless][Vertico, Consult, Embark, Orderless]]
 - [[#search][Search]]
 - [[#ivy-and-counsel][Ivy and counsel]]
