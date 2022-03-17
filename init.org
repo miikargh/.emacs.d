@@ -702,6 +702,14 @@ Welcome to the dark side ;)
       (evil-define-key 'visual evil-snipe-local-mode-map "z" 'evil-snipe-s)
       (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
+  (use-package evil-easymotion)
+
+#+end_src
+
+** Multiple cursors
+
+#+begin_src emacs-lisp
+
   (use-package evil-multiedit
     :ensure t
     ;; :bind
