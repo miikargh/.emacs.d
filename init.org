@@ -1284,7 +1284,9 @@ Or  =pylsp= if you fancy.
   (defun miika/python-after-env-activate-setup ()
     "Sets up python after evirnoment activation"
     (setq python-shell-interpreter (expand-file-name "bin/python" conda-env-current-path))
-    (eglot-ensure))
+    (eglot-ensure)
+    ;; (lsp)
+    )
 
 
   (use-package conda
