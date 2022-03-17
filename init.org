@@ -256,15 +256,16 @@ Stuff that makes Emacs on MacOS usable.
 
 #+begin_src emacs-lisp
 
-    (with-system darwin ;; Darqwin == MacOS
-      (message "MacOS detected")
-      (setq mac-option-key-is-meta nil
-            mac-command-key-is-meta t
-            mac-command-modifier 'meta
-            mac-option-modifier 'none
-            miika/default-font "Monoid"
-            miika/org-font "Monoid"
-            miika/default-font-height 120))
+  (with-system darwin ;; Darqwin == MacOS
+    (message "MacOS detected")
+    (setq mac-option-key-is-meta nil
+          mac-command-key-is-meta t
+          mac-command-modifier 'meta
+          mac-option-modifier 'none
+          miika/default-font "Monoid"
+          miika/org-font "Monoid"
+          miika/default-font-height 120
+          miika/default-font-weight 'normal))
 
 #+end_src
 
