@@ -473,6 +473,16 @@ Nice visual hints for evil-mode
     (evil-goggles-use-diff-faces))
 #+end_src
 
+** Solaire mode
+Distinguish "real" buffers from "unreal" buffers.
+
+#+begin_src emacs-lisp
+
+  (use-package solaire-mode
+    :config
+    (solaire-global-mode t))
+
+#+end_src
 
 * Vertico, Consult, Embark, Orderless
 
