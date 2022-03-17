@@ -919,7 +919,7 @@ Stuff that makes Emacs behave more like an IDE.
     (global-flycheck-mode)
     (miika/leader-keys
       :keymap flycheck-mode-map
-      "ne" '(flycheck-next-error :which-key "Go to next error")))
+      "nj" '(flycheck-next-error :which-key "Go to next error")))
 
 
   (use-package flymake
@@ -992,7 +992,10 @@ Stuff that makes Emacs behave more like an IDE.
     (miika/leader-keys
       :keymap eglot-mode-map
       "r" '(:ignore t :which-key "Refactor")
-      "rr" '(eglot-rename :which-key "Rename symbol")))
+      "rr" '(eglot-rename :which-key "Rename symbol")
+      "nj" '(flymake-goto-next-error :which-key "Go to next error")
+      "nk" '(flymake-goto-prev-error :which-key "Go to prev error")
+      "nb" '(flymake-show-buffer-diagnostics :which-key "Show buffer diagnostics")))
 
   (use-package consult-eglot
     :after eglot)
