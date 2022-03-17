@@ -232,10 +232,6 @@
 ;;   (setq nyan-animate-nyancat t
 ;;         nyan-wavy-trail t))
 
-(use-package solaire-mode
-  :config
-  (solaire-global-mode t))
-
 (use-package vertico
   :bind (:map vertico-map
               ("M-j" . vertico-next)
@@ -576,7 +572,7 @@
   (global-flycheck-mode)
   (miika/leader-keys
     :keymap flycheck-mode-map
-    "ne" '(flycheck-next-error :which-key "Go to next error")))
+    "nj" '(flycheck-next-error :which-key "Go to next error")))
 
 
 (use-package flymake
@@ -637,7 +633,10 @@
   (miika/leader-keys
     :keymap eglot-mode-map
     "r" '(:ignore t :which-key "Refactor")
-    "rr" '(eglot-rename :which-key "Rename symbol")))
+    "rr" '(eglot-rename :which-key "Rename symbol")
+    "nj" '(flymake-goto-next-error :which-key "Go to next error")
+    "nk" '(flymake-goto-prev-error :which-key "Go to prev error")
+    "nb" '(flymake-show-buffer-diagnostics :which-key "Show buffer diagnostics")))
 
 (use-package consult-eglot
   :after eglot)
@@ -962,17 +961,18 @@
 (use-package clang-format
   :commands (clang-format-buffer clang-format-region))
 
+(add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+
 (use-package cc-mode
   :config
-  (add-hook 'c-mode-hook 'lsp)
-  (add-hook 'c++-mode-hook 'lsp)
-  (with-eval-after-load 'lsp-mode
-    (require 'dap-cpptools))
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure)
   (miika/leader-keys
     :keymaps '(c++-mode-map c-mode-map)
     "mc" '(compile :which-key "Compile file")
-    "mfa" '(clang-format-buffer :which-key "Format buffer")
-    "mfr" '(clang-format-region :which-key "Format region")))
+    "mfa" '(eglot-format-buffer :which-key "Format buffer")
+    "mfr" '(eglot-format :which-key "Format region"))
+  )
 
 (use-package csharp-mode
     :mode "\\.cs\\'"
