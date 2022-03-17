@@ -81,7 +81,8 @@
         mac-option-modifier 'none
         miika/default-font "Monoid"
         miika/org-font "Monoid"
-        miika/default-font-height 120))
+        miika/default-font-height 120
+        miika/default-font-weight 'normal))
 
 (with-system gnu/linux
   (message "Linux detected")
@@ -118,6 +119,9 @@
 ;; Hide native comp warnings
 (setq native-comp-async-report-warnings-errors nil)
 
+;; Automatically refresh buffers if corresponding files are changed on disk
+(global-auto-revert-mode 1)
+
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -148,31 +152,46 @@
 
 (display-time-mode 1)
 
-(set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight 'light)
+(set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight miika/default-font-weight)
 
-(use-package doom-themes
+;; (use-package doom-themes
+;;   :config
+;;   ;; Global settings (defaults)
+;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;;   (load-theme 'doom-solarized-light t)
+
+
+;;   Enable flashing mode-line on errors
+;;   (doom-themes-visual-bell-config)
+
+;;   Enable custom neotree theme (all-the-icons must be installed!)
+;;   (doom-themes-neotree-config)
+;;   ;; or for treemacs users
+;;   (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+;;   (doom-themes-treemacs-config)
+
+;;   Corrects (and improves) org-mode's native fontification.
+;; (doom-themes-org-config))
+
+;; (use-package solo-jazz-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'solo-jazz t))
+
+(use-package tao-theme
+  :ensure t
   :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-one t)
-
-  ;; Enable flashing mode-line on errors
-  ;; (doom-themes-visual-bell-config)
-
-  ;; Enable custom neotree theme (all-the-icons must be installed!)
-  (doom-themes-neotree-config)
-  ;; or for treemacs users
-  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-  (doom-themes-treemacs-config)
-
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
+  (load-theme 'tao-yang t))
 
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
+
+;; (use-package nano-theme
+;;   :config
+;;   (load-theme 'nano-light t))
 
 ;; (use-package nano-modeline
 ;;   :config
@@ -202,6 +221,10 @@
   ;; some red color (as defined by the color theme)
   ;; other faces such as `diff-added` will be used for other actions
   (evil-goggles-use-diff-faces))
+
+(use-package solaire-mode
+  :config
+  (solaire-global-mode t))
 
 (use-package vertico
   :bind (:map vertico-map
@@ -390,6 +413,8 @@
     (evil-define-key 'visual evil-snipe-local-mode-map "z" 'evil-snipe-s)
     (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
+(use-package evil-easymotion)
+
 (use-package evil-multiedit
   :ensure t
   ;; :bind
@@ -400,7 +425,11 @@
   (evil-multiedit-default-keybinds)
   (evil-multiedit-mode))
 
-(use-package evil-easymotion)
+
+(use-package evil-mc
+  :ensure t
+  :config
+  (global-evil-mc-mode))
 
 (use-package undo-fu
   :config
@@ -551,6 +580,15 @@
     :keymap flycheck-mode-map
     "ne" '(flycheck-next-error :which-key "Go to next error")))
 
+
+(use-package flymake
+  :config
+  (miika/leader-keys
+    :keymap flymake-mode-map
+    "lj" '(flymake-goto-next-error :which-key "Go to next error")
+    "lk" '(flymake-goto-prev-error :which-key "Go to prev error")
+    "lc" '(consult-flymake :which-key "Consult linter")))
+
 (defun miika/company-complete-selection ()
   "Insert the selected candidate or the first if none are selected.
     From: https://www.reddit.com/r/emacs/comments/kmeuft/companymode_not_autocompleting_first_candidate/"
@@ -567,10 +605,12 @@
   (:map company-active-map
         ("<tab>" . miika/company-complete-selection))
   :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.1)
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.05)
   :config
-  (global-company-mode))
+  (setq company-global-modes '(not gud-mod not eshell-mode))
+  (global-company-mode)
+  )
 
 ;; Nicer UI
 (use-package company-box
@@ -600,6 +640,23 @@
     :keymap eglot-mode-map
     "r" '(:ignore t :which-key "Refactor")
     "rr" '(eglot-rename :which-key "Rename symbol")))
+
+(use-package consult-eglot
+  :after eglot)
+
+;; (use-package lsp-mode
+;;   :config
+;;   (lsp-register-custom-settings
+;;    '(("pyls.plugins.pyls_mypy.enabled" t t)
+;;      ("pyls.plugins.pyls_mypy.live_mode" nil t)
+;;      ("pyls.plugins.pyls_black.enabled" t t)
+;;      ("pyls.plugins.pyls_isort.enabled" t t)))
+;;   :hook
+;;   ((python-mode . lsp)))
+
+;; (use-package lsp-ui
+;;   :after lsp-mode
+;;   :commands lsp-ui-mode)
 
 (use-package smartparens
   :after evil
@@ -756,12 +813,14 @@
     "msb" '(python-shell-send-buffer :which-key "Send buffer")
     "msf" '(python-shell-send-file :which-key "Send file")
     "mfa" '(python-black-buffer :which-key "Format buffer")
-    "mfr" '(python-black-format-region :which-key "Format region"))
+    "mfr" '(python-black-format-region :which-key "Format region")
+    "md" '(:ignore t :which-key "Debug")
+    "mdf" '(py-pdb :which-key "Debug file"))
   (message "Python mode activated"))
 
 (add-hook 'python-mode-hook 'miika/python-setup)
 ;; (add-hook 'python-mode-hook 'company-mode)
-(add-hook 'python-mode-hook 'miika/conda-autoactivate)
+;; (add-hook 'python-mode-hook 'miika/conda-autoactivate)
 
 (defun miika/conda-env-activate (name)
   "Switch to environment NAME."
@@ -785,7 +844,9 @@
 (defun miika/python-after-env-activate-setup ()
   "Sets up python after evirnoment activation"
   (setq python-shell-interpreter (expand-file-name "bin/python" conda-env-current-path))
-  (eglot-ensure))
+  (eglot-ensure)
+  ;; (lsp)
+  )
 
 
 (use-package conda
@@ -945,6 +1006,8 @@
   (add-hook 'gdscript-mode-hook 'lsp-deferred)
   (advice-add #'lsp--get-message-type :around #'lsp--gdscript-ignore-errors)
   (setq gdscript-godot-executable (expand-file-name "~/bin/godot")))
+
+(use-package terraform-mode)
 
 (use-package markdown-preview-mode
   :after (markdown-mode))
