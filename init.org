@@ -323,6 +323,9 @@ Random stuff I can't seem to place anywhere else.
   ;; Hide native comp warnings
   (setq native-comp-async-report-warnings-errors nil)
 
+  ;; Automatically refresh buffers if corresponding files are changed on disk
+  (global-auto-revert-mode 1)
+
 #+end_src
 
 * UI Config
