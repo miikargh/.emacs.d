@@ -1509,6 +1509,14 @@ Develop games with Godot!
 
 #+end_src
 
+** Terraform
+
+#+begin_src emacs-lisp
+
+  (use-package terraform-mode)
+
+#+end_src
+
 ** Markdown
 
 #+begin_src emacs-lisp
