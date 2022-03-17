@@ -1248,12 +1248,14 @@ Or  =pylsp= if you fancy.
       "msb" '(python-shell-send-buffer :which-key "Send buffer")
       "msf" '(python-shell-send-file :which-key "Send file")
       "mfa" '(python-black-buffer :which-key "Format buffer")
-      "mfr" '(python-black-format-region :which-key "Format region"))
+      "mfr" '(python-black-format-region :which-key "Format region")
+      "md" '(:ignore t :which-key "Debug")
+      "mdf" '(py-pdb :which-key "Debug file"))
     (message "Python mode activated"))
 
   (add-hook 'python-mode-hook 'miika/python-setup)
   ;; (add-hook 'python-mode-hook 'company-mode)
-  (add-hook 'python-mode-hook 'miika/conda-autoactivate)
+  ;; (add-hook 'python-mode-hook 'miika/conda-autoactivate)
 #+end_src
 
 *** Conda
