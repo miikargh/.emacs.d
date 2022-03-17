@@ -964,10 +964,12 @@ Stuff that makes Emacs behave more like an IDE.
     (:map company-active-map
           ("<tab>" . miika/company-complete-selection))
     :custom
-    (company-minimum-prefix-length 3)
-    (company-idle-delay 0.1)
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.05)
     :config
-    (global-company-mode))
+    (setq company-global-modes '(not gud-mod not eshell-mode))
+    (global-company-mode)
+    )
 
   ;; Nicer UI
   (use-package company-box
