@@ -392,29 +392,44 @@ Random stuff I can't seem to place anywhere else.
 
 #+begin_src emacs-lisp
 
-  (use-package doom-themes
+  ;; (use-package doom-themes
+  ;;   :config
+  ;;   ;; Global settings (defaults)
+  ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+  ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;;   (load-theme 'doom-solarized-light t)
+
+
+  ;;   Enable flashing mode-line on errors
+  ;;   (doom-themes-visual-bell-config)
+
+  ;;   Enable custom neotree theme (all-the-icons must be installed!)
+  ;;   (doom-themes-neotree-config)
+  ;;   ;; or for treemacs users
+  ;;   (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  ;;   (doom-themes-treemacs-config)
+
+  ;;   Corrects (and improves) org-mode's native fontification.
+  ;; (doom-themes-org-config))
+
+  ;; (use-package solo-jazz-theme
+  ;;   :ensure t
+  ;;   :config
+  ;;   (load-theme 'solo-jazz t))
+
+  (use-package tao-theme
+    :ensure t
     :config
-    ;; Global settings (defaults)
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-          doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    (load-theme 'doom-one t)
-
-    ;; Enable flashing mode-line on errors
-    ;; (doom-themes-visual-bell-config)
-
-    ;; Enable custom neotree theme (all-the-icons must be installed!)
-    (doom-themes-neotree-config)
-    ;; or for treemacs users
-    (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-    (doom-themes-treemacs-config)
-
-    ;; Corrects (and improves) org-mode's native fontification.
-    (doom-themes-org-config))
+    (load-theme 'tao-yang t))
 
   (use-package doom-modeline
     :ensure t
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 15)))
+
+  ;; (use-package nano-theme
+  ;;   :config
+  ;;   (load-theme 'nano-light t))
 
   ;; (use-package nano-modeline
   ;;   :config
