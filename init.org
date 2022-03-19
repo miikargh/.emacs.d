@@ -358,7 +358,7 @@ Random stuff I can't seem to place anywhere else.
 
   ;; Automatically refresh buffers if corresponding files are changed on disk
   (global-auto-revert-mode 1)
-  
+
   ;; Super smooth scrolling
   (if (< emacs-major-version 29)
       (pixel-scroll-precision-mode))
