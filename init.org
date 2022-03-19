@@ -237,18 +237,23 @@ I use Emacs on both MacOS and Linux so here are is a macro copied from [[https:/
 
 #+begin_src emacs-lisp
 
-  (defmacro with-system (type &rest body)
-    "Evaluate BODY if `system-type' equals TYPE."
-    (declare (indent defun))
-    `(when (eq system-type ',type)
-       ,@body))
+   (defmacro with-system (type &rest body)
+     "Evaluate BODY if `system-type' equals TYPE."
+     (declare (indent defun))
+     `(when (eq system-type ',type)
+        ,@body))
 
-  (defmacro with-system-not (type &rest body)
-    "Evaluate BODY if `system-type' does not equal TYPE."
-    (declare (indent defun))
-    `(when (not (eq system-type ',type))
-       ,@body))
+   (defmacro with-system-not (type &rest body)
+     "Evaluate BODY if `system-type' does not equal TYPE."
+     (declare (indent defun))
+     `(when (not (eq system-type ',type))
+        ,@body))
 
+   ;; Add defaults
+  (setq miika/default-font "Monoid"
+        miika/org-font "Monoid"
+        miika/default-font-height 120
+        miika/default-font-weight 'normal)
 #+end_src
 
 *** Mac
