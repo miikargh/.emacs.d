@@ -1023,12 +1023,19 @@ Stuff that makes Emacs behave more like an IDE.
     :config
     (smartparens-global-mode t)
     (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
-    (sp-pair "'" nil :actions :rem))
+    ;; (sp-pair "'" nil :actions :rem)
+    ;; (sp-pair '(emacs-lisp-mode clojure-mode) "'" nil :actions :rem)
+    (sp-with-modes 'emacs-lisp-mode
+      ;; disable ', it's the quote character!
+      (sp-local-pair "'" nil :actions nil)
+      ;; also only use the pseudo-quote inside strings where it
+      ;; serves as hyperlink.
+      (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))))
 
-  (use-package evil-smartparens
-    :after smartparens
-    :config
-    (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
+    (use-package evil-smartparens
+      :after smartparens
+      :config
+      (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
 #+end_src
 
