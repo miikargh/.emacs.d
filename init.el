@@ -92,10 +92,16 @@
 
 (with-system gnu/linux
   (message "Linux detected")
+<<<<<<< HEAD
   (setq miika/default-font "Fira Code"
         miika/org-font "Fira Code"
         miika/default-font-height 120
         miika/default-font-weight 'normal))
+=======
+  (setq miika/default-font "Monoid"
+        miika/org-font "Monoid"
+        miika/default-font-height 120))
+>>>>>>> 1e9065a6348fab2377a0599207f83e6425760bc7
 
 (if (eq system-type 'windows-nt)
   (progn
@@ -145,9 +151,12 @@
 ;; Hide native comp warnings
 (setq native-comp-async-report-warnings-errors nil)
 
+<<<<<<< HEAD
 ;; Automatically refresh buffers if corresponding files are changed on disk
 (global-auto-revert-mode 1)
 
+=======
+>>>>>>> 1e9065a6348fab2377a0599207f83e6425760bc7
 ;; Super smooth scrolling
 (if (< emacs-major-version 29)
     (pixel-scroll-precision-mode))
@@ -188,7 +197,11 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+<<<<<<< HEAD
   (load-theme 'doom-dracula t)
+=======
+  (load-theme 'doom-one t)
+>>>>>>> 1e9065a6348fab2377a0599207f83e6425760bc7
 
   ;; Enable flashing mode-line on errors
   ;; (doom-themes-visual-bell-config)
@@ -202,6 +215,7 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
+<<<<<<< HEAD
 ;; (use-package solo-jazz-theme
 ;;   :ensure t
 ;;   :config
@@ -216,6 +230,13 @@
 ;;   :config
 ;;   (load-theme 'nano-light t))
 
+=======
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
+
+>>>>>>> 1e9065a6348fab2377a0599207f83e6425760bc7
 ;; (use-package nano-modeline
 ;;   :config
 ;;   (setq nano-modeline-position 'bottom)
@@ -781,6 +802,7 @@
      (process-buffer (run-python nil nil t)))))
 
 (setq python-shell-interpreter (expand-file-name "~/miniconda/bin/python"))
+<<<<<<< HEAD
 
 (add-to-list 'display-buffer-alist
              `(,(rx bos "*python-black errors*" eos)
@@ -789,6 +811,8 @@
                (reusable-frames . visible)
                (side            . bottom)
                (window-height   . 0spl.2)))
+=======
+>>>>>>> 1e9065a6348fab2377a0599207f83e6425760bc7
 
 (use-package python-black
   :demand t
