@@ -1449,8 +1449,27 @@ Or  =pylsp= if you fancy.
 
 #+end_src
 
-** C#
+** GLSL
 
+Build GLSL language server from here first: https://github.com/svenstaro/glsl-language-server
+
+#+begin_src emacs-lisp
+
+  (use-package glsl-mode
+    :mode  ("\\.vert\\'" "\\.frag\\'")
+    :config
+    ;; (add-to-list )
+    (add-hook 'glsl-mode-hook 'eglot-ensure)
+    (miika/leader-keys
+      :keymaps '(glsl-mode-map)
+      "mfa" '(clang-format :which-key "Format buffer"))
+    (add-to-list 'eglot-server-programs
+                 `(glsl-mode . ("glslls" "-v" "--port" :autoport))))
+
+
+#+end_src
+
+** C#
 Unity tip: Sometimes the omnisharp server doesn't work. Try rebuilding the project and regenerating project files.
 
 #+begin_src emacs-lisp
