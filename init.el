@@ -62,16 +62,22 @@
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
 (defmacro with-system (type &rest body)
-  "Evaluate BODY if `system-type' equals TYPE."
-  (declare (indent defun))
-  `(when (eq system-type ',type)
-     ,@body))
+   "Evaluate BODY if `system-type' equals TYPE."
+   (declare (indent defun))
+   `(when (eq system-type ',type)
+      ,@body))
 
-(defmacro with-system-not (type &rest body)
-  "Evaluate BODY if `system-type' does not equal TYPE."
-  (declare (indent defun))
-  `(when (not (eq system-type ',type))
-     ,@body))
+ (defmacro with-system-not (type &rest body)
+   "Evaluate BODY if `system-type' does not equal TYPE."
+   (declare (indent defun))
+   `(when (not (eq system-type ',type))
+      ,@body))
+
+ ;; Add defaults
+(setq miika/default-font "Monoid"
+      miika/org-font "Monoid"
+      miika/default-font-height 120
+      miika/default-font-weight 'normal)
 
 (with-system darwin ;; Darqwin == MacOS
   (message "MacOS detected")
@@ -86,9 +92,10 @@
 
 (with-system gnu/linux
   (message "Linux detected")
-  (setq miika/default-font "Monoid"
-        miika/org-font "Monoid"
-        miika/default-font-height 120))
+  (setq miika/default-font "Fira Code"
+        miika/org-font "Fira Code"
+        miika/default-font-height 120
+        miika/default-font-weight 'normal))
 
 (if (eq system-type 'windows-nt)
   (progn
@@ -140,6 +147,7 @@
 
 ;; Automatically refresh buffers if corresponding files are changed on disk
 (global-auto-revert-mode 1)
+
 ;; Super smooth scrolling
 (if (< emacs-major-version 29)
     (pixel-scroll-precision-mode))
@@ -175,35 +183,29 @@
 
 (set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight miika/default-font-weight)
 
-;; (use-package doom-themes
-;;   :config
-;;   ;; Global settings (defaults)
-;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;;   (load-theme 'doom-solarized-light t)
+(use-package doom-themes
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-dracula t)
 
+  ;; Enable flashing mode-line on errors
+  ;; (doom-themes-visual-bell-config)
 
-;;   Enable flashing mode-line on errors
-;;   (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  (doom-themes-treemacs-config)
 
-;;   Enable custom neotree theme (all-the-icons must be installed!)
-;;   (doom-themes-neotree-config)
-;;   ;; or for treemacs users
-;;   (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-;;   (doom-themes-treemacs-config)
-
-;;   Corrects (and improves) org-mode's native fontification.
-;; (doom-themes-org-config))
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
 
 ;; (use-package solo-jazz-theme
 ;;   :ensure t
 ;;   :config
 ;;   (load-theme 'solo-jazz t))
-
-(use-package tao-theme
-  :ensure t
-  :config
-  (load-theme 'tao-yang t))
 
 (use-package doom-modeline
   :ensure t
@@ -660,12 +662,19 @@
   :config
   (smartparens-global-mode t)
   (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
-  (sp-pair "'" nil :actions :rem))
+  ;; (sp-pair "'" nil :actions :rem)
+  ;; (sp-pair '(emacs-lisp-mode clojure-mode) "'" nil :actions :rem)
+  (sp-with-modes 'emacs-lisp-mode
+    ;; disable ', it's the quote character!
+    (sp-local-pair "'" nil :actions nil)
+    ;; also only use the pseudo-quote inside strings where it
+    ;; serves as hyperlink.
+    (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))))
 
-(use-package evil-smartparens
-  :after smartparens
-  :config
-  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
+  (use-package evil-smartparens
+    :after smartparens
+    :config
+    (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 
 (use-package rainbow-delimiters)
 
@@ -973,6 +982,17 @@
     "mfa" '(eglot-format-buffer :which-key "Format buffer")
     "mfr" '(eglot-format :which-key "Format region"))
   )
+
+(use-package glsl-mode
+  :mode  ("\\.vert\\'" "\\.frag\\'")
+  :config
+  ;; (add-to-list )
+  (add-hook 'glsl-mode-hook 'eglot-ensure)
+  (miika/leader-keys
+    :keymaps '(glsl-mode-map)
+    "mfa" '(clang-format :which-key "Format buffer"))
+  (add-to-list 'eglot-server-programs
+               `(glsl-mode . ("glslls" "-v" "--port" :autoport))))
 
 (use-package csharp-mode
     :mode "\\.cs\\'"
