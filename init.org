@@ -72,6 +72,7 @@ Much of this configuration is copied and some times modified from davivil's exce
     - [[#jupyter][Jupyter]]
   - [[#web][Web]]
   - [[#cc][C/C++]]
+  - [[#glsl][GLSL]]
   - [[#c][C#]]
     - [[#problems-with-omnisharp][Problems with Omnisharp?]]
   - [[#unity-shaders][Unity shaders]]
