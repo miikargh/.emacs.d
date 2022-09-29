@@ -718,6 +718,9 @@
 ;;   :config
 ;;   (setq lsp-metals-treeview-show-when-views-received nil))
 
+;; PYTHON
+;; pip install pyright
+;; pip install python-lsp-black
 (defun miika/open-ipython-repl ()
   "Open an IPython REPL."
   (interactive)
