@@ -201,7 +201,9 @@
 (use-package vertico
   :bind (:map vertico-map
               ("M-j" . vertico-next)
+              ("C-<tab>" . vertico-next)
               ("M-k" . vertico-previous)
+              ("C-<iso-lefttab>" . vertico-previous)
               ("C-f" . vertico-exit))
   :custom
   (vertico-cycle t)
@@ -427,6 +429,7 @@
    :keymaps 'override
    "/" '(consult-line :which-key "Search")
    "n" '(newline :which-key "Inser newline")
+   "C-<tab>" '(switch-to-buffer :which-key "Switch to buffer")
    ;; "/" '(swiper :which-key "Search")
    )
 
