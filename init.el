@@ -1,6 +1,3 @@
-;; NOTE: init.el is generated from init.org.  Please edit that file
-;;       in Emacs and init.el will be generated automatically!
-
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
@@ -82,19 +79,22 @@
         miika/default-font "Monoid"
         miika/org-font "Monoid"
         miika/default-font-height 120
-        miika/default-font-weight 'normal))
+        miika/default-font-weight 'normal
+        ))
 
 (with-system gnu/linux
   (message "Linux detected")
-  (setq miika/default-font "Monoid NF"
-        miika/org-font "Monoid NF"
-        miika/default-font-height 120))
+  (setq miika/default-font "FuraMono Nerd Font"
+        miika/org-font "FuraMono Nerd Font"
+        miika/default-font-height 120
+        miika/default-font-weight 'normal
+        ))
 
 (if (eq system-type 'windows-nt)
   (progn
     (message "Windows detected")
     (setq miika/init-file-path "c:/Users/mamoi/AppData/Roaming/.emacs.d/init.org"))
-  (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.org")))
+  (setq miika/init-file-path (expand-file-name "~/.emacs.d/init.el")))
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -106,11 +106,7 @@
   (find-file miika/init-file-path))
 
 
-;; todo highlighting
-(use-package hl-todo
-:config (hl-todo-mode))
-
-
+;; Delete trailint whitespace
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (use-package command-log-mode
@@ -131,10 +127,7 @@
 ;; (setq visible-bell 1)
 (setq ring-bell-function 'ignore)
 
-
 (show-paren-mode 1)
-
-
 
 (column-number-mode)
 (global-display-line-numbers-mode t)
@@ -154,49 +147,28 @@
 
 (set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight miika/default-font-weight)
 
-;; (use-package doom-themes
-;;   :config
-;;   ;; Global settings (defaults)
-;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;;   (load-theme 'doom-solarized-light t)
-
+(use-package doom-themes
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-dracula t)
 
 ;;   Enable flashing mode-line on errors
 ;;   (doom-themes-visual-bell-config)
 
-;;   Enable custom neotree theme (all-the-icons must be installed!)
-;;   (doom-themes-neotree-config)
-;;   ;; or for treemacs users
-;;   (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-;;   (doom-themes-treemacs-config)
+  Enable custom neotree theme (all-the-icons must be installed!)
+  ;; (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  (doom-themes-treemacs-config))
 
-;;   Corrects (and improves) org-mode's native fontification.
-;; (doom-themes-org-config))
-
-;; (use-package solo-jazz-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'solo-jazz t))
-
-(use-package tao-theme
-  :ensure t
-  :config
-  (load-theme 'tao-yang t))
 
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
 
-;; (use-package nano-theme
-;;   :config
-;;   (load-theme 'nano-light t))
-
-;; (use-package nano-modeline
-;;   :config
-;;   (setq nano-modeline-position 'bottom)
-;;   (nano-modeline-mode))
 
 ;; NOTE: The first time you load your configuration on a new machine, you'll
 ;; need to run the following command interactively so that mode line icons
@@ -205,11 +177,11 @@
 ;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
-;; (use-package nyan-mode
-;;   :init (nyan-mode t)
-;;   :config
-;;   (setq nyan-animate-nyancat t
-;;         nyan-wavy-trail t))
+(use-package nyan-mode
+  :init (nyan-mode t)
+  :config
+  (setq nyan-animate-nyancat t
+        nyan-wavy-trail t))
 
 (use-package evil-goggles
   :ensure t
@@ -644,19 +616,6 @@
 (use-package consult-eglot
   :after eglot)
 
-;; (use-package lsp-mode
-;;   :config
-;;   (lsp-register-custom-settings
-;;    '(("pyls.plugins.pyls_mypy.enabled" t t)
-;;      ("pyls.plugins.pyls_mypy.live_mode" nil t)
-;;      ("pyls.plugins.pyls_black.enabled" t t)
-;;      ("pyls.plugins.pyls_isort.enabled" t t)))
-;;   :hook
-;;   ((python-mode . lsp)))
-
-;; (use-package lsp-ui
-;;   :after lsp-mode
-;;   :commands lsp-ui-mode)
 
 (use-package smartparens
   :after evil
@@ -868,13 +827,6 @@
 
 (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs"))
 
-;; (use-package pyvenv
-;;   ;; :diminish
-;;   :config
-;;   (setq pyvenv-mode-line-indicator
-;;         '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
-;;     (add-hook 'pyvenv-post-activate-hooks #'miika/python-after-env-activate-setup)
-;;   (pyvenv-mode +1))
 
 (use-package ein
   :defer t
@@ -923,89 +875,7 @@
              jupyter-run-repl
              jupyter-server-list-kernels))
 
-;; (use-package web-mode
-;;   :mode ("\\.tsx\\'" "\\.jsx\\'")
-;;   :ensure t)
-
-;; (use-package typescript-mode
-;;   :ensure t)
-
-;; (use-package tide
-;;   :ensure t
-;;   :config
-;;   (miika/leader-keys
-;;     :keymap tide-mode-map
-;;     "r" '(:ignore t :which-key "Refactor")
-;;     "rr" '(tide-rename-symbol-at-location :which-key "Rename symbol")
-;;     "rf" '(tide-rename-file :which-key "Rename file")
-;;     "gd" '(tide-jump-to-definition :which-key "Jump to definition")
-;;     "gr" '(tide-references :which-key "Goto reference")))
-
-;; (defun miika/setup-tide-mode ()
-;;   (interactive)
-;;   (flycheck-mode +1)
-;;   (eldoc-mode +1)
-;;   (tide-hl-identifier-mode +1)
-;;   (company-mode +1))
-
-;; (add-hook 'typescript-mode-hook #'miika/setup-tide-mode)
-
-
-
-;; (add-hook 'web-mode-hook
-;;           (lambda ()
-;;             (when (string-equal "tsx" (file-name-extension buffer-file-name))
-;;               (miika/setup-tide-mode))))
-
-;; (flycheck-add-mode 'typescript-tslint 'web-mode)
-
 (setq-default c-basic-offset 4)
-
-(use-package clang-format
-  :commands (clang-format-buffer clang-format-region))
-
-(use-package cc-mode
-  :config
-  (add-hook 'c-mode-hook 'lsp)
-  (add-hook 'c++-mode-hook 'lsp)
-  (with-eval-after-load 'lsp-mode
-    (require 'dap-cpptools))
-  (miika/leader-keys
-    :keymaps '(c++-mode-map c-mode-map)
-    "mc" '(compile :which-key "Compile file")
-    "mfa" '(clang-format-buffer :which-key "Format buffer")
-    "mfr" '(clang-format-region :which-key "Format region")))
-
-(use-package csharp-mode
-    :mode "\\.cs\\'"
-    :config
-    (add-hook 'csharp-mode-hook 'eglot-ensure))
-
-;; https://github.com/joaotavora/eglot/issues/241
-
-(use-package shader-mode
-  :mode "\\.shader\\'"
-  :mode "\\.compute\\'")
-
-;; https://github.com/godotengine/emacs-gdscript-mode#known-issues
-(defun lsp--gdscript-ignore-errors (original-function &rest args)
-  "Ignore the error message resulting from Godot not replying to the `JSONRPC' request."
-  (if (string-equal major-mode "gdscript-mode")
-      (let ((json-data (nth 0 args)))
-        (if (and (string= (gethash "jsonrpc" json-data "") "2.0")
-                 (not (gethash "id" json-data nil))
-                 (not (gethash "method" json-data nil)))
-            nil ; (message "Method not found")
-          (apply original-function args)))
-    (apply original-function args)))
-;; Runs the function `lsp--gdscript-ignore-errors` around `lsp--get-message-type` to suppress unknown notification errors.
-
-(use-package gdscript-mode
-  :mode "\\.gd\\'"
-  :config
-  (add-hook 'gdscript-mode-hook 'lsp-deferred)
-  (advice-add #'lsp--get-message-type :around #'lsp--gdscript-ignore-errors)
-  (setq gdscript-godot-executable (expand-file-name "~/bin/godot")))
 
 (use-package terraform-mode)
 
@@ -1060,95 +930,7 @@
   :config
   (with-eval-after-load 'esh-opt
     (setq eshell-destroy-buffer-when-process-dies t)
-    (setq eshell-visual-commands '("htop" "zsh" "vim")))
-
-  ;; (eshell-git-prompt-use-theme 'powerline)
-)
-
-(defun eshell-exec-in-vterm (&rest args)
-  "https://git.jeremydormitzer.com/jdormit/dotfiles/commit/b7c4e383a2a3d8a0140376e9ebb76a3b7897848a"
-    (let* ((program (car args))
-            (buf (generate-new-buffer
-                    (concat "*" (file-name-nondirectory program) "*"))))
-        (with-current-buffer buf
-        (vterm-mode)
-        (vterm-send-string (concat (s-join " " args) "\n")))
-        (switch-to-buffer buf)))
-
-;; vterm doesn't work on windows sadly
-(with-system-not 'windows-nt
-
-  (use-package multi-vterm
-    :ensure t)
-
-  (use-package vterm
-    :after (multi-vterm)
-    :commands (vterm vterm-other-window vterm-mode)
-    :config
-    (with-eval-after-load 'em-term
-      (defun eshell-exec-visual (&rest args)
-        (apply #'eshell-exec-in-vterm args)))
-    (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-    (setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-    (setq vterm-max-scrollback 10000)))
-
-(defun miika/switch-to-vterm-buffer ()
-  "Switch to a vterm buffer, or create one."
-  (interactive)
-  (ivy-read "Vterm buffer: " (counsel--buffers-with-mode #'vterm-mode)
-            :action #'miika/switch-to-vterm
-            :caller 'miika/switch-to-vterm-buffer))
-
-(defun miika/switch-to-vterm (name)
-  "Display vterm buffer with NAME and select its window.
-Reuse any existing window already displaying the named buffer.
-If there is no such buffer, start a new `vterm' with NAME."
-  (if (get-buffer name)
-      (pop-to-buffer name '((display-buffer-reuse-window
-                             display-buffer-same-window)
-                            (inhibit-same-window . nil)
-                            (reusable-frames . visible)))
-    (let ((default-directory (miika/get-project-root-dir)))
-      (vterm name))))
-
-(defun miika/multi-vterm ()
-  "Create new vterm buffer but open in project root if possible."
-  (interactive)
-  (let* ((default-directory (miika/get-project-root-dir))
-         (vterm-buffer (multi-vterm-get-buffer)))
-    (setq multi-vterm-buffer-list (nconc multi-vterm-buffer-list (list vterm-buffer)))
-    (set-buffer vterm-buffer)
-    (multi-vterm-internal)
-    (switch-to-buffer vterm-buffer)))
-
-(defun miika/get-project-root-dir ()
-  "Get the root directory of the current project if available."
-    (project-root
-     (or (project-current) `(transient . ,default-directory))))
-
-(defun miika/multi-vterm-dedicated-toggle ()
-  "Toggle dedicated `multi-vterm' window but in project root."
-  (interactive)
-  (if (multi-vterm-dedicated-exist-p)
-      (multi-vterm-dedicated-close)
-    (miika/multi-vterm-dedicated-open)))
-
-(defun miika/multi-vterm-dedicated-open ()
-  "Open dedicated `multi-vterm' window but in project root."
-  (interactive)
-  (if (not (multi-vterm-dedicated-exist-p))
-      (if (multi-vterm-buffer-exist-p multi-vterm-dedicated-buffer)
-          (unless (multi-vterm-window-exist-p multi-vterm-dedicated-window)
-            (multi-vterm-dedicated-get-window))
-        (let ((default-directory (miika/get-project-root-dir)))
-          (setq multi-vterm-dedicated-buffer (multi-vterm-get-buffer 'dedicated)))
-        (set-buffer (multi-vterm-dedicated-get-buffer-name))
-        (multi-vterm-dedicated-get-window)
-        (multi-vterm-internal)))
-  (set-window-buffer multi-vterm-dedicated-window (get-buffer (multi-vterm-dedicated-get-buffer-name)))
-  (set-window-dedicated-p multi-vterm-dedicated-window t)
-  (select-window multi-vterm-dedicated-window)
-  (message "`multi-vterm' dedicated window has exist."))
+    (setq eshell-visual-commands '("htop" "zsh" "vim"))))
 
 (use-package hydra)
 
@@ -1273,16 +1055,6 @@ If there is no such buffer, start a new `vterm' with NAME."
 (use-package org-make-toc
   :hook (org-mode . org-make-toc-mode))
 
-;; Automatically tangle our Emacs.org config file when we save it
-(defun miika/org-babel-tangle-config ()
-  (when (string-equal (buffer-file-name)
-                      miika/init-file-path)
-    ;; Dynamic scoping to the rescue
-    (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
-
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'miika/org-babel-tangle-config)))
-
 ;; (add-hook 'latex-mode-hook 'company-mode)
 
 (use-package auctex
@@ -1309,3 +1081,22 @@ If there is no such buffer, start a new `vterm' with NAME."
 
 (use-package gcmh
   :init (gcmh-mode 1))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(gcmh xkcd emojify flycheck-grammarly auctex org-make-toc citar citeproc org-bullets eshell-git-prompt highlight-indent-guides docker-compose-mode dockerfile-mode markdown-preview-mode terraform-mode which-key vertico use-package undo-fu treemacs-projectile treemacs-magit tao-theme solaire-mode scala-mode sbt-mode rg rainbow-delimiters quelpa python-black paredit orderless nyan-mode no-littering marginalia jupyter hl-todo helpful general format-all flycheck exec-path-from-shell evil-snipe evil-smartparens evil-multiedit evil-mc evil-goggles evil-easymotion evil-commentary evil-collection embark ein doom-modeline consult-projectile consult-eglot conda company-box command-log-mode cider auto-package-update all-the-icons aggressive-indent ag)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(evil-goggles-change-face ((t (:inherit diff-removed))))
+ '(evil-goggles-delete-face ((t (:inherit diff-removed))))
+ '(evil-goggles-paste-face ((t (:inherit diff-added))))
+ '(evil-goggles-undo-redo-add-face ((t (:inherit diff-added))))
+ '(evil-goggles-undo-redo-change-face ((t (:inherit diff-changed))))
+ '(evil-goggles-undo-redo-remove-face ((t (:inherit diff-removed))))
+ '(evil-goggles-yank-face ((t (:inherit diff-changed)))))
