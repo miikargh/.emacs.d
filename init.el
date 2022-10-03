@@ -5,7 +5,7 @@
   (message "Emacs loaded in %s with %d garbage collections."
            (format "%.2f seconds"
                    (float-time
-                     (time-subtract after-init-time before-init-time)))
+                    (time-subtract after-init-time before-init-time)))
            gcs-done))
 
 (add-hook 'emacs-startup-hook #'miika/display-startup-time)
@@ -53,7 +53,7 @@
 
 (use-package no-littering)
 
-;; no-littering doesn't set this by default so we must place
+;;git push --set-upstream origin work-neu no-littering doesn't set this by default so we must place
 ;; auto save files in the same path as it uses for sessions
 (setq auto-save-file-name-transforms
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
@@ -148,16 +148,17 @@
 (set-face-attribute 'default nil :font miika/default-font :height miika/default-font-height :weight miika/default-font-weight)
 
 (use-package doom-themes
+  :ensure t
   :config
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-dracula t)
 
-;;   Enable flashing mode-line on errors
-;;   (doom-themes-visual-bell-config)
+  ;;   Enable flashing mode-line on errors
+  ;;   (doom-themes-visual-bell-config)
 
-  Enable custom neotree theme (all-the-icons must be installed!)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
   ;; (doom-themes-neotree-config)
   ;; or for treemacs users
   (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
@@ -185,6 +186,7 @@
 
 (use-package evil-goggles
   :ensure t
+  :after evil
   :config
   (evil-goggles-mode)
 
@@ -368,7 +370,7 @@
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
-  (setq evil-want-keybinding nil))
+  )
 
 
 (use-package evil-collection
@@ -516,6 +518,10 @@
 (use-package format-all
   :commands (format-all-buffer format-all-mode))
 
+;; TERMINALS
+(use-package vterm
+  :ensure t)
+
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -611,6 +617,7 @@
   :config
   ;; (eglot-work)
   ;; (setq eglot-stay-out-of '(flymake))
+  ;; (setq eglot-stay-out-of '(company))
   (miika/leader-keys
     :keymap eglot-mode-map
     "r" '(:ignore t :which-key "Refactor")
@@ -710,7 +717,7 @@
    'minibuffer-complete-word
    'self-insert-command
    minibuffer-local-completion-map)
-   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+  ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
   (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 ;; (use-package lsp-metals
@@ -719,7 +726,7 @@
 ;;   (setq lsp-metals-treeview-show-when-views-received nil))
 
 ;; PYTHON
-;; pip install pyright
+;; pip install -- user "python-language-server[all]"
 ;; pip install python-lsp-black
 (defun miika/open-ipython-repl ()
   "Open an IPython REPL."
@@ -787,6 +794,20 @@
 ;; (add-hook 'python-mode-hook 'company-mode)
 ;; (add-hook 'python-mode-hook 'miika/conda-autoactivate)
 
+;; (defun miika/pip-install ()
+;;   "Interactively install pip package on current python environment."
+;;   (interactive)
+;;   (miika/pip-install-package (read-string "pip install "))
+;;   )
+
+;; (defun miika/pip-install-package (package)
+;;   "Install pip package PACKAGE on current python environment."
+;;   (message "Installing package: %s" package)
+;;   (with-temp-buffer
+;;     (shell (current-buffer))
+;;     (process-send-string nil (concat "pip install " package)))
+;;   )
+
 (defun miika/conda-env-activate (name)
   "Switch to environment NAME."
   (let* ((env-name name)
@@ -809,10 +830,12 @@
 (defun miika/python-after-env-activate-setup ()
   "Sets up python after evirnoment activation"
   (setq python-shell-interpreter (expand-file-name "bin/python" conda-env-current-path))
+  (setq company-backends
+        (cons 'company-files
+              (remove 'company-files company-backends)))
   (eglot-ensure)
   ;; (lsp)
   )
-
 
 (use-package conda
   :commands (conda-env-activate
@@ -1092,8 +1115,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(conda-anaconda-home (expand-file-name "~/miniconda3/"))
  '(package-selected-packages
-   '(gcmh xkcd emojify flycheck-grammarly auctex org-make-toc citar citeproc org-bullets eshell-git-prompt highlight-indent-guides docker-compose-mode dockerfile-mode markdown-preview-mode terraform-mode which-key vertico use-package undo-fu treemacs-projectile treemacs-magit tao-theme solaire-mode scala-mode sbt-mode rg rainbow-delimiters quelpa python-black paredit orderless nyan-mode no-littering marginalia jupyter hl-todo helpful general format-all flycheck exec-path-from-shell evil-snipe evil-smartparens evil-multiedit evil-mc evil-goggles evil-easymotion evil-commentary evil-collection embark ein doom-modeline consult-projectile consult-eglot conda company-box command-log-mode cider auto-package-update all-the-icons aggressive-indent ag)))
+   '(vterm gcmh xkcd emojify flycheck-grammarly auctex org-make-toc citar citeproc org-bullets eshell-git-prompt highlight-indent-guides docker-compose-mode dockerfile-mode markdown-preview-mode terraform-mode which-key vertico use-package undo-fu treemacs-projectile treemacs-magit tao-theme solaire-mode scala-mode sbt-mode rg rainbow-delimiters quelpa python-black paredit orderless nyan-mode no-littering marginalia jupyter hl-todo helpful general format-all flycheck exec-path-from-shell evil-snipe evil-smartparens evil-multiedit evil-mc evil-goggles evil-easymotion evil-commentary evil-collection embark ein doom-modeline consult-projectile consult-eglot conda company-box command-log-mode cider auto-package-update all-the-icons aggressive-indent ag)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
